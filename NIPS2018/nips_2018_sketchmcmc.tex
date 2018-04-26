@@ -33,6 +33,9 @@
 \newcommand{\He}{{\cal H}}
 \newcommand{\SW}{{\cal S}{\cal W}_2}
 
+\DeclareMathOperator*{\argmin}{arg\min}
+
+
 
 \title{Sliced-Wasserstein Flows: Learning Generative Models via Single Data Pass with Guarantees}
 
@@ -104,7 +107,11 @@ where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the func
 \begin{align}
 \F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
 \end{align}
-where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases.
+where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
+\begin{align}
+\rho^\star = \argmin_\rho \F(\rho).
+\end{align}
+Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\mu_0$ and bring it closer to $\pi$ as $t$ evolves.
 
 By following \cite{santambrogio2017euclidean}, the gradient given in \eqref{eqn:gradflow} can be written as follows:
 \begin{align}
@@ -120,7 +127,13 @@ where
 \begin{align}
 \F_\lambda(\rho) \triangleq \F(\rho) + \lambda \He(\rho).
 \end{align}
-Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho minimizing $
+Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
+
+This time the optimization problem is modified: 
+\begin{align}
+\min_\rho \F_\lambda(\rho),
+\end{align}
+in which $\pi$ is no longer an optimizer. The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
 
 We need to compute the gradient of $\F_\lambda$ by using the definition given in \eqref{eqn:gradw2}. We first start by computing the first variation of the functional:
 \begin{align}
