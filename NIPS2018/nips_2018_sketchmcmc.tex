@@ -86,7 +86,7 @@
 \maketitle
 
 \begin{abstract}
-  
+
 \end{abstract}
 
 \section{Constructing an entropy-regularized $\SW$ gradient flow}
@@ -95,7 +95,7 @@ Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pit
 \begin{align}
 \partial_t \rho_t - \nabla \cdot (\rho_t v_t) = 0,
 \end{align}
-where $\rho_t$ is the density of $\mu_t$ and 
+where $\rho_t$ is the density of $\mu_t$ and
 \begin{align}
 v_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta. \label{eqn:idt_v}
 \end{align}
@@ -123,13 +123,13 @@ By this definition, $\mu_t$ directly goes to $\nu$. However, in practical settin
 \begin{align}
 \partial_t \rho = - \nabla_{\W} \F_\lambda(\rho),
 \end{align}
-where 
+where
 \begin{align}
 \F_\lambda(\rho) \triangleq \F(\rho) + \lambda \He(\rho).
 \end{align}
 Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
 
-This time the optimization problem is modified: 
+This time the optimization problem is modified:
 \begin{align}
 \min_\rho \F_\lambda(\rho),
 \end{align}
@@ -138,12 +138,12 @@ in which $\pi$ is no longer an optimizer. The idea in this new gradient flow for
 We need to compute the gradient of $\F_\lambda$ by using the definition given in \eqref{eqn:gradw2}. We first start by computing the first variation of the functional:
 \begin{align}
 \frac{\delta \F_\lambda}{\delta \rho} (\rho ) &= \frac{\delta \F}{\delta \rho} (\rho ) + \frac{\delta \He}{\delta \rho} (\rho ) \\
-&= \frac{\delta \F}{\delta \rho} + \lambda  (\log \rho +1 ) . 
+&= \frac{\delta \F}{\delta \rho} + \lambda  (\log \rho +1 ) .
 \end{align}
 When we use this identity in \eqref{eqn:gradw2}:
 \begin{align}
-\nabla_{\W} \F_\lambda(\rho) &= -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F_\lambda}{\delta \rho}(\rho) \bigr) \Bigr) \\ 
-&= -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho} +  \lambda  (\log \rho +1 ) \bigr) \Bigr) \\ 
+\nabla_{\W} \F_\lambda(\rho) &= -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F_\lambda}{\delta \rho}(\rho) \bigr) \Bigr) \\
+&= -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho} +  \lambda  (\log \rho +1 ) \bigr) \Bigr) \\
 &= -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho} \bigr) \Bigr) -  \lambda \nabla \cdot \Bigl( \rho \nabla \bigl( \log \rho +1  \bigr) \Bigr)
 \end{align}
 By using $\nabla ( \log \rho +1  ) = \nabla \log \rho = \frac{\nabla \rho}{\rho} $, we have:
@@ -151,7 +151,7 @@ By using $\nabla ( \log \rho +1  ) = \nabla \log \rho = \frac{\nabla \rho}{\rho}
 \nabla_{\W} \F_\lambda(\rho) &= \nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho} \bigr) \Bigr) -  \lambda \nabla \cdot \Bigl( \nabla \rho \Bigr) \\
 &= \nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho} \bigr) \Bigr) -  \lambda \Delta \rho,
 \end{align}
-where $\Delta$ denotes the Laplacian operator. 
+where $\Delta$ denotes the Laplacian operator.
 
 Since we already know the definition of $\nabla \bigl( \frac{\delta \F}{\delta \rho} \bigr)$ from \eqref{eqn:idt_v}, we can now construct the modified gradient flow as follows:
 \begin{align}
@@ -169,15 +169,19 @@ where $W_t$ denotes the standard Brownian motion. In practice we can simulate th
 \begin{align}
 X_{n+1} = X_n - v_n(X_n) + \sqrt{2 \lambda} Z_{n+1},
 \end{align}
-where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. After that we might hope to have some error bounds on our estimation. 
+where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. After that we might hope to have some error bounds on our estimation.
 
 
 \section{Open questions}
 
 \begin{enumerate}
 \item We assume that the flow given in Bonnotte converges to $\nu$. Can we say/prove something about this?
+\\Do you think there is some restrictive assumption to put on $\nu$ that would make it clear? Something less limiting than the Gaussian assumption, that's kind of useless. What about your intuition of overfitting? Let's say that actually, we do not observe $\nu$, but rather some $\hat{\nu}$ that is atomic, and just a sum of diracs over the observations, maybe convergence to $\hat{\nu}$ is obtained through Bonnotte's scheme? The problem is that actually, this solution is probably not our true objective, and these stuff would kind of justify your idea of justifiying our regularisation as avoiding overfitting.
 \item We need to develop an unbiased (or maybe biased) estimator for $v_n$. We also need to think about the `single-data-pass' aspect? Can we still do a single data pass in this scheme?
+\\I understand this means we approximate the sum over $\theta$ as a finite sum, right? It's still a bit unclear to me, but in the 1D case, $\psi'_{t,\theta}(\langle \theta, x \rangle)$ is precisely given by the transport map (for which we have the analytical expression), right? In this case, I think I will implement this approximation by picking a different set of $\theta$ each time, just like they do in IDT.
+\\Concerning the single data-pass aspect, maybe I'm wrong but I think it's not changed: all we need for building the transport map, whatever the current $\rho_t$, is the distribution $\theta^*_{\#}\nu$ (that does not depend on $\rho_t$). Correct me if I'm wrong, but in practice, it looks to me we are simply adding a Gaussian noise term to the solution of the IDT, right?
 \item When we use the entropy regularization, the flow will no longer converge to $\nu$ (assuming the first flow converges to $\nu$). Let's say it converges to $\nu_\lambda$. Can we show a bound between $\nu$ and $\nu_\lambda$?
+\\I think some answers will be found in~\cite{cuturi2013sinkhorn}
 \item Let's say we developed an estimator for $v_n$ (or more generally $v_t$). Can we show error bounds? I am sure there are related studies to this. I will check the relevant literature. I am guessing that we might need to assume some sort of regularity in $v_t$ in terms of $t$.
 \item This scheme reminds me the normalizing flows \cite{rezende2015variational}, continuous-time flows \cite{chen2018cont} and Stein Variational Descent \cite{liu2016stein,liu2017stein}. We need to understand the differences/similarities.
 \end{enumerate}
