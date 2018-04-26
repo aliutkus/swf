@@ -5,134 +5,131 @@ from torchvision.utils import save_image
 from torchvision.utils import make_grid
 import numpy as np
 import tqdm
+import copy
 from qsketch.sketch import Projectors
 import argparse
+from scipy.interpolate import interp1d
 
+class Chain(None):
+    def __init__(self, num_sketches, epochs, input_matrix=None, lambda=1):
+        self.input_matrix = input_matrix
+        self.num_sketches = num_sketches
+        self.epochs = epochs
+        self.lambda = 1
+        self.qf = None
+    def __copy__(self):
+        return Chain(self.num_sketches, self.epochs,
+                     self.input_matrix, self.lambda)
 
-def new_chain_data(input_dim, num_sketches, epochs):
-    return {'input_dim':input_dim,
-            'num_sketches':num_sketches,
-            'epochs':epochs,
-            'qf':None}
+def IDT(target_sketch_file, chain_in, samples,
+        plot_function, compute_chain_out=True):
 
-def IDT(sketch_file, sample_size,
-        chain_data,
-        plot, plot_dir,
-        ):
-
-    # Load the sketch data
-    print('Loading the sketching data')
+    # Load the sketch data for target
+    print('Loading the sketching data for target')
     data = np.load(sketch_file).item()
-    qf = torch.Tensor(data['qf']).float()
-
+    qf = data['qf']
 
     [num_sketches, data_dim, num_quantiles] = qf.shape
-    num_sketches_optim = min(num_sketches, num_sketches_optim)
     img_size = data['img_size']
     nchannels = data['nchannels']
     data_dim = nchannels*img_size**2
     print('done')
 
+
     # prepare the projectors
     projectors = Projectors(data_dim=data_dim, size=num_sketches)
+    quantiles = np.linspace(0, 100, num_quantiles)
 
-    if plot and plot_dir is not None and not os.path.exists(plot_dir):
-        os.mkdir(plot_dir)
+    if compute_chain_out:
+        # prepare the chain_out
+        chain_out = copy.copy(chain_in)
+        chain_out.qf = np.empty((chain_in.epochs,
+                                 chain_in.num_sketches,
+                                 data_dim, num_quantiles))
 
-    # Prepare the
+    # Process the samples via the input matrix if needed:
+    if chain_in.input_matrix is not None:
+        samples = np.dot(samples, chain_in.input_matrix)
+
     for epoch in tqdm.tqdm(range(epochs)):
-        for batch in tqdm.tqdm(batch_iterator):
-            for projector in projectors[batch]:
-                # Forward: generate random samples with current parameters
-                features = np.random.randn(sample_size, input_dim)
-                features = Variable(torch.Tensor(features),
-                                    requires_grad=True)
-                output = model(features)
+        for sketch_index in tqdm.tqdm(range(chain_in.num_sketches)):
+            projector = projectors[sketch_index]
+            projections = np.dot(samples, projector.T)
 
-                # compute the projections of the current batch
-                # current support of sparse tensors looks experimental
-                # so let's go to dense...
-                projector = torch.Tensor(projector)
-                projections = torch.mm(Variable(projector),
-                                       output.transpose(0, 1))
+            if chain_in.qf is None
+                # we need to compute the quantile function for the particles
+                # in the projected domain
+                source_qf = np.percentile(projections, quantiles, axis=0)
+            else:
+                source_qf = chain_in.qf[epoch,sketch_index]
 
-                # compute the corresponding quantiles
-                percentile_fn = Percentile(num_quantiles)
-                output_qf = percentile_fn(projections)
+            transported = np.empoty(projections.shape)
+            for d in range(data_dim):
+                F    = interp1d(source_qf[d], quantiles, kind='linear',
+                                bounds_error=False, fill_value='extrapolate')
+                Ginv = interp1d(quantiles, qf[sketch_index,d], kind='linear',
+                                bounds_error=False, fill_value='extrapolate')
+                zd = np.clip(projections[:,d], source_qf[d,0], source_qf[d,-1])
+                zd = F(zd)
+                zd = np.clip(zd, 0, 100)
+                transported[:,d] = Ginv(zd)
 
-                # compute the loss: squared error over the quantiles
-                loss = criterion(output_qf, Variable(qf[batch]))
+            samples += (np.dot(transported - projections, projector.T)
+                        +chain_in.lambda*np.random.randn(*samples.shape)
 
-            # now backward the loss and step
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            if compute_chain_out:
+                chain_out.qf[epoch, sketch_index] = source_qf
 
-        # ===================log========================
-        writer.add_scalar('data/loss', loss.data[0], epoch)
-        print('epoch [{}/{}], loss:{:.5f}'
-              .format(epoch + 1, epochs, loss.data[0]))
+        if plot_function is not None:
+            plot_function(samples)
 
-        if plot:
-            # at the end of each macro batch, displays genrated images
-            output = model(features_plot).data
-            pic = make_grid(output.view(-1, nchannels, img_size, img_size),
-                            nrow=8, padding=2, normalize=True)
-            writer.add_image('Image', pic, epoch)
-            if plot_dir is not None:
-                save_image(pic,
-                           '{}/image_{}.png'.format(plot_dir, epoch))
-
-        # save the network
-        torch.save(model.state_dict(), model_file)
-
+    if compute_chain_out:
+        return chain_out
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=
-                                     'Learn a generative model through '
-                                     'sketching.'
-                                     'The model is learned by fitting '
-                                     'batches of sketches.')
+                                     'Performs iterative distribution transfer'
+                                     ' with sliced wasserstein flow.')
     parser.add_argument("sketch_file", help="path to the sketch file as "
                         "generated by the `sketch.py` script")
-    parser.add_argument("-i", "--input_dim",
-                        help="Dimension of the random input to the "
-                             "generative network",
+    parser.add_argument("-i", "--input_chain",
+                        help="Input chain to use, as returned by this same "
+                             "script. If provided, overrides any other of"
+                             "the parameters `epochs`, `dim`, `lambda`)
+    parser.add_argument("-i", "--input_chain",
+                        help="Input chain to use, as returned by this same "
+                             "script")
+
+    parser.add_argument("-d", "--dim",
+                        help="Dimension of the random input",
                         type=int,
                         default=100)
-    parser.add_argument("-b", "--batch_size",
-                        help="Size of the batches",
-                        type=int,
-                        default=1)
     parser.add_argument("-e", "--epochs",
                         help="Number of epochs",
                         type=int,
-                        default=1000)
+                        default=10)
     parser.add_argument("-s", "--sample_size",
-                        help="Number of samples to draw per batch to "
-                             "compute the sketch of that batch",
+                        help="Number of samples to draw",
                         type=int,
                         default=3000)
-    parser.add_argument("-o", "--optimizer",
-                        help="Optimizer to use, must be one from torch.optim",
-                        default="Adam")
-    parser.add_argument("-r", "--learning_rate",
-                        help="Learning rate for backpropagation",
+    parser.add_argument("-l", "--lambda",
+                        help="Regularization term",
                         type=float,
-                        default=1e-3)
+                        default=1.)
     parser.add_argument("--plot",
                         help="Flag indicating whether or not to plot samples",
                         action="store_true")
     parser.add_argument("-d", "--plot_dir",
                         help="Output directory for the plots",
                         default="./samples")
-    parser.add_argument("-m", "--model_file",
-                        help="Output file for the model",
-                        default="./model.pth")
+    parser.add_argument("-o", "--plot_dir",
+                        help="Output directory for the plots",
+                        default="./samples")
+
 
     args = parser.parse_args()
 
-    learn_generative(args.sketch_file, args.input_dim, args.batch_size,
+    IDT(args.sketch_file, args.input_dim, args.batch_size,
                      args.epochs, args.sample_size, args.optimizer,
                      args.learning_rate, args.plot, args.plot_dir,
                      args.model_file)
