@@ -6,12 +6,14 @@ from torchvision.utils import make_grid
 import numpy as np
 import tqdm
 import copy
-from qsketch.sketch import Projectors
+from qsketch.sketch import Projectors, load_data
 import argparse
 from scipy.interpolate import interp1d
+import matplotlib.pylab as pl
+pl.ion()
 
 
-class Chain(None):
+class Chain:
 
     def __init__(self, num_sketches, epochs, reg=1):
         self.num_sketches = num_sketches
@@ -32,9 +34,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     qf = data['qf']
 
     [num_sketches, data_dim, num_quantiles] = qf.shape
-    img_size = data['img_size']
-    nchannels = data['nchannels']
-    data_dim = nchannels*img_size**2
+    data_dim = data['data_dim']
     print('done')
 
     # prepare the projectors
@@ -49,20 +49,21 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                                  data_dim, num_quantiles))
 
     samples = samples_gen_fn(data_dim)
-
     for epoch in tqdm.tqdm(range(chain_in.epochs)):
-        for sketch_index in tqdm.tqdm(range(chain_in.num_sketches)):
+        for sketch_index in tqdm.tqdm(range(min(chain_in.num_sketches,
+                                                num_sketches))):
             projector = projectors[sketch_index]
             projections = np.dot(samples, projector.T)
 
             if chain_in.qf is None:
                 # we need to compute the quantile function for the particles
                 # in the projected domain
-                source_qf = np.percentile(projections, quantiles, axis=0)
+                source_qf = np.percentile(projections, quantiles, axis=0).T
             else:
                 source_qf = chain_in.qf[epoch, sketch_index]
 
-            transported = np.empoty(projections.shape)
+            transported = np.empty(projections.shape)
+
             for d in range(data_dim):
                 F = interp1d(source_qf[d], quantiles, kind='linear',
                              bounds_error=False, fill_value='extrapolate')
@@ -74,14 +75,14 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
-            samples += (np.dot(transported - projections, projector.T)
+            samples += (np.dot(transported - projections, projector)
                         + chain_in.reg*np.random.randn(*samples.shape))
 
             if compute_chain_out:
                 chain_out.qf[epoch, sketch_index] = source_qf
 
-        if plot_function is not None:
-            plot_function(samples)
+            if plot_function is not None:
+                plot_function(samples, epoch, sketch_index)
 
     if not compute_chain_out:
         chain_out = None
@@ -117,6 +118,12 @@ if __name__ == "__main__":
                         help="Number of samples to draw and to transport",
                         type=int,
                         default=3000)
+    parser.add_argument("-l", "--num_sketches",
+                        help="Number of sketches to use per epoch. "
+                             "In case the sketch file contains less, will be "
+                             "cropped.",
+                        type=int,
+                        default=3000)
     parser.add_argument("-e", "--epochs",
                         help="Number of epochs",
                         type=int,
@@ -128,8 +135,14 @@ if __name__ == "__main__":
     parser.add_argument("--plot",
                         help="Flag indicating whether or not to plot samples",
                         action="store_true")
-    parser.add_argument("-d", "--plot_dir",
-                        help="Output directory for the plots",
+    parser.add_argument("-t", "--plot_target",
+                        help="Samples from the target "
+                             "distribution for plotting purposes. Either a "
+                             "file saved by numpy.save containing a ndarray "
+                             "of shape num_samples x data_dim, or the name of "
+                             "a DATASET in torchvision.datasets")
+    parser.add_argument("-p", "--plot_dir",
+                        help="Output directory for saving the plots",
                         default="./samples")
 
     args = parser.parse_args()
@@ -142,9 +155,11 @@ if __name__ == "__main__":
     if args.samples is None:
         def generate_samples(data_dim):
             z = np.random.randn(args.num_samples, args.dim)
-            np.random.seed(0)
-            up_sampling = np.random.randn(args.dim, data_dim)
-            return np.dot(z, up_sampling)
+            if args.dim != data_dim:
+                np.random.seed(0)
+                up_sampling = np.random.randn(args.dim, data_dim)
+                z = np.dot(z, up_sampling)
+            return z
     else:
         def generate_samples(data_dim):
             samples = np.load(args.samples)
@@ -158,22 +173,36 @@ if __name__ == "__main__":
     else:
         compute_output_chain = False
 
+    if args.plot_target is not None:
+        # just handle numpy arrays now
+        target_samples = load_data(args.plot_target, None)[0]
     if args.plot:
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)
 
         def plot_function(samples, epoch, sketch_index):
-            [num_samples, data_dim] = samples.shape
+            data_dim = samples.shape[-1]
             square_dim_bw = np.sqrt(data_dim)
             square_dim_col = np.sqrt(data_dim/3)
             if not (square_dim_col % 1):
                 nchan = 3
-                img_dim = square_dim_col
+                img_dim = int(square_dim_col)
             elif not (square_dim_bw % 1):
                 nchan = 1
-                img_dim = square_dim_bw
+                img_dim = int(square_dim_bw)
             else:
-                raise ValueError('Can only plot images for now.')
+                pl.clf()
+                if args.plot_target is not None:
+                    pl.plot(target_samples[:, 0], target_samples[:, 1], '.r')
+                pl.plot(samples[:, 0], samples[:, 1], '.b')
+                pl.grid(True)
+                pl.title('epoch %d, sketch %d' % (epoch, sketch_index+1))
+                pl.show()
+                pl.pause(0.05)
+                return
+            [num_samples, data_dim] = samples.shape
+            samples = samples[:min(100, num_samples)]
+            num_samples = samples.shape[0]
 
             samples = np.reshape(samples,
                                  [num_samples, nchan, img_dim, img_dim])
