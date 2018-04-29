@@ -176,6 +176,8 @@ if __name__ == "__main__":
     if args.plot_target is not None:
         # just handle numpy arrays now
         target_samples = load_data(args.plot_target, None)[0]
+        ntarget = min(100000, target_samples.shape[0])
+        target_samples = target_samples[:ntarget]
     if args.plot:
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)

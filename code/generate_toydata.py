@@ -2,23 +2,23 @@ import numpy as np
 from numpy.random import randn, rand
 import argparse
 import matplotlib.pyplot as pl
-import seaborn
+import seaborn as sns
 
 
 def draw_GMM_parameters(d, K, mean_mul=30):
     ''' randomly draws the parameters of the GMM'''
-    np.random.seed(0)
+    #np.random.seed(0)
     # weights
-    w = rand(K)**2
+    w = rand(K)
     w /= np.sum(w)
 
     # means
     mu = randn(d, K)**3*np.sqrt(d)*mean_mul
 
     # covariances
-    L = randn(d, d, K) * rand(1, d, K) * np.sqrt(K)
+    L = (randn(d, d, K) * rand(1, d, K) * np.sqrt(K)
+         + np.eye(d)[..., None]*4)
     C = np.sum(L[..., None, :] * np.rollaxis(L, 1)[None, ...], axis=1)
-    C += np.eye(d)[..., None]*1e-5
 
     # compute inverses of covariances
     invC = np.zeros(C.shape)
@@ -40,6 +40,7 @@ def rand_GMM(params, T):
         # for each component, first pick the number of samples according to
         # the component weight
         Tc = min(T-pos, int(T*params['w'][k]))
+        print(Tc)
 
         # draw the samples from this component
         xc = randn(d, Tc)
