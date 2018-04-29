@@ -9,8 +9,10 @@ import copy
 from qsketch.sketch import Projectors, load_data
 import argparse
 from scipy.interpolate import interp1d
-import matplotlib.pylab as pl
-pl.ion()
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.ion()
 
 
 class Chain:
@@ -53,6 +55,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
         for sketch_index in tqdm.tqdm(range(min(chain_in.num_sketches,
                                                 num_sketches))):
             projector = projectors[sketch_index]
+            samples += chain_in.reg*np.random.randn(*samples.shape)
             projections = np.dot(samples, projector.T)
 
             if chain_in.qf is None:
@@ -76,7 +79,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 transported[:, d] = Ginv(zd)
 
             samples += (np.dot(transported - projections, projector)
-                        + chain_in.reg*np.random.randn(*samples.shape))
+                        + 0*np.random.randn(*samples.shape))
 
             if compute_chain_out:
                 chain_out.qf[epoch, sketch_index] = source_qf
@@ -176,7 +179,8 @@ if __name__ == "__main__":
     if args.plot_target is not None:
         # just handle numpy arrays now
         target_samples = load_data(args.plot_target, None)[0]
-        ntarget = min(100000, target_samples.shape[0])
+        ntarget = min(10000, target_samples.shape[0])
+        axis_lim = [[v.min(), v.max()] for v in target_samples.T]
         target_samples = target_samples[:ntarget]
     if args.plot:
         if not os.path.exists(args.plot_dir):
@@ -184,23 +188,35 @@ if __name__ == "__main__":
 
         def plot_function(samples, epoch, sketch_index):
             data_dim = samples.shape[-1]
-            square_dim_bw = np.sqrt(data_dim)
-            square_dim_col = np.sqrt(data_dim/3)
-            if not (square_dim_col % 1):
-                nchan = 3
-                img_dim = int(square_dim_col)
-            elif not (square_dim_bw % 1):
-                nchan = 1
-                img_dim = int(square_dim_bw)
-            else:
-                pl.clf()
+            image = False
+
+            if data_dim > 700:
+                square_dim_bw = np.sqrt(data_dim)
+                square_dim_col = np.sqrt(data_dim/3)
+                if not (square_dim_col % 1):
+                    image = True
+                    nchan = 3
+                    img_dim = int(square_dim_col)
+                elif not (square_dim_bw % 1):
+                    image = True
+                    nchan = 1
+                    img_dim = int(square_dim_bw)
+            if not image:
+                plt.figure(1, figsize=(8, 8))
+                plt.clf()
                 if args.plot_target is not None:
-                    pl.plot(target_samples[:, 0], target_samples[:, 1], '.r')
-                pl.plot(samples[:, 0], samples[:, 1], '.b')
-                pl.grid(True)
-                pl.title('epoch %d, sketch %d' % (epoch, sketch_index+1))
-                pl.show()
-                pl.pause(0.05)
+                    plt.plot(target_samples[:, 0], target_samples[:, 1], 'or')
+                #ax = sns.kdeplot(samples[:, 0], samples[:, 1],
+                #                 cmap="Blues", shade=True, shade_lowest=False)
+
+                plt.plot(samples[:, 0], samples[:, 1], 'ob')
+                plt.xlim(axis_lim[0])
+                plt.ylim(axis_lim[1])
+                plt.grid(True)
+                plt.title('epoch %d, sketch %d' % (epoch, sketch_index+1))
+
+                plt.pause(0.05)
+                plt.show()
                 return
             [num_samples, data_dim] = samples.shape
             samples = samples[:min(100, num_samples)]

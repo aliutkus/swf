@@ -25,10 +25,11 @@ class Projectors(Dataset):
         result = np.empty((len(idx), self.data_dim, self.data_dim))
         for pos, id in enumerate(idx):
             np.random.seed(id)
-            #result[pos] = np.random.randn(self.data_dim, self.data_dim)
-            #result[pos] /= np.linalg.norm(result[pos], axis=-1)
+            result[pos] = np.random.randn(self.data_dim, self.data_dim)
+            result[pos] /= self.data_dim
+            #result[pos] /= np.linalg.norm(result[pos], axis=-1)*self.data_dim
 
-            '''A Random matrix distributed with Haar measure,
+            """'''A Random matrix distributed with Haar measure,
             From Francesco Mezzadri:
             @article{mezzadri2006generate,
                 title={How to generate random matrices from the
@@ -41,7 +42,7 @@ class Projectors(Dataset):
             q, r = np.linalg.qr(z)
             d = np.diagonal(r)
             ph = d/np.absolute(d)
-            result[pos] = np.multiply(q, ph, q)
+            result[pos] = np.multiply(q, ph, q)"""
         return np.squeeze(result)
 
 
