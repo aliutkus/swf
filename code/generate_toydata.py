@@ -5,19 +5,20 @@ import matplotlib.pyplot as pl
 import seaborn as sns
 
 
-def draw_GMM_parameters(d, K, mean_mul=30):
+def draw_GMM_parameters(d, K, seed = None):
     ''' randomly draws the parameters of the GMM'''
-    #np.random.seed(0)
+    if seed:
+        np.random.seed(seed)
     # weights
-    w = rand(K)
+    w = rand(K)**2
     w /= np.sum(w)
 
     # means
-    mu = randn(d, K)**3*np.sqrt(d)*mean_mul
+    mu = randn(d, K)*K*d*5
 
     # covariances
-    L = (randn(d, d, K) * rand(1, d, K) * np.sqrt(K)
-         + np.eye(d)[..., None]*4)
+    L = (randn(d, d, K) * rand(1, 1, K) * K
+         + np.eye(d)[..., None]*randn(1, 1, K)*np.sqrt(K))
     C = np.sum(L[..., None, :] * np.rollaxis(L, 1)[None, ...], axis=1)
 
     # compute inverses of covariances
@@ -74,12 +75,19 @@ if __name__ == "__main__":
                         help="Number of components in the GMM",
                         type=int,
                         default=30)
+    parser.add_argument("-s", "--seed",
+                        help="Seed to use for random generation of the GMM"
+                             "parameters. If ommitted, will not use "
+                             "a specific seed, yielding always different "
+                             "data",
+                        type=int)
+
     parser.add_argument("--plot",
                         help="Flag indicating whether or not to plot samples",
                         action="store_true")
 
     args = parser.parse_args()
-    params = draw_GMM_parameters(args.dim, args.num_components)
+    params = draw_GMM_parameters(args.dim, args.num_components, args.seed)
     (X, Y) = rand_GMM(params, args.num_samples)
 
     if args.plot:

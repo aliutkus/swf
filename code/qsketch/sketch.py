@@ -7,29 +7,61 @@ from torch.utils.data import Dataset, DataLoader
 import tqdm
 import argparse
 import os
+import sys
 
 
 class Projectors(Dataset):
-    def __init__(self, data_dim=4096, size=100):
+    def __init__(self, size=100, dim_multiplier=None):
         super(Dataset, self).__init__()
-        self.data_dim = data_dim
         self.size = size
+        self.dim_multiplier = dim_multiplier
+        self.shape = None
 
     def __len__(self):
         return self.size
 
     def __getitem__(self, idx):
+        pass
+
+
+class RandomProjectors(Projectors):
+    """Each projector is a set of unit-length random vectors. The parameter
+    is the number of such random vectors used for each projector"""
+    def prepare(self, data_dim):
+        self.shape = (data_dim*self.dim_multiplier, data_dim)
+
+    def __getitem__(self, idx):
+        if self.shape is None:
+            raise ValueError('Projectors must be prepared before use.')
+
         if isinstance(idx, int):
             idx = [idx]
 
-        result = np.empty((len(idx), self.data_dim, self.data_dim))
+        result = np.empty((len(idx), *self.shape))
         for pos, id in enumerate(idx):
             np.random.seed(id)
-            result[pos] = np.random.randn(self.data_dim, self.data_dim)
-            result[pos] /= self.data_dim
-            #result[pos] /= np.linalg.norm(result[pos], axis=-1)*self.data_dim
+            result[pos] = np.random.randn(*self.shape)
+            result[pos] /= self.shape[1]
+        return np.squeeze(result)
 
-            """'''A Random matrix distributed with Haar measure,
+
+class UnitaryProjectors(Projectors):
+    """Each projector is a unitary basis of the data-space, hence a
+    square matrix"""
+    def prepare(self, data_dim):
+        self.shape = (data_dim, data_dim)
+
+    def __getitem__(self, idx):
+        if self.shape is None:
+            raise ValueError('Projectors must be prepared before use.')
+
+        if isinstance(idx, int):
+            idx = [idx]
+
+        result = np.empty((len(idx), *self.shape))
+        for pos, id in enumerate(idx):
+            np.random.seed(id)
+            '''A Random matrix distributed with Haar measure,
             From Francesco Mezzadri:
             @article{mezzadri2006generate,
                 title={How to generate random matrices from the
@@ -38,11 +70,11 @@ class Projectors(Dataset):
                 journal={arXiv preprint math-ph/0609050},
                 year={2006}}
             '''
-            z = np.random.randn(self.data_dim, self.data_dim)
+            z = np.random.randn(*self.shape)
             q, r = np.linalg.qr(z)
             d = np.diagonal(r)
             ph = d/np.absolute(d)
-            result[pos] = np.multiply(q, ph, q)"""
+            result[pos] = np.multiply(q, ph, q)
         return np.squeeze(result)
 
 
@@ -89,7 +121,7 @@ def load_data(dataset, clipto,
     return imgs_npy, data_loader, num_samples, data_dim
 
 
-def main_sketch(dataset, output, num_sketches,
+def main_sketch(dataset, output, projectors,
                 num_quantiles, img_size,
                 memory_usage, data_dir, clipto=None):
 
@@ -99,13 +131,13 @@ def main_sketch(dataset, output, num_sketches,
                                         img_size, memory_usage)
 
     # prepare the sketch data
-    projectors = Projectors(data_dim=data_dim, size=num_sketches)
-    sketch_loader = DataLoader(range(num_sketches))
+    projectors.prepare(data_dim)
+    sketch_loader = DataLoader(range(len(projectors)))
 
     print('Sketching the data')
     # allocate the sketch variable (quantile function)
     quantiles = np.linspace(0, 100, num_quantiles)
-    qf = np.zeros((num_sketches, data_dim, num_quantiles))
+    qf = np.zeros((len(projectors), projectors.shape[0], num_quantiles))
 
     # proceed to projection
     for batch in tqdm.tqdm(sketch_loader):
@@ -114,7 +146,7 @@ def main_sketch(dataset, output, num_sketches,
         if imgs_npy is None:
             # loop over the data if not loaded once (torchvision dataset)
             pos = 0
-            projections = np.zeros((data_dim, num_samples))
+            projections = np.zeros((projectors.shape[0], num_samples))
             for img, labels in tqdm.tqdm(data_loader):
                 # load img numpy data
                 imgs_npy = torch.Tensor(img).view(-1, data_dim).numpy()
@@ -123,12 +155,14 @@ def main_sketch(dataset, output, num_sketches,
         else:
             # data is in memory as a ndarray
             projections = batch_proj.dot(imgs_npy.T)
-
         # compute the quantiles for each of these projections
         qf[batch] = np.percentile(projections, quantiles, axis=1).T
 
     # save sketch
-    np.save(output, {'qf': qf, 'data_dim': data_dim})
+    np.save(output, {'qf': qf,
+                     'projectors_class': projectors.__class__.__name__,
+                     'num_sketches': len(projectors),
+                     'projectors_shape': projectors.shape})
 
 
 if __name__ == "__main__":
@@ -141,18 +175,10 @@ if __name__ == "__main__":
                                         "of the dataset to sketch, which "
                                         "must be one of those supported in "
                                         "torchvision.datasets")
-    parser.add_argument("-n", "--num_sketches",
-                        help="Number of sketches",
-                        type=int,
-                        default=400)
     parser.add_argument("-s", "--img_size",
                         help="Images are resized as s x s",
                         type=int,
                         default=64)
-    parser.add_argument("-q", "--num_quantiles",
-                        help="Number of quantiles to compute",
-                        type=int,
-                        default=100)
     parser.add_argument("-m", "--memory_usage",
                         help="RAM usage for batches in Gb",
                         type=int,
@@ -160,6 +186,23 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--root_data_dir",
                         help="Root directory of the dataset. Defaults to"
                              "`data/\{dataset\}`")
+    parser.add_argument("-p", "--projectors",
+                        help="Type of projectors, must be of the classes "
+                             "overriding Projectors.",
+                        default="RandomProjectors")
+    parser.add_argument("-n", "--num_sketches",
+                        help="Number of sketches",
+                        type=int,
+                        default=400)
+    parser.add_argument("-x", "--projectors_dim_multiplier",
+                        help="Projectors-specific parameters that sets the "
+                             "number of sketches as a product of the data "
+                             "dimension",
+                        type=int)
+    parser.add_argument("-q", "--num_quantiles",
+                        help="Number of quantiles to compute",
+                        type=int,
+                        default=100)
     parser.add_argument("-o", "--output",
                         help="Output file, defaults to the `dataset` argument")
 
@@ -168,8 +211,12 @@ if __name__ == "__main__":
         args.root_data_dir = 'data/'+args.dataset
     if args.output is None:
         args.output = args.dataset
+
+    ProjectorsClass = getattr(sys.modules[__name__], args.projectors)
+    projectors = ProjectorsClass(args.num_sketches,
+                                 args.projectors_dim_multiplier)
     main_sketch(args.dataset,
                 args.output,
-                args.num_sketches,
+                projectors,
                 args.num_quantiles, args.img_size,
                 args.memory_usage, args.root_data_dir)

@@ -35,12 +35,16 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     data = np.load(sketch_file).item()
     qf = data['qf']
 
-    [num_sketches, data_dim, num_quantiles] = qf.shape
-    data_dim = data['data_dim']
+    data_dim = data['projectors_shape'][1]
+    [num_sketches, sketch_dim, num_quantiles] = qf.shape
     print('done')
 
     # prepare the projectors
-    projectors = Projectors(data_dim=data_dim, size=num_sketches)
+    from qsketch import sketch
+    ProjectorClass = getattr(sketch, data['projectors_class'])
+    projectors = ProjectorClass(data['num_sketches'])
+    projectors.shape = data['projectors_shape']
+
     quantiles = np.linspace(0, 100, num_quantiles)
 
     if compute_chain_out:
@@ -48,7 +52,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
         chain_out = copy.copy(chain_in)
         chain_out.qf = np.empty((chain_in.epochs,
                                  chain_in.num_sketches,
-                                 data_dim, num_quantiles))
+                                 projectors.sketch_size, num_quantiles))
 
     samples = samples_gen_fn(data_dim)
     for epoch in tqdm.tqdm(range(chain_in.epochs)):
@@ -78,9 +82,9 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
+
             samples += (np.dot(transported - projections, projector)
                         + 0*np.random.randn(*samples.shape))
-
             if compute_chain_out:
                 chain_out.qf[epoch, sketch_index] = source_qf
 
@@ -206,9 +210,6 @@ if __name__ == "__main__":
                 plt.clf()
                 if args.plot_target is not None:
                     plt.plot(target_samples[:, 0], target_samples[:, 1], 'or')
-                #ax = sns.kdeplot(samples[:, 0], samples[:, 1],
-                #                 cmap="Blues", shade=True, shade_lowest=False)
-
                 plt.plot(samples[:, 0], samples[:, 1], 'ob')
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
