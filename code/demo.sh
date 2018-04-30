@@ -8,4 +8,4 @@
  python qsketch/sketch.py ./toydata.npy -n 400 -q 100 -o toysketch -p RandomProjectors -x 1
 
 # IDT
- python sketchIDT.py toysketch.npy  -d 6 -n 10000 --plot_target toydata.npy --plot -r 1 -e 100
+ python sketchIDT_umut.py toysketch.npy  -d 6 -n 10000 --plot_target toydata.npy --plot -r 1 -e 100
