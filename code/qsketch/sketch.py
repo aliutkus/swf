@@ -41,7 +41,9 @@ class RandomProjectors(Projectors):
         for pos, id in enumerate(idx):
             np.random.seed(id)
             result[pos] = np.random.randn(*self.shape)
-            result[pos] /= self.shape[1]
+            result[pos] /= np.sqrt(self.shape[0])
+            #print(np.dot(result[pos].T, result[pos]))
+            #import ipdb; ipdb.set_trace()
         return np.squeeze(result)
 
 
