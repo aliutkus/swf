@@ -17,14 +17,15 @@ plt.ion()
 
 class Chain:
 
-    def __init__(self, num_sketches, epochs, reg=1):
+    def __init__(self, num_sketches, epochs, stepsize=1, reg=1):
         self.num_sketches = num_sketches
         self.epochs = epochs
+        self.stepsize = 1
         self.reg = reg
         self.qf = None
 
     def __copy__(self):
-        return Chain(self.num_sketches, self.epochs, self.lamb)
+        return Chain(self.num_sketches, self.epochs, self.stepsize, self.reg)
 
 
 def IDT(sketch_file, chain_in, samples_gen_fn,
@@ -44,7 +45,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     ProjectorClass = getattr(sketch, data['projectors_class'])
     projectors = ProjectorClass(data['num_sketches'])
     projectors.shape = data['projectors_shape']
-
+    num_thetas = projectors.shape[0]
     quantiles = np.linspace(0, 100, num_quantiles)
 
     if compute_chain_out:
@@ -59,7 +60,8 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
         for sketch_index in tqdm.tqdm(range(min(chain_in.num_sketches,
                                                 num_sketches))):
             projector = projectors[sketch_index]
-            samples += chain_in.reg*np.random.randn(*samples.shape)
+
+            # compute the projections
             projections = np.dot(samples, projector.T)
 
             if chain_in.qf is None:
@@ -71,7 +73,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
 
             transported = np.empty(projections.shape)
 
-            for d in range(data_dim):
+            for d in range(num_thetas):
                 F = interp1d(source_qf[d], quantiles, kind='linear',
                              bounds_error=False, fill_value='extrapolate')
                 Ginv = interp1d(quantiles, qf[sketch_index, d], kind='linear',
@@ -82,9 +84,10 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
-
-            samples += (np.dot(transported - projections, projector)
-                        + 0*np.random.randn(*samples.shape))
+            samples += (chain_in.stepsize *
+                        np.dot(transported - projections, projector)/num_thetas
+                        + np.sqrt(chain_in.stepsize)*chain_in.reg
+                        * np.random.randn(*samples.shape))
             if compute_chain_out:
                 chain_out.qf[epoch, sketch_index] = source_qf
 
@@ -112,7 +115,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output_chain",
                         help="keep output chain, and save it to "
                              "provided filepath")
-    parser.add_argument("-s", "--samples",
+    parser.add_argument("-z", "--samples",
                         help="Initial samples to use, must be a file"
                              "containing a ndarray of dimension num_samples x "
                              "dim, saved with numpy. If provided, overrides"
@@ -139,6 +142,10 @@ if __name__ == "__main__":
                         help="Regularization term",
                         type=float,
                         default=1.)
+    parser.add_argument("-s", "--stepsize",
+                        help="Stepsize",
+                        type=float,
+                        default=1.)
     parser.add_argument("--plot",
                         help="Flag indicating whether or not to plot samples",
                         action="store_true")
@@ -157,7 +164,8 @@ if __name__ == "__main__":
     if args.input_chain is not None:
         input_chain = np.load(args.input_chain).item()
     else:
-        input_chain = Chain(args.num_sketches, args.epochs, args.reg)
+        input_chain = Chain(args.num_sketches, args.epochs,
+                            args.stepsize, args.reg)
 
     if args.samples is None:
         def generate_samples(data_dim):
