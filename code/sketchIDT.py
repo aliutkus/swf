@@ -1,12 +1,12 @@
 # imports
 import os
 import torch
-from torchvision.utils import save_image
-from torchvision.utils import make_grid
+from torchvision.utils import save_image, make_grid
+from torch.utils.data import DataLoader
 import numpy as np
 import tqdm
 import copy
-from qsketch.sketch import Projectors, load_data
+from qsketch import sketch
 import argparse
 from scipy.interpolate import interp1d
 import seaborn as sns
@@ -17,15 +17,15 @@ plt.ion()
 
 class Chain:
 
-    def __init__(self, num_sketches, epochs, stepsize=1, reg=1):
-        self.num_sketches = num_sketches
+    def __init__(self, batchsize, epochs, stepsize=1, reg=1):
+        self.batchsize = batchsize
         self.epochs = epochs
         self.stepsize = 1
         self.reg = reg
         self.qf = None
 
     def __copy__(self):
-        return Chain(self.num_sketches, self.epochs, self.stepsize, self.reg)
+        return Chain(self.batchsize, self.epochs, self.stepsize, self.reg)
 
 
 def IDT(sketch_file, chain_in, samples_gen_fn,
@@ -35,17 +35,15 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     print('Loading the sketching data for target')
     data = np.load(sketch_file).item()
     qf = data['qf']
-
-    data_dim = data['projectors_shape'][1]
-    [num_sketches, sketch_dim, num_quantiles] = qf.shape
+    [num_sketches, data_dim, num_quantiles] = qf.shape
     print('done')
 
     # prepare the projectors
-    from qsketch import sketch
     ProjectorClass = getattr(sketch, data['projectors_class'])
-    projectors = ProjectorClass(data['num_sketches'])
-    projectors.shape = data['projectors_shape']
-    num_thetas = projectors.shape[0]
+    projectors = ProjectorClass(num_sketches, data_dim)
+    projectors_loader = DataLoader(range(len(projectors)),
+                                   batch_size=chain_in.batchsize,
+                                   shuffle=True)
     quantiles = np.linspace(0, 100, num_quantiles)
 
     if compute_chain_out:
@@ -53,13 +51,17 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
         chain_out = copy.copy(chain_in)
         chain_out.qf = np.empty((chain_in.epochs,
                                  chain_in.num_sketches,
-                                 projectors.sketch_size, num_quantiles))
+                                 data_dim, num_quantiles))
 
+    # get the initial samples
     samples = samples_gen_fn(data_dim)
+
     for epoch in tqdm.tqdm(range(chain_in.epochs)):
-        for sketch_index in tqdm.tqdm(range(min(chain_in.num_sketches,
-                                                num_sketches))):
-            projector = projectors[sketch_index]
+        # for each epoch, loop over the sketches
+        for sketch_indexes in tqdm.tqdm(projectors_loader):
+            projector = projectors[sketch_indexes]
+            projector = np.reshape(projector, [-1, data_dim])
+            num_thetas = projector.shape[0]
 
             # compute the projections
             projections = np.dot(samples, projector.T)
@@ -69,14 +71,17 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 # in the projected domain
                 source_qf = np.percentile(projections, quantiles, axis=0).T
             else:
-                source_qf = chain_in.qf[epoch, sketch_index]
+                source_qf = chain_in.qf[epoch, sketch_indexes]
+                source_qf = np.reshape(source_qf, [num_thetas, num_quantiles])
 
+            target_qf = np.reshape(qf[sketch_indexes],
+                                   [num_thetas, num_quantiles])
             transported = np.empty(projections.shape)
 
             for d in range(num_thetas):
                 F = interp1d(source_qf[d], quantiles, kind='linear',
                              bounds_error=False, fill_value='extrapolate')
-                Ginv = interp1d(quantiles, qf[sketch_index, d], kind='linear',
+                Ginv = interp1d(quantiles, target_qf[d], kind='linear',
                                 bounds_error=False, fill_value='extrapolate')
                 zd = np.clip(projections[:, d],
                              source_qf[d, 0], source_qf[d, -1])
@@ -89,10 +94,13 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                         + np.sqrt(chain_in.stepsize)*chain_in.reg
                         * np.random.randn(*samples.shape))
             if compute_chain_out:
-                chain_out.qf[epoch, sketch_index] = source_qf
+                source_qf = np.reshape(source_qf,
+                                       [len(sketch_indexes),
+                                        data_dim, num_quantiles])
+                chain_out.qf[epoch, sketch_indexes] = source_qf
 
             if plot_function is not None:
-                plot_function(samples, epoch, sketch_index)
+                plot_function(samples, epoch, sketch_indexes)
 
     if not compute_chain_out:
         chain_out = None
@@ -128,12 +136,10 @@ if __name__ == "__main__":
                         help="Number of samples to draw and to transport",
                         type=int,
                         default=3000)
-    parser.add_argument("-l", "--num_sketches",
-                        help="Number of sketches to use per epoch. "
-                             "In case the sketch file contains less, will be "
-                             "cropped.",
+    parser.add_argument("-b", "--batchsize",
+                        help="Number of sketches to use per step.",
                         type=int,
-                        default=3000)
+                        default=1)
     parser.add_argument("-e", "--epochs",
                         help="Number of epochs",
                         type=int,
@@ -164,7 +170,7 @@ if __name__ == "__main__":
     if args.input_chain is not None:
         input_chain = np.load(args.input_chain).item()
     else:
-        input_chain = Chain(args.num_sketches, args.epochs,
+        input_chain = Chain(args.batchsize, args.epochs,
                             args.stepsize, args.reg)
 
     if args.samples is None:
@@ -190,7 +196,7 @@ if __name__ == "__main__":
 
     if args.plot_target is not None:
         # just handle numpy arrays now
-        target_samples = load_data(args.plot_target, None)[0]
+        target_samples = sketch.load_data(args.plot_target, None)[0]
         ntarget = min(10000, target_samples.shape[0])
         axis_lim = [[v.min(), v.max()] for v in target_samples.T]
         target_samples = target_samples[:ntarget]
@@ -222,7 +228,9 @@ if __name__ == "__main__":
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
                 plt.grid(True)
-                plt.title('epoch %d, sketch %d' % (epoch, sketch_index+1))
+                sketch_index = np.array(sketch_index)
+                plt.title('epoch %d, sketches %s'
+                          % (epoch, np.array2string(sketch_index+1)))
 
                 plt.pause(0.05)
                 plt.show()

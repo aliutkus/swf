@@ -1,8 +1,8 @@
 # Generate data:
- python ./generate_toydata.py  -o toydata -d 20 -n 50000 -c 20 -s 20
+ python ./generate_toydata.py  -o toydata -d 3 -n 50000 -c 20 --seed 0
 
 # Sketch
- python qsketch/sketch.py ./toydata.npy -n 400 -q 100 -o toysketch -p RandomProjectors -x 10
+ python qsketch/sketch.py ./toydata.npy -n 500 -q 100 -o toysketch -p RandomProjectors
 
 # IDT
- python sketchIDT.py toysketch.npy  -d 20 -n 1000 --plot_target toydata.npy --plot -s 1 -r 2 -e 100
+ python sketchIDT.py toysketch.npy  -d 3 -n 10000 --plot_target toydata.npy --plot -s 1 -r 1 -e 10000 -b 10
