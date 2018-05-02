@@ -58,7 +58,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
 
     for epoch in tqdm.tqdm(range(chain_in.epochs)):
         # for each epoch, loop over the sketches
-        for sketch_indexes in tqdm.tqdm(projectors_loader):
+        for index, sketch_indexes in enumerate(tqdm.tqdm(projectors_loader)):
             projector = projectors[sketch_indexes]
             projector = np.reshape(projector, [-1, data_dim])
             num_thetas = projector.shape[0]
@@ -89,6 +89,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
+            #import ipdb; ipdb.set_trace()
             samples += (chain_in.stepsize *
                         np.dot(transported - projections, projector)/num_thetas
                         + np.sqrt(chain_in.stepsize)*chain_in.reg
@@ -100,7 +101,7 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 chain_out.qf[epoch, sketch_indexes] = source_qf
 
             if plot_function is not None:
-                plot_function(samples, epoch, sketch_indexes)
+                plot_function(samples, epoch, index)
 
     if not compute_chain_out:
         chain_out = None
@@ -204,7 +205,7 @@ if __name__ == "__main__":
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)
 
-        def plot_function(samples, epoch, sketch_index):
+        def plot_function(samples, epoch, index):
             data_dim = samples.shape[-1]
             image = False
 
@@ -228,9 +229,8 @@ if __name__ == "__main__":
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
                 plt.grid(True)
-                sketch_index = np.array(sketch_index)
-                plt.title('epoch %d, sketches %s'
-                          % (epoch, np.array2string(sketch_index+1)))
+                plt.title('epoch %d, sketches %d'
+                          % (epoch, index+1))
 
                 plt.pause(0.05)
                 plt.show()
@@ -244,7 +244,7 @@ if __name__ == "__main__":
             pic = make_grid(torch.Tensor(samples),
                             nrow=8, padding=2, normalize=True)
             save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, epoch,
-                                                        sketch_index))
+                                                        index+1))
     else:
         plot_function = None
 
