@@ -4,6 +4,8 @@ import torch
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
+from functools import reduce
+
 import tqdm
 import argparse
 import os
@@ -34,6 +36,36 @@ class RandomProjectors(Projectors):
             np.random.seed(id)
             result[pos] = np.random.randn(self.data_dim, self.data_dim)
             result[pos] /= (np.linalg.norm(result[pos], axis=1))[:, None]
+        return np.squeeze(result)
+
+
+class RandomLocalizedProjectors(Projectors):
+    """Each projector is a set of unit-length random vectors, that are
+    active only in neighbourhoods of the data"""
+    @staticmethod
+    def get_factors(n):
+        return np.unique(reduce(list.__add__,
+                         ([i, int(n//i)] for i in range(1, int(n**0.5) + 1)
+                          if not n % i)))[1:]
+
+    def __init__(self, size, data_dim):
+        print('Initializing localized projectors')
+        super(RandomLocalizedProjectors, self).__init__(size, data_dim)
+        self.factors = RandomLocalizedProjectors.get_factors(self.data_dim)
+
+    def __getitem__(self, idx):
+        if isinstance(idx, int):
+            idx = [idx]
+        result = np.zeros((len(idx), self.data_dim, self.data_dim))
+        for pos, id in enumerate(idx):
+            # generate each set of projectors
+            np.random.seed(id)
+            size_patches = np.random.choice(self.factors)
+            short_matrix = np.random.randn(self.data_dim, size_patches)
+            short_matrix /= (np.linalg.norm(short_matrix, axis=1))[:, None]
+            for k in range(int(self.data_dim/size_patches)):
+                indices = slice(k*size_patches, (k+1)*size_patches)
+                result[pos, indices, indices] = short_matrix[indices, :]
         return np.squeeze(result)
 
 
@@ -134,7 +166,6 @@ def main_sketch(dataset, output, projectors_class, num_sketches,
     for batch in tqdm.tqdm(sketch_loader):
         # initialize projections
         batch_proj = projectors[batch]
-
         if imgs_npy is None:
             # loop over the data if not loaded once (torchvision dataset)
             pos = 0

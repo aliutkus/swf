@@ -14,7 +14,7 @@ def draw_GMM_parameters(d, K, seed = None):
     w /= np.sum(w)
 
     # means
-    mu = randn(d, K)*K*d*5
+    mu = randn(d, K)*K*10
 
     # covariances
     L = (randn(d, d, K) * rand(1, 1, K) * K
@@ -89,6 +89,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     params = draw_GMM_parameters(args.dim, args.num_components, args.seed)
     (X, Y) = rand_GMM(params, args.num_samples)
+
+    X = X-X.min()
+    X /= X.max()
+    #X *= 1000
 
     if args.plot:
         pl.plot(X[:, 0], X[:, 1], '.')

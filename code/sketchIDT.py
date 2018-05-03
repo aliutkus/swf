@@ -20,7 +20,7 @@ class Chain:
     def __init__(self, batchsize, epochs, stepsize=1, reg=1):
         self.batchsize = batchsize
         self.epochs = epochs
-        self.stepsize = 1
+        self.stepsize = stepsize
         self.reg = reg
         self.qf = None
 
@@ -89,11 +89,21 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
-            #import ipdb; ipdb.set_trace()
+            #aaa =np.dot(transported, projector)/num_thetas
+            #plt.ioff()
+            """f,axs = plt.subplots(2,1)
+            axs[0].hist(projections.flatten(),100)
+            axs[1].plot(source_qf.T,'b')
+            axs[1].plot(target_qf.T,'r')
+            plt.draw()
+            plt.pause(2)
+            plt.show()
+            import ipdb; ipdb.set_trace()"""
+            #samples = aaa
             samples += (chain_in.stepsize *
                         np.dot(transported - projections, projector)/num_thetas
                         + np.sqrt(chain_in.stepsize)*chain_in.reg
-                        * np.random.randn(*samples.shape))
+                        * np.random.randn(1, data_dim))
             if compute_chain_out:
                 source_qf = np.reshape(source_qf,
                                        [len(sketch_indexes),
@@ -176,7 +186,7 @@ if __name__ == "__main__":
 
     if args.samples is None:
         def generate_samples(data_dim):
-            z = np.random.randn(args.num_samples, args.dim)
+            z = np.random.randn(args.num_samples, args.dim)*1e-10
             if args.dim != data_dim:
                 np.random.seed(0)
                 up_sampling = np.random.randn(args.dim, data_dim)
@@ -198,6 +208,7 @@ if __name__ == "__main__":
     if args.plot_target is not None:
         # just handle numpy arrays now
         target_samples = sketch.load_data(args.plot_target, None)[0]
+        target_samples = target_samples[:,:55]
         ntarget = min(10000, target_samples.shape[0])
         axis_lim = [[v.min(), v.max()] for v in target_samples.T]
         target_samples = target_samples[:ntarget]
