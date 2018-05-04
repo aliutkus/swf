@@ -69,7 +69,8 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
             if chain_in.qf is None:
                 # we need to compute the quantile function for the particles
                 # in the projected domain
-                source_qf = np.percentile(projections, quantiles, axis=0).T
+                source_qf = sketch.fast_percentile(projections.T, quantiles)
+                #source_qf = np.percentile(projections, quantiles, axis=0).T
             else:
                 source_qf = chain_in.qf[epoch, sketch_indexes]
                 source_qf = np.reshape(source_qf, [num_thetas, num_quantiles])
@@ -89,21 +90,11 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 zd = np.clip(zd, 0, 100)
                 transported[:, d] = Ginv(zd)
 
-            #aaa =np.dot(transported, projector)/num_thetas
-            #plt.ioff()
-            """f,axs = plt.subplots(2,1)
-            axs[0].hist(projections.flatten(),100)
-            axs[1].plot(source_qf.T,'b')
-            axs[1].plot(target_qf.T,'r')
-            plt.draw()
-            plt.pause(2)
-            plt.show()
-            import ipdb; ipdb.set_trace()"""
-            #samples = aaa
             samples += (chain_in.stepsize *
                         np.dot(transported - projections, projector)/num_thetas
                         + np.sqrt(chain_in.stepsize)*chain_in.reg
-                        * np.random.randn(1, data_dim))
+                        #* np.random.randn(1, data_dim))
+                        * np.random.randn(*samples.shape))
             if compute_chain_out:
                 source_qf = np.reshape(source_qf,
                                        [len(sketch_indexes),
