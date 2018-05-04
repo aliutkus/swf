@@ -1,0 +1,3 @@
+[submodule "code/qsketch"]
+	path = code/qsketch
+	url = git@github.com:ANR-kamoulox/qsketch.git
