@@ -93,8 +93,8 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
             samples += (chain_in.stepsize *
                         np.dot(transported - projections, projector)/num_thetas
                         + np.sqrt(chain_in.stepsize)*chain_in.reg
-                        #* np.random.randn(1, data_dim))
-                        * np.random.randn(*samples.shape))
+                        * np.random.randn(1, data_dim))
+                        #* np.random.randn(*samples.shape))
             if compute_chain_out:
                 source_qf = np.reshape(source_qf,
                                        [len(sketch_indexes),
