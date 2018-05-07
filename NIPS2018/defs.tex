@@ -1,0 +1,132 @@
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\thb}{\mathbf{x}} 
+\newcommand{\Ths}{{\cal X}} 
+% \newcommand{\thb}{\boldsymbol{\theta}} 
+% \newcommand{\Ths}{{\cal M}} 
+\newcommand{\xe}{\tilde{\mathbf{x}}} 
+
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\q}{\mathbf{q}}
+\newcommand{\qc}{\mathbf{\bar{q}}}
+\newcommand{\p}{\mathbf{p}}
+\newcommand{\tb}{\mathbf{t}} 
+\newcommand{\Ds}{{\cal D}} 
+
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\stl}{l}
+\newcommand{\Lo}{{\cal L}}
+\newcommand{\Oc}{{\cal O}}
+\newcommand{\Lot}{\tilde{\Lo}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\Y}{{ Y}}
+\newcommand{\D}{ {\cal D} }
+\newcommand{\ba}[1]{b(#1,\alpha)}
+\newcommand{\bta}[1]{\tilde{b}_{h,K}(#1,\alpha)}
+\newcommand{\bha}[1]{\hat{b}(#1,\alpha)}
+\newcommand{\rmd}{r}
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Pro}{\mathbb{P}}
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{remark}{Remark}
+\newtheorem{cor}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{prop}{Proposition}
+
+\DeclareMathOperator*{\argmin}{arg\min}
+\DeclareMathOperator*{\argmax}{arg\max}
+
+
+
+\newcommand{\tmpeqno}{{\color{red} (TEMPEQ) }}
+
+\newcommand{\umut}[1]{{\color{red} (#1)} }
+
+\DeclareMathOperator{\sign}{sign}
+\newcommand{\sas}{{\cal S} \alpha {\cal S} }
+
+% \newcommand{\pb}{\bar{{\cal P}}}
+% \newcommand{\pt}{\tilde{{\cal P}}}
+
+\newcommand{\pb}{{\cal P}^\x}
+\newcommand{\pt}{{\cal P}^\y}
+
+% \newcommand{\ab}{\bar{{\cal A}}}
+% \newcommand{\at}{\tilde{{\cal A}}}
+
+\newcommand{\ab}{{\cal A}^\x}
+\newcommand{\at}{{\cal A}^\y}
+
+\usepackage{cleveref}
+
+
+% \newtheoremstyle{exampstyle}
+%   {\topsep} % Space above
+%   {0} % Space below
+%   {} % Body font
+%   {} % Indent amount
+%   {\bfseries} % Theorem head font
+%   {.} % Punctuation after theorem head
+%   {0pt} % Space after theorem head
+%   {} % Theorem head spec (can be left empty, meaning `normal')
+
+% \theoremstyle{exampstyle} 
+
+\newtheorem{assumption}{\textbf{H}\hspace{-3pt}}
+\Crefname{assumption}{\textbf{H}\hspace{-3pt}}{\textbf{H}\hspace{-3pt}}
+\crefname{assumption}{\textbf{H}}{\textbf{H}}
+
+
+
+\newcommand{\insertimage}[4]{ % scale, filename, caption, label
+\begin{figure}[t]
+\centering
+\includegraphics[scale=#1, clip=true]{figures/#2}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+\newcommand{\insertimageC}[5]{ % scale, filename, caption, label, location
+\begin{figure}[#5]
+\centering
+\includegraphics[width=#1\linewidth, clip=true]{figures/#2}
+%\vspace{-1.5em}
+\caption{#3}
+%\vspace{-0.5em}
+\label{#4}
+\end{figure}
+}
+
+%\setlength{\belowcaptionskip}{-10pt}
+%\captionsetup[figure]{calcwidth = 0.95\linewidth,skip=10pt}
+% \setlength{\abovecaptionskip}{-10pt}
+
+\newcommand{\insertimageStar}[5]{ % scale, filename, caption, label, location
+\begin{figure*}[#5]
+\centering
+\includegraphics[width=#1\linewidth, clip=true]{figures/#2}
+\caption{#3}
+%\vspace{-0.5em}
+\label{#4}
+\end{figure*}
+}
+
+\newcommand{\insertimageAsSubfig}[5]{ % scale, filename, caption, label,
+\begin{figure}[#5]
+\begin{center}
+\subfigbottomskip =-4in
+\subfigure{
+\includegraphics[width=#1\columnwidth]{figures/#2}
+\label{#4}
+}
+\end{center}
+\subfigbottomskip =-4in
+\caption{#3}
+\label{#4}
+\end{figure}
+}
