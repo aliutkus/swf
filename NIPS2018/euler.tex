@@ -1,3 +1,109 @@
 %!TEX root = ./nips_2018_sketchmcmc_supp.tex
 
+\section{The Gradient Flow and the SDE}
+
+Let $\rho_t$ be the density of a measure $\mu_t$ with respect to the Lebesgue measure, such that $\mu_t(dx) = \rho_t(x) dx$. In this section, we will be interested in the following gradient flow in $\W$:
+\begin{align}
+\partial_t \rho_t &= - \nabla_{\W} \F_\lambda(\rho_t) \\
+&=  \nabla \cdot (\rho_t \> v_t) + \lambda \Delta \rho_t, \label{eqn:gradflow_reg}
+\end{align}
+where 
+\begin{align}
+v_t(x) \triangleq \nabla \Psi_t(x) = \int_{\Sp^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta \label{eqn:idt_v}
+\end{align}
+and
+\begin{align}
+\Psi_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi_{t,\theta}(\langle \theta, x \rangle) \> d\theta.
+\end{align}
+Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$ and $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$.
+
+We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
+\begin{align}
+d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
+\end{align}
+where $W_t$ denotes the standard Brownian motion.
+
+\begin{assumption}
+\label{asmp:sde_ergo}
+The SDE in \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$. The solution process has a unique invariant measure denoted by $\nu_\lambda$ and it is geometrically ergodic. 
+\end{assumption}
+
+We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
+
+\begin{prop}
+\label{prop:dist_statmeas}
+Consider the following SDE
+\begin{align}
+d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
+\end{align}
+Assume that it satisfies \Cref{asmp:sde_ergo} with the invariant measure denoted by $\nu_\epsilon$. Let $\rho^\epsilon_t$ denote the probability density function of $Y_t$ at time $t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$  
+\begin{align}
+\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
+\end{align}
+Then the following bound holds:
+\begin{align}
+\lim_{\epsilon \rightarrow 0} \| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 \leq 2 C \lambda.
+\end{align}
+\end{prop}
+%
+\begin{proof}
+By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
+\begin{align}
+\| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 &\leq \int_0^\infty \int_{\R^d} \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \frac{\|\nabla \rho^\epsilon_s(x)\|^2}{\rho^\epsilon_s(x)}  dx ds \\
+&\leq  C \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \label{eqn:prop_interm} \\
+&= \frac{2C}{\lambda} (\lambda - \epsilon)^2,
+\end{align}
+where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result is obtained by taking the taking the limit of both sides. 
+\end{proof}
+%
+\begin{remark}
+For more information and a discussion about the assumptions of Proposition~\ref{prop:dist_statmeas}, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
+\end{remark}
+
+
 \section{Euler Discretization}
+
+
+
+
+\section{Discussion on the assumptions}
+
+\subsection{Conditions for the unique solution to the flow}
+
+The following conditions ensure that there is a unique solution to the flow given in \eqref{eqn:gradflow_reg}:
+\begin{assumption}
+\label{asmp:flowunq_1}
+There exists $p>d+2$ such that for every open ball $B \subset \R^d$, one has
+\begin{align}
+\int_0^T \int_B \|v_t(x)\|^p dx\> dt < \infty.
+\end{align}
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:flowunq_2}
+The initial measure $\mu_0$ has finite entropy, such that
+\begin{align}
+\int_{\R^d} \rho_0(x) \log \rho_0(x) dx < \infty,
+\end{align}
+where $\mu_0(dx) = \rho_0(x)dx$ and $\rho_0 \in L^1(\R^d)$.
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:flowunq_3}
+There exist $\alpha, \gamma, \delta, c, k \in \R_+$ such that for all $(t,x) \in [0,T] \times \R^d$ 
+\begin{align}
+\langle v_t(x), x \rangle \leq \gamma - (ck + \delta) \| x\|^{2k},
+\end{align}
+and 
+\begin{align}
+\label{asmp:flowunq_4}
+\|v_t(x)\| \leq \alpha \exp(\frac{c}{2} \|x\|^{2k}), \qquad \text{and} \qquad \int_{\R^d} \exp(\frac{c}{2}\|x\|^{2k} ) \mu_0(dx) < \infty.
+\end{align}
+\end{assumption}
+
+The following theorem ensures the uniqueness.
+\begin{thm}[Theorem 3.3 \cite{bogachev2007uniqueness}]
+Assume that \Cref{asmp:flowunq_1,asmp:flowunq_2,asmp:flowunq_3,asmp:flowunq_4} hold. Then, there exists a unique family $\{\mu_t, t\in(0,T]\}$ of probability measures on $\R^d$ solving \eqref{eqn:gradflow_reg}.
+\end{thm}
+
+
