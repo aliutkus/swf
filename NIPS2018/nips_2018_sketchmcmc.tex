@@ -103,7 +103,11 @@ Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}
 \begin{align}
 \partial_t \rho = - \nabla_{\W} \F(\rho) \label{eqn:gradflow}
 \end{align}
+<<<<<<< HEAD
+where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
+=======
 where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the function $\F$ is chosen as the sliced-Wasserstein distance between $\mu$ and $\nu$:
+>>>>>>> b62a09fd78b855ee3eb4de966d445b13341ded6f
 \begin{align}
 \F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
 \end{align}
@@ -111,7 +115,11 @@ where $\pi$ denotes the density of $\nu$. Here we abused the notation by definin
 \begin{align}
 \rho^\star = \argmin_\rho \F(\rho).
 \end{align}
+<<<<<<< HEAD
+Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\rho_0$ and bring it closer to $\pi$ as $t$ evolves.
+=======
 Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\mu_0$ and bring it closer to $\pi$ as $t$ evolves.
+>>>>>>> b62a09fd78b855ee3eb4de966d445b13341ded6f
 
 By following \cite{santambrogio2017euclidean}, the gradient given in \eqref{eqn:gradflow} can be written as follows:
 \begin{align}
@@ -167,9 +175,10 @@ d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t,
 \end{align}
 where $W_t$ denotes the standard Brownian motion. In practice we can simulate this SDE by using the Euler-Maruyama scheme:
 \begin{align}
-X_{n+1} = X_n - v_n(X_n) + \sqrt{2 \lambda} Z_{n+1},
+X_{n+1} = X_n - h v_n(X_n) + \sqrt{2 \lambda h} Z_{n+1},
 \end{align}
-where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. After that we might hope to have some error bounds on our estimation.
+where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $h$ denotes the step-size. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. After that we might hope to have some error bounds on our estimation.
+
 
 
 \section{Open questions}
