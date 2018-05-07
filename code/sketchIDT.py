@@ -2,6 +2,7 @@
 import os
 import torch
 from torchvision.utils import save_image, make_grid
+from qsketch.sketch import add_sketch_arguments, add_data_arguments
 from torch.utils.data import DataLoader
 import numpy as np
 import tqdm
@@ -28,22 +29,17 @@ class Chain:
         return Chain(self.batchsize, self.epochs, self.stepsize, self.reg)
 
 
-def IDT(sketch_file, chain_in, samples_gen_fn,
+def IDT(data_sketches, projectors, num_quantiles, chain_in, samples_gen_fn,
         plot_function, compute_chain_out=True):
 
+
     # Load the sketch data for target
-    print('Loading the sketching data for target')
-    data = np.load(sketch_file).item()
-    qf = data['qf']
-    [num_sketches, data_dim, num_quantiles] = qf.shape
-    print('done')
 
     # prepare the projectors
-    ProjectorClass = getattr(sketch, data['projectors_class'])
-    projectors = ProjectorClass(num_sketches, data_dim)
-    projectors_loader = DataLoader(range(len(projectors)),
+    shuffle = True if len(projectors)<np.inf else False
+    projectors_loader = DataLoader(Range(len(projectors)),
                                    batch_size=chain_in.batchsize,
-                                   shuffle=True)
+                                   shuffle=shuffle)
     quantiles = np.linspace(0, 100, num_quantiles)
 
     if compute_chain_out:
@@ -56,11 +52,30 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     # get the initial samples
     samples = samples_gen_fn(data_dim)
 
+    def IDTiteration(projector, projections, num_thetas,
+                     source_qf, target_qf):
+        transported = np.empty(projections.shape)
+
+        for d in range(num_thetas):
+            F = interp1d(source_qf[d], quantiles, kind='linear',
+                         bounds_error=False, fill_value='extrapolate')
+            Ginv = interp1d(quantiles, target_qf[d], kind='linear',
+                            bounds_error=False, fill_value='extrapolate')
+            zd = np.clip(projections[:, d],
+                         source_qf[d, 0], source_qf[d, -1])
+            zd = F(zd)
+            zd = np.clip(zd, 0, 100)
+            transported[:, d] = Ginv(zd)
+
+        samples += (chain_in.stepsize *
+                    np.dot(transported - projections, projector)/num_thetas
+                    + np.sqrt(chain_in.stepsize)*chain_in.reg
+                    * np.random.randn(1, data_dim))
+
+
     for epoch in tqdm.tqdm(range(chain_in.epochs)):
         # for each epoch, loop over the sketches
-        for index, sketch_indexes in enumerate(tqdm.tqdm(projectors_loader)):
-            projector = projectors[sketch_indexes]
-            projector = np.reshape(projector, [-1, data_dim])
+        for target_qf, projector in sketches:
             num_thetas = projector.shape[0]
 
             # compute the projections
@@ -70,31 +85,16 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
                 # we need to compute the quantile function for the particles
                 # in the projected domain
                 source_qf = sketch.fast_percentile(projections.T, quantiles)
-                #source_qf = np.percentile(projections, quantiles, axis=0).T
             else:
                 source_qf = chain_in.qf[epoch, sketch_indexes]
                 source_qf = np.reshape(source_qf, [num_thetas, num_quantiles])
 
-            target_qf = np.reshape(qf[sketch_indexes],
+            target_qf = np.reshape(data_sketches[sketch_indexes],
                                    [num_thetas, num_quantiles])
-            transported = np.empty(projections.shape)
 
-            for d in range(num_thetas):
-                F = interp1d(source_qf[d], quantiles, kind='linear',
-                             bounds_error=False, fill_value='extrapolate')
-                Ginv = interp1d(quantiles, target_qf[d], kind='linear',
-                                bounds_error=False, fill_value='extrapolate')
-                zd = np.clip(projections[:, d],
-                             source_qf[d, 0], source_qf[d, -1])
-                zd = F(zd)
-                zd = np.clip(zd, 0, 100)
-                transported[:, d] = Ginv(zd)
+            IDTiteration(projector, projections, num_thetas,
+                             source_qf, target_qf):
 
-            samples += (chain_in.stepsize *
-                        np.dot(transported - projections, projector)/num_thetas
-                        + np.sqrt(chain_in.stepsize)*chain_in.reg
-                        * np.random.randn(1, data_dim))
-                        #* np.random.randn(*samples.shape))
             if compute_chain_out:
                 source_qf = np.reshape(source_qf,
                                        [len(sketch_indexes),
@@ -109,65 +109,95 @@ def IDT(sketch_file, chain_in, samples_gen_fn,
     return samples, chain_out
 
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=
                                      'Performs iterative distribution transfer'
                                      ' with sliced Wasserstein flow.')
-    parser.add_argument("sketch_file", help="path to the sketch file as "
-                        "generated by the `sketch.py` script")
-    parser.add_argument("-w", "--write",
+
+    parser.add_argument("--sketch_file", help="If provided, path to the sketch "
+                        "file as generated by the `sketch.py` script. If not "
+                        "provided, will need a `dataset` argument.")
+
+
+    parser = add_data_arguments(parser)
+    parser = add_sketch_arguments(parser)
+
+    parser.add_argument("--output",
                         help="If provided, save the generated samples to "
                              "this file path after transportation")
-    parser.add_argument("-i", "--input_chain",
+    parser.add_argument("--input_chain",
                         help="Input chain to use, as returned by this same "
                              "script. If provided, overrides any other of "
                              "the parameters `epochs`, `dim`, `lambda`")
-    parser.add_argument("-o", "--output_chain",
+    parser.add_argument("--output_chain",
                         help="keep output chain, and save it to "
                              "provided filepath")
-    parser.add_argument("-z", "--samples",
+    parser.add_argument("--initial_samples",
                         help="Initial samples to use, must be a file"
                              "containing a ndarray of dimension num_samples x "
                              "dim, saved with numpy. If provided, overrides"
                              "the parameters `dim`, `num_samples`")
-    parser.add_argument("-d", "--dim",
+    parser.add_argument("--input_dim",
                         help="Dimension of the random input",
                         type=int,
                         default=100)
-    parser.add_argument("-n", "--num_samples",
+    parser.add_argument("--num_samples",
                         help="Number of samples to draw and to transport",
                         type=int,
                         default=3000)
-    parser.add_argument("-b", "--batchsize",
+    parser.add_argument("--batchsize",
                         help="Number of sketches to use per step.",
                         type=int,
                         default=1)
-    parser.add_argument("-e", "--epochs",
-                        help="Number of epochs",
-                        type=int,
-                        default=10)
-    parser.add_argument("-r", "--reg",
+    parser.add_argument("--reg",
                         help="Regularization term",
                         type=float,
                         default=1.)
-    parser.add_argument("-s", "--stepsize",
+    parser.add_argument("--stepsize",
                         help="Stepsize",
                         type=float,
                         default=1.)
+    parser.add_argument("--epochs",
+                        help="Number of epochs",
+                        type=int,
+                        default=10)
     parser.add_argument("--plot",
                         help="Flag indicating whether or not to plot samples",
                         action="store_true")
-    parser.add_argument("-t", "--plot_target",
-                        help="Samples from the target "
-                             "distribution for plotting purposes. Either a "
-                             "file saved by numpy.save containing a ndarray "
-                             "of shape num_samples x data_dim, or the name of "
-                             "a DATASET in torchvision.datasets")
-    parser.add_argument("-p", "--plot_dir",
+    parser.add_argument("--plot_target",
+                        help="Samples from the target. Same constraints as "
+                             "the `dataset` argument.")
+    parser.add_argument("--plot_dir",
                         help="Output directory for saving the plots",
                         default="./samples")
 
     args = parser.parse_args()
+
+    if args.sketch_file is None:
+        if args.dataset is None:
+            raise ValueError("Need either a sketch file or a dataset. "
+                             "Aborting.")
+        if args.root_data_dir is None:
+            args.root_data_dir = 'data/'+args.dataset
+        data_loader = load_data(args.dataset, None, args.root_data_dir,
+                                args.img_size, args.memory_usage)
+
+        num_samples = len(data_loader.dataset)
+        data_dim = int(np.prod(data_loader.dataset[0][0].shape))
+
+        # prepare the projectors
+        ProjectorsClass = getattr(sketch, args.projectors)
+        projectors = ProjectorsClass(np.inf, data_dim)
+
+        sketches = sketch.SketchIterator(dataloader, projectors,
+                                         args.num_quantiles, 0, stop=None)
+    else:
+        sketch_data = np.load(args.sketch_file).item()
+        sketches = sketch_data['qf']
+        [num_sketches, data_dim, num_quantiles] = sketches.shape
+        ProjectorClass = getattr(sketch, data['projectors_class'])
+        projectors = ProjectorClass(num_sketches, data_dim)
 
     if args.input_chain is not None:
         input_chain = np.load(args.input_chain).item()
@@ -191,6 +221,7 @@ if __name__ == "__main__":
                                  'They should be num_samples x %d for this '
                                  'sketch file.' % (args.samples, data_dim))
             return samples
+
     if args.output_chain is not None:
         compute_output_chain = True
     else:
@@ -198,11 +229,10 @@ if __name__ == "__main__":
 
     if args.plot_target is not None:
         # just handle numpy arrays now
-        target_samples = sketch.load_data(args.plot_target, None)[0]
-        target_samples = target_samples[:,:55]
+        target_samples_loader = sketch.load_data(args.plot_target, None)
         ntarget = min(10000, target_samples.shape[0])
-        axis_lim = [[v.min(), v.max()] for v in target_samples.T]
         target_samples = target_samples[:ntarget]
+        axis_lim = [[v.min(), v.max()] for v in target_samples.T]
     if args.plot:
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)
@@ -212,17 +242,19 @@ if __name__ == "__main__":
             image = False
 
             if data_dim > 700:
+                # if the data dimension is large: probably an image.
                 square_dim_bw = np.sqrt(data_dim)
                 square_dim_col = np.sqrt(data_dim/3)
-                if not (square_dim_col % 1):
+                if not (square_dim_col % 1): # check monochrome
                     image = True
                     nchan = 3
                     img_dim = int(square_dim_col)
-                elif not (square_dim_bw % 1):
+                elif not (square_dim_bw % 1): # check color
                     image = True
                     nchan = 1
                     img_dim = int(square_dim_bw)
             if not image:
+                # just plot second data dimension vs first one
                 plt.figure(1, figsize=(8, 8))
                 plt.clf()
                 if args.plot_target is not None:
@@ -237,21 +269,23 @@ if __name__ == "__main__":
                 plt.pause(0.05)
                 plt.show()
                 return
+            # If it's an image, output a grid of samples
             [num_samples, data_dim] = samples.shape
-            samples = samples[:min(100, num_samples)]
+            samples = samples[:min(104, num_samples)]
             num_samples = samples.shape[0]
 
             samples = np.reshape(samples,
                                  [num_samples, nchan, img_dim, img_dim])
             pic = make_grid(torch.Tensor(samples),
-                            nrow=8, padding=2, normalize=True)
+                            nrow=8, padding=2, normalize=True, scale_each=True)
             save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, epoch,
                                                         index+1))
     else:
         plot_function = None
 
-    samples, chain_out = IDT(args.sketch_file, input_chain, generate_samples,
-                             plot_function, compute_output_chain)
+    samples, chain_out = IDT(data_sketches, projectors, input_chain,
+                             generate_samples, plot_function,
+                             compute_output_chain)
 
     if compute_output_chain:
         np.save(args.output_chain, chain_out)
