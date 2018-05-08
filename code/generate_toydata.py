@@ -14,7 +14,7 @@ def draw_GMM_parameters(d, K, seed = None):
     w /= np.sum(w)
 
     # means
-    mu = randn(d, K)*K*10
+    mu = randn(d, K)*K*10*np.log(d)
 
     # covariances
     L = (randn(d, d, K) * rand(1, 1, K) * K
@@ -61,21 +61,21 @@ def rand_GMM(params, T):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=
                                      'Generate some toy data')
-    parser.add_argument("-o", "--output",
+    parser.add_argument("--output",
                         help="File to save samples to")
-    parser.add_argument("-d", "--dim",
+    parser.add_argument("--dim",
                         help="dimension of the samples",
                         type=int,
                         default=2)
-    parser.add_argument("-n", "--num_samples",
+    parser.add_argument("--num_samples",
                         help="Number of samples to draw",
                         type=int,
                         default=30000)
-    parser.add_argument("-c", "--num_components",
+    parser.add_argument("--num_components",
                         help="Number of components in the GMM",
                         type=int,
                         default=30)
-    parser.add_argument("-s", "--seed",
+    parser.add_argument("--seed",
                         help="Seed to use for random generation of the GMM"
                              "parameters. If ommitted, will not use "
                              "a specific seed, yielding always different "
