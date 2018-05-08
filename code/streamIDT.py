@@ -50,6 +50,7 @@ if __name__ == "__main__":
                                    args.img_size, args.memory_usage)
     data_dim = int(np.prod(data_loader.dataset[0][0].shape))
 
+    import ipdb; ipdb.set_trace()
     # prepare the projectors
     ProjectorsClass = getattr(sketch, args.projectors)
     projectors = ProjectorsClass(np.inf, data_dim)
