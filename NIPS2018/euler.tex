@@ -67,9 +67,9 @@ samples drawn from $\nu_\lambda$, which is not far from $\nu$. However, this is 
 
 We now consider the approximate Euler-Maruyama discretization, that is given as follows:
 \begin{align}
-\bar{X}_{n+1} = \bar{X}_n - h \hat{v}_n(\bar{X}_n) + \sqrt{2 \lambda h} Z_{n+1},
+\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_k(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
 \end{align}
-where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_n$ is a computable unbiased estimator of $v_n$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_k$.
 
 
 By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. We consider the following assumptions:
@@ -94,17 +94,103 @@ for some $m,b >0$.
 \label{asmp:stochgrad}
 The estimator of the drift is unbiased, i.e.\ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and its variance satisfies the following condition for some $\delta \in (0,1)$ and for all $t\geq 0$, $x \in \R^d$:
 \begin{align}
-\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(M \|x\|^2 + B^2).
+\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2).
 \end{align}
 \end{assumption}
 %
 \begin{assumption}
+\label{asmp:init_fun}
 The function $\Psi_t$ satisfies the following conditions for all $t \geq 0$:
 \begin{align}
 |\Psi_t(0)| \leq A, \qquad \text{and} \qquad \|v_t(0)\| \leq B
 \end{align}
 for $A,B \geq 0$.
 \end{assumption}
+
+
+We are interested in computing the distance $\| \muh_{kh} - \nu_\lambda \|_{\TV}$, where $\muh_{kh}$ denotes the law of $\hat{X}_k$ with step size $h$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{kh} - \mu_t \|_{\TV} + \| \mu_{t} - \nu_\lambda \|_{\TV}$, where $\mu_t$ denotes the law of $X_t$ such that $(X_t)_t$ is the solution of the continuous-time SDE \eqref{eqn:sde}. 
+
+We start by upper-bounding the first term. 
+%
+\begin{lemma}
+Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
+\begin{align}
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda},
+\end{align}
+where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
+\end{lemma}
+%
+%
+\begin{proof}
+We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}. Starting from the discrete-time process $(\bar{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
+\begin{align}
+d Y_t = \tilde{v}_t(Y) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear}
+\end{align}
+where $\tilde{v}_t(Y) \triangleq - \sum_{k=0}^{\infty} \hat{v}_k (Y_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mathds{1}$ denotes the indicator function. It is easy to verify that for all $k \in \mathbb{N}_+$, we have $Y_{kh} = \bar{X}_k$. 
+
+Let us denote the distributions of $(X_t)_{t \in [0,T]}$ and $(Y_t)_{t \in [0,T]}$ as $\pi_{X}^T$ and $\pi_{Y}^T$ with $T = Kh$. Then we can use Girsanov's formula to express the Kullback-Leibler (KL) divergence between these two distributions, given as follows:
+\begin{align}
+\KL (\pi_{X}^T || \pi_{Y}^T) &= \frac1{4 \lambda} \int_0^{Kh} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ]  \> dt \\
+&= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ] \> dt \\
+&= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \> dt,
+\end{align}
+where we use the notation $\hat{v}_{kh} \equiv \hat{v}_{k}$ in order to illustrate the time index more explicitly. By using $v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) = ( v_t(Y_t) - v_{kh}(Y_{kh})) + ( v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}))$, we obtain
+%
+\begin{align}
+\nonumber \KL (\pi_{X}^T || \pi_{Y}^T) \leq& \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) - {v}_{kh}(Y_{kh}) \|^2 ] \> dt \\
+&+  \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \> dt \\
+\nonumber \leq& \frac{L^2}{\lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \bigl(\E[ \|Y_t - Y_{kh} \|^2 ] + (t-kh)^2 \bigr)  \> dt \\
+&+  \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \> dt . \label{eqn:lem1_proof_interm}
+\end{align}
+The last inequality is due to the Lipschitz condition \Cref{asmp:lipschitz}.
+
+Now, let us focus on the term $\E[ \|Y_t - Y_{kh} \|^2]$. By using \eqref{eqn:sde_linear}, we obtain:
+\begin{align}
+Y_t - Y_{kh} = - (t-kh) \hat{v}_{kh}(Y_{kh}) + \sqrt{2 \lambda (t-kh)} Z,
+\end{align}
+where $Z$ denotes a standard normal random variable. By adding and subtracting the term $-(t-kh) v_{kh}(Y_{kh})$, we have:
+\begin{align}
+Y_t - Y_{kh} = -(t-kh)v_{kh}(Y_{kh}) + (t-kh)(v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh})) + \sqrt{2 \lambda (t-kh)} Z.
+\end{align}
+Taking the square and then the expectation of both sides yields:
+\begin{align}
+\nonumber \E[ \|Y_t - Y_{kh} \|^2] \leq& 3(t-kh)^2 \E[ \|v_{kh}(Y_{kh})\|^2] + 3 (t-kh)^2 \E[\|v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh})\|^2] \\
+&+ 6\lambda (t-kh)d.
+\end{align}
+As a consequence of \Cref{asmp:lipschitz} and \Cref{asmp:init_fun}, we have $\| v_t(x)\| \leq L\|x\|+B$ for all $t \geq 0$, $x\in \R^d$. Combining this inequality with \Cref{asmp:stochgrad}, we obtain:
+\begin{align}
+\nonumber \E[ \|Y_t - Y_{kh} \|^2] \leq& 6(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) + 6(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) \\
+&+ 6\lambda (t-kh)d\\
+=& 12(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) + 6\lambda (t-kh)d.
+\end{align}
+By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq 2 \max(1, \frac1{m})(b+2B^2 + d \lambda)$. Using this result in the above equation yields:
+\begin{align}
+\E[ \|Y_t - Y_{kh} \|^2] \leq& 12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d. \label{eqn:lem_bound1}
+\end{align}
+
+We now focus on the term $\E[ \|v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}) \|^2 ]$ in \eqref{eqn:lem1_proof_interm}. Similarly to the previous term, we can upper-bound this term as follows:
+\begin{align}
+\E[ \|v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \leq& 2 \delta(L^2 \E[\|Y_{kh}\|^2] + B^2) \\
+\leq& 2 \delta(L^2 C_0 + B^2). \label{eqn:lem_bound2}
+\end{align}
+
+By using \eqref{eqn:lem_bound1} and \eqref{eqn:lem_bound2} in \eqref{eqn:lem1_proof_interm}, we obtain:
+\begin{align}
+\nonumber \KL (\pi_{X}^T || \pi_{Y}^T) \leq& \frac{L^2}{\lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \bigl(12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d +(t-kh)^2 \bigr) dt\\
+&+  \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} 2 \delta(L^2 C_0 + B^2) \> dt \\
+=& \frac{L^2 K}{\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{2\lambda},
+\end{align}
+where $C_1 = 12(L^2 C_0 + B^2)+1$ and $C_2 = 2 \delta(L^2 C_0 + B^2)$.
+
+Finally, by using the data processing and Pinsker inequalities, we obtain:
+\begin{align}
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \| \pi_{X}^T - \pi_{Y}^T \|_{\TV}^2 \leq& \frac1{4} \KL (\pi_{X}^T || \pi_{Y}^T) \\
+=& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda}.
+\end{align}
+This concludes the proof.
+
+\end{proof}
+
 
 \section{Discussion on the assumptions}
 
