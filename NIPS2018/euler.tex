@@ -25,7 +25,7 @@ where $W_t$ denotes the standard Brownian motion.
 
 \begin{assumption}
 \label{asmp:sde_ergo}
-The SDE in \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$. The solution process has a unique invariant measure denoted by $\nu_\lambda$. % and it is geometrically ergodic. 
+For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. Its define a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. % and it is geometrically ergodic. 
 \end{assumption}
 
 \begin{assumption}
@@ -77,7 +77,7 @@ We now consider the approximate Euler-Maruyama discretization, that is given as 
 \begin{align}
 \bar{X}_{k+1} = \bar{X}_k - h \hat{v}_k(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_k$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_{kh}$.
 
 
 By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. We consider the following assumptions:
@@ -91,9 +91,9 @@ The drift is Lipschitz continuous, i.e.\ there exits $L < \infty$ such that
 %
 \begin{assumption}
 \label{asmp:dissip}
-For all $t \geq 0$, $v_t$ is dissipative, such that
+For all $t \geq 0$, $v_t$ is dissipative, i.e. for all $x \in \R^d$.
 \begin{align}
-\langle x, v_t \rangle \geq m \|x\|^2 -b
+\langle x, v_t(x) \rangle \geq m \|x\|^2 -b
 \end{align}
 for some $m,b >0$.
 \end{assumption}
@@ -124,7 +124,7 @@ We start by upper-bounding the first term.
 \label{lem:euler}
 Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
-\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda},
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 \delta K h}{8\lambda},
 \end{align}
 where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
 \end{lemma}
@@ -187,14 +187,14 @@ By using \eqref{eqn:lem_bound1} and \eqref{eqn:lem_bound2} in \eqref{eqn:lem1_pr
 \begin{align}
 \nonumber \KL (\pi_{X}^T || \pi_{Y}^T) \leq& \frac{L^2}{\lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \bigl(12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d +(t-kh)^2 \bigr) dt\\
 &+  \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} 2 \delta(L^2 C_0 + B^2) \> dt \\
-=& \frac{L^2 K}{\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{2\lambda},
+=& \frac{L^2 K}{\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 \delta K h}{2\lambda},
 \end{align}
-where $C_1 = 12(L^2 C_0 + B^2)+1$ and $C_2 = 2 \delta(L^2 C_0 + B^2)$.
+where $C_1 = 12(L^2 C_0 + B^2)+1$ and $C_2 = 2 (L^2 C_0 + B^2)$.
 
 Finally, by using the data processing and Pinsker inequalities, we obtain:
 \begin{align}
 \| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \| \pi_{X}^T - \pi_{Y}^T \|_{\TV}^2 \leq& \frac1{4} \KL (\pi_{X}^T || \pi_{Y}^T) \\
-=& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda}.
+=& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 \delta K h}{8\lambda}.
 \end{align}
 This concludes the proof.
 
@@ -204,7 +204,7 @@ This concludes the proof.
 \begin{thm}
 Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
-\| \muh_{K} - \nu_\lambda \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda} +  C_3 \exp(-C_4 Kh \lambda),
+\| \muh_{K} - \nu_\lambda \|_{\TV} \leq \left \lbrace  \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2  \delta K h}{8\lambda} \right \rbrace^{1/2} +  C_3 \exp(-C_4 Kh \lambda),
 \end{align}
 for some $C_1,C_2,C_3,C_4 > 0$.
 \end{thm}
@@ -213,7 +213,18 @@ for some $C_1,C_2,C_3,C_4 > 0$.
 The proof is a direct consequence of the triangle inequality, Lemma~\ref{lem:euler}, and assumption \Cref{asmp:sde_expconv}.
 \end{proof}
 
-
+\begin{cor}
+  \label{coro:precision}
+  Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then for all $\varepsilon >0$, setting
+  \begin{equation*}
+T = Kh  = \ceil{-\log(\varepsilon/(2C_3))/(C_4\lambda)} \, , \qquad 
+h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+6 \lambda d/2)^{-1}\right)\eqsp,
+  \end{equation*}
+  we have
+  \begin{equation*}
+    \| \muh_{K} - \nu_\lambda \|_{\TV}^2 \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} . 
+  \end{equation*}
+\end{cor}
 
 \section{Discussion on the assumptions}
 
@@ -260,3 +271,8 @@ Assume that \Cref{asmp:flowunq_1,asmp:flowunq_2,asmp:flowunq_3,asmp:flowunq_4} h
 The assumptions of Proposition~\ref{prop:dist_statmeas} can be satisfied if we further assume certain regularity assumptions on $v_t$. For more information and a discussion about these assumptions, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
 
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "nips_2018_sketchmcmc_supp"
+%%% End:
