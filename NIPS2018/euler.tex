@@ -124,7 +124,7 @@ We start by upper-bounding the first term.
 \label{lem:euler}
 Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
-\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 \delta K h}{8\lambda},
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
 \end{align}
 where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
 \end{lemma}
@@ -172,7 +172,7 @@ As a consequence of \Cref{asmp:lipschitz} and \Cref{asmp:init_fun}, we have $\| 
 &+ 6\lambda (t-kh)d\\
 =& 12(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) + 6\lambda (t-kh)d.
 \end{align}
-By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq C_e +2  \max(1, \frac1{m})(b+2B^2 + d \lambda)$, where $C_e$ denotes the entropy of $\mu_0$. Using this result in the above equation yields:
+By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq C_e +2  (1 \vee \frac1{m})(b+2B^2 + d \lambda)$, where $C_e$ denotes the entropy of $\mu_0$. Using this result in the above equation yields:
 \begin{align}
 \E[ \|Y_t - Y_{kh} \|^2] \leq& 12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d. \label{eqn:lem_bound1}
 \end{align}
@@ -194,7 +194,7 @@ where $C_1 = 12(L^2 C_0 + B^2)+1$ and $C_2 = 2 (L^2 C_0 + B^2)$.
 Finally, by using the data processing and Pinsker inequalities, we obtain:
 \begin{align}
 \| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \| \pi_{X}^T - \pi_{Y}^T \|_{\TV}^2 \leq& \frac1{4} \KL (\pi_{X}^T || \pi_{Y}^T) \\
-=& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 \delta K h}{8\lambda}.
+=& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda}.
 \end{align}
 This concludes the proof.
 
@@ -204,7 +204,7 @@ This concludes the proof.
 \begin{thm}
 Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
-\| \muh_{K} - \nu_\lambda \|_{\TV} \leq \left \lbrace  \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2  \delta K h}{8\lambda} \right \rbrace^{1/2} +  C_3 \exp(-C_4 Kh \lambda),
+\| \muh_{K} - \nu_\lambda \|_{\TV} \leq \left \lbrace  \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2  \delta K h}{8\lambda} \right \rbrace^{1/2} +  C_3 \exp(-C_4 Kh \lambda),
 \end{align}
 for some $C_1,C_2,C_3,C_4 > 0$.
 \end{thm}
@@ -216,15 +216,23 @@ The proof is a direct consequence of the triangle inequality, Lemma~\ref{lem:eul
 \begin{cor}
   \label{coro:precision}
   Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then for all $\varepsilon >0$, setting
-  \begin{equation*}
+  \begin{align}
 T = Kh  = \ceil{-\log(\varepsilon/(2C_3))/(C_4\lambda)} \, , \qquad 
-h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+6 \lambda d/2)^{-1}\right)\eqsp,
-  \end{equation*}
+h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\right) \,,
+  \end{align}
   we have
-  \begin{equation*}
-    \| \muh_{K} - \nu_\lambda \|_{\TV}^2 \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} . 
-  \end{equation*}
+  \begin{align}
+    \| \muh_{K} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} . 
+  \end{align}
 \end{cor}
+\begin{proof}
+Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$ imply that
+\begin{align}
+\frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) \leq \frac{\varepsilon^2}{4}, \quad \text{and} \quad C_3 \exp(-C_4 Kh \lambda) \leq \frac{\varepsilon}{2}.
+\end{align}
+?
+
+\end{proof}
 
 \section{Discussion on the assumptions}
 
