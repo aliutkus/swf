@@ -25,7 +25,15 @@ where $W_t$ denotes the standard Brownian motion.
 
 \begin{assumption}
 \label{asmp:sde_ergo}
-The SDE in \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$. The solution process has a unique invariant measure denoted by $\nu_\lambda$ and it is geometrically ergodic. 
+The SDE in \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$. The solution process has a unique invariant measure denoted by $\nu_\lambda$. % and it is geometrically ergodic. 
+\end{assumption}
+
+\begin{assumption}
+\label{asmp:sde_expconv}
+The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, such that there exists $C_0, C_1 >0$
+\begin{align}
+\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
+\end{align}
 \end{assumption}
 
 We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
@@ -108,11 +116,12 @@ for $A,B \geq 0$.
 \end{assumption}
 
 
-We are interested in computing the distance $\| \muh_{kh} - \nu_\lambda \|_{\TV}$, where $\muh_{kh}$ denotes the law of $\hat{X}_k$ with step size $h$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{kh} - \mu_t \|_{\TV} + \| \mu_{t} - \nu_\lambda \|_{\TV}$, where $\mu_t$ denotes the law of $X_t$ such that $(X_t)_t$ is the solution of the continuous-time SDE \eqref{eqn:sde}. 
+We are interested in computing the distance $\| \muh_{Kh} - \nu_\lambda \|_{\TV}$, where $\muh_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_t \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$. %$(X_t)_t$ is the solution of the continuous-time SDE \eqref{eqn:sde} and 
 
 We start by upper-bounding the first term. 
 %
 \begin{lemma}
+\label{lem:euler}
 Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
 \| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda},
@@ -163,7 +172,7 @@ As a consequence of \Cref{asmp:lipschitz} and \Cref{asmp:init_fun}, we have $\| 
 &+ 6\lambda (t-kh)d\\
 =& 12(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) + 6\lambda (t-kh)d.
 \end{align}
-By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq 2 \max(1, \frac1{m})(b+2B^2 + d \lambda)$. Using this result in the above equation yields:
+By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq C_e +2  \max(1, \frac1{m})(b+2B^2 + d \lambda)$, where $C_e$ denotes the entropy of $\mu_0$. Using this result in the above equation yields:
 \begin{align}
 \E[ \|Y_t - Y_{kh} \|^2] \leq& 12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d. \label{eqn:lem_bound1}
 \end{align}
@@ -190,6 +199,20 @@ Finally, by using the data processing and Pinsker inequalities, we obtain:
 This concludes the proof.
 
 \end{proof}
+
+
+\begin{thm}
+Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
+\begin{align}
+\| \muh_{K} - \nu_\lambda \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) + \frac{C_2 K h}{8\lambda} +  C_3 \exp(-C_4 Kh \lambda),
+\end{align}
+for some $C_1,C_2,C_3,C_4 > 0$.
+\end{thm}
+%
+\begin{proof}
+The proof is a direct consequence of the triangle inequality, Lemma~\ref{lem:euler}, and assumption \Cref{asmp:sde_expconv}.
+\end{proof}
+
 
 
 \section{Discussion on the assumptions}
