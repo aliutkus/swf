@@ -16,13 +16,24 @@
 % \end{itemize}
 % \end{itemize}
 
+\umut{There are disconnected paragraphs, I'm still working on it.}
 
-Implicit generative modeling has become very popular recently and has proven successful in various fields. Variational auto-encoders (VAE) and generative adversarial networks (GAN) are the two well-known examples. Recently, it has been shown that these methods are trying to solve an optimal transport problem.
+Implicit generative modeling has become very popular recently and has proven successful in various fields. Variational auto-encoders (VAE) and generative adversarial networks (GAN) are the two well-known examples.
+%
+The goal in these approaches can be briefly described as learning the underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the output of this map will coincide with the target measure $\nu$. 
+
+% Recently, it has been shown that these methods are trying to solve an optimal transport problem.
 
 
-The goal in these approaches can be briefly described as learning the underlying probability measure of a given data sample, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the output of this map will coincide with the target measure $\nu$. 
 
-This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
+
+While its inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g. with Gaussian or uniform i.i.d.\ entries), its outputs should match the target measure $\nu$ on $\Omega_\nu$, which can be very complicated in real applications. For the sake of simplicity, we only consider in this study the case where $\nu$ is not known in closed form, but rather only through $N$ elements from a learning database $D = \{y_1 , \dots , y_N \}$ that are assumed independently sampled from it. It is common in applications to have a very large amount of millions or billions of such samples.
+
+In that context, learning generative networks witnessed a groundbreaking contribution with the introduction of Generative Adversarial Networks (GAN, \cite{goodfellow2014generative,salimans2016improved,eghbal2017probabilistic}), which take generative learning as an adversarial game. On the one hand, a discriminative system is trained to detect generated samples from those of the dataset. On the other hand, the generative network is trained so as to minimize the performance of the classifier. Optimization then alternates between both. While this strategy was found effective, theoretical foundations for it were highlighted only recently \cite{bousquet2017optimal} in an optimal transport (OT) setting as minimizing a Wasserstein distance between the output distribution and the target $\nu$. More specifically, GAN and VAE were shown to tackle the same OT problem in a dual way \cite{bousquet2017optimal,genevay2017gan}.
+
+As it turns out, the venerable old topic of optimal transport brings new light on the generative modeling problem. In short, OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.  
+%
+This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided very mild conditions on these distributions are respected (notably that $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed. However, it remains challenging to construct it in practice.
 
 Most of the current generative modeling strategies consider an operator that belongs to a parametric family $T_{\phi}$ with $\phi \in \Phi$, and aims to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 \begin{align}
