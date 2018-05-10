@@ -49,7 +49,7 @@ This result implies that there exists a perfect solution for transporting sample
 
 In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distance has an analytical form, given as follows:
 \begin{align}
-\W(\mu,\nu) = \int_0^1 |F^{-1}(\tau) - G^{-1}(\tau)| \> d\tau,
+\W(\mu,\nu) = \int_0^1 |F^{-1}(\tau) - G^{-1}(\tau)|^2 \> d\tau,
 \end{align}
 where $F$ and $G$ denote the cumulative distribution functions of $\mu$ and $\nu$, respectively. In this case, the optimal transport map has a closed-form formula, given as follows: $T(x) = (G^{-1} \circ F) (x)$. Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich is therefore given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (G^{-1} \circ F) (x)$.
  
