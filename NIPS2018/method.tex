@@ -122,9 +122,9 @@ samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, thi
 
 We now consider the approximate Euler-Maruyama discretization, that is given as follows:
 \begin{align}
-\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_k(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
+\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_{kh}(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_{kh}$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_{kh}$ is a computable unbiased estimator of $v_{kh}$.
 
 \umut{Mention particle method}
 

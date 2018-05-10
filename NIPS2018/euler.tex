@@ -51,9 +51,10 @@ Let us denote the distributions of $(X_t)_{t \in [0,T]}$ and $(Y_t)_{t \in [0,T]
 \begin{align}
 \KL (\pi_{X}^T || \pi_{Y}^T) &= \frac1{4 \lambda} \int_0^{Kh} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ]  \> dt \\
 &= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ] \> dt \\
-&= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \> dt,
+&= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) \|^2 ] \> dt.
 \end{align}
-where we use the notation $\hat{v}_{kh} \equiv \hat{v}_{k}$ in order to illustrate the time index more explicitly. By using $v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) = ( v_t(Y_t) - v_{kh}(Y_{kh})) + ( v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}))$, we obtain
+% where we use the notation $\hat{v}_{kh} \equiv \hat{v}_{k}$ in order to illustrate the time index more explicitly. 
+By using $v_t(Y_t) - \hat{v}_{kh}(Y_{kh}) = ( v_t(Y_t) - v_{kh}(Y_{kh})) + ( v_{kh}(Y_{kh}) - \hat{v}_{kh}(Y_{kh}))$, we obtain
 %
 \begin{align}
 \nonumber \KL (\pi_{X}^T || \pi_{Y}^T) \leq& \frac1{2 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) - {v}_{kh}(Y_{kh}) \|^2 ] \> dt \\
