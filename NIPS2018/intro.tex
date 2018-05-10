@@ -22,7 +22,7 @@ Implicit generative modeling has become very popular recently and has proven suc
 
 The goal in these approaches can be briefly described as learning the underlying probability measure of a given data sample, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the output of this map will coincide with the target measure $\nu$. 
 
-This can be explained using some `push operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
+This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
 
 Most of the current generative modeling strategies consider an operator that belongs to a parametric family $T_{\phi}$ with $\phi \in \Phi$, and aims to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 \begin{align}
@@ -34,6 +34,6 @@ In this study, we follow a completely different approach and we consider a funct
 \begin{align}
 \partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \label{eqn:gradflow}
 \end{align}
-where the functional $\mathrm{Cost}$ computes a discrepancy between $\mu_t$ and $\nu$, $\mathrm{Reg}$ denotes a regularization functional, and $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric for probability measures. If this flow can be simulated, ideally one would hope that $\mu_t$ will converge to the minimum of the Cost functional.
+where the functional $\mathrm{Cost}$ computes a discrepancy between $\mu_t$ and $\nu$, $\mathrm{Reg}$ denotes a regularization functional, and $\nabla_{\W}$ denotes a notion of gradient with respect to a probability density function in the $\W$ metric for probability measures\footnote{This gradient flow is similar to the the usual Euclidean gradient flows, i.e.\ $dx/dt = - \nabla (f(x) + r(x))$, where $f$ is typically the data-dependent cost function and $r$ is a regularization term. The (explicit) Euler discretization of this flow results in the gradient descent algorithm.}. If this flow can be simulated, one would hope for $\mu_t$ to converge to the minimum of the functional optimization problem: $\min_\mu ( \mathrm{Cost}(\mu, \nu) + \mathrm{Reg}(\mu)$).
 
 However, in general these flows cannot be either solved or simulated perfectly. \umut{discuss $\SW$.}

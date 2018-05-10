@@ -1,6 +1,6 @@
 %!TEX root = ./nips_2018_sketchmcmc.tex
 
-\subsection{Non-asymptotic analysis}
+\section{Theoretical Analysis}
 
 
 
@@ -68,10 +68,10 @@ for some $C_1,C_2,C_3,C_4 > 0$.
 \begin{cor}
   \label{coro:precision}
   Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then for all $\varepsilon >0$, setting
-  \begin{align}
-T = Kh  = \ceil{-\log(\varepsilon/(2C_3))/(C_4\lambda)} \, , \qquad 
-h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\right)^{1/2} \,,
-  \end{align}
+  % \begin{align}
+$T = Kh  = \ceil{\log(2C_3/\varepsilon)/(C_4\lambda)}$, % \, , \qquad 
+$h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\right)^{1/2}$, % \,,
+  % \end{align}
   we have
   % \begin{align}
     $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} $. 

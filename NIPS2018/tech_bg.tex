@@ -14,24 +14,46 @@
 
 % For a vector $v \in \R^d$, we denote its $\ell_2$-norm by $\|v\| \triangleq \sqrt{v^\top v}$. We occasionally denote the Euclidean inner-product of two vectors by $\langle v, y \rangle \triangleq v^\top y$ for $v,y \in \R^d$. 
 
-\subsection{Optimal Transport, Wasserstein Spaces, Gradient Flows}
+\subsection{Wasserstein distance, optimal transport maps, and Kantorovich potentials}
 
 
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
 \W(\mu,\nu) \triangleq \Biggl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Biggr\}^{1/2}, \label{eqn:w2}
 \end{align}
-where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$. More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
+where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$. More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators. 
+
 
 Since $\W$ is a linear program with linear constraints, it has a dual formulation, known as the Kantorovich problem:
 \begin{align}
 \W(\mu,\nu) = \max_{\psi \in \textnormal{1-Lipschitz}} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}, \label{eqn:w2dual}
 \end{align}
 where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the maximum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
+%
+Provided that $\mu$ satisfies a mild regularity condition, we have the following nice uniqueness result.
+\begin{thm}[Theorem 1.4 of \cite{santambrogio2010introduction}]
+\label{thm:unqmap}
+If $\mu$ is absolutely continuous with respect to the Lebesgue measure, then there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The optimal transport map $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
+\end{thm}
+ 
 
+This result implies that there exists a perfect solution for transporting samples from $\mu$ to samples from $\nu$ and even do so in a way that minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
+\subsection{Sliced-Wasserstein distance}
 
+In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distance has an analytical form, given as follows:
+\begin{align}
+\W(\mu,\nu) = \int_0^1 |F^{-1}(\tau) - G^{-1}(\tau)| \> d\tau,
+\end{align}
+where $F$ and $G$ denote the cumulative distribution functions of $\mu$ and $\nu$, respectively. In this case, the optimal transport map has a closed-form formula, given as follows: $T(x) = (G^{-1} \circ F) (x)$. Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich is therefore given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (G^{-1} \circ F) (x)$.
+ 
+These nice properties of the one-dimensional Wasserstein distance motivate the usage of \emph{sliced-Wasserstein distance} ($\SW$) for practical applications. Before formally defining $\SW$, let us first define the orthogonal projection $\theta^* (x) \triangleq \langle \theta, x \rangle$ for any direction $\theta \in \Sp^{d-1}$ and $x \in \R^d$, where $\langle \cdot, \cdot \rangle$ denotes the Euclidean inner-product and $\Sp^{d-1} \subset \R^d$ denotes the $d$-dimensional unit sphere. Then, the $\SW$ distance is formally defined as follows:
+\begin{align}
+\SW(\mu,\nu) \triangleq \int_{\Sp^{d-1}} \W (\theta^*_\#\mu, \theta^*_\#\nu) \> d \theta, \label{eqn:sw}
+\end{align}
+where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$. As shown \cite{bonnotte2013unidimensional}[Chapter 5], $\SW$ is indeed a distance metric and induces the same topology as $\W$ in compact domains. 
 
+The $\SW$ has a strong practical significance: provided that the distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed. Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replaces the integral in \eqref{eqn:sw} with a finite-sample average. 
 
 
 
