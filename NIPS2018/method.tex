@@ -73,6 +73,9 @@ Here, we present our first theoretical result.
 The gradient flow is a valid gradient flow. \umut{Szymon.}
 \end{thm}
 
+
+\subsection{Connection with stochastic differential equations}
+
 We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
 \begin{align}
 d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
@@ -88,14 +91,7 @@ where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $
 For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
 \end{assumption}
 
-\begin{assumption}
-\label{asmp:sde_expconv}
-The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
-% \begin{align}
-$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$,
-% \end{align}
-where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
-\end{assumption}
+
 
 We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
 

@@ -8,6 +8,15 @@ We are interested in computing the distance $\| \muh_{Kh} - \nu_\lambda \|_{\TV}
 
 By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. We consider the following assumptions:
 \begin{assumption}
+\label{asmp:sde_expconv}
+The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
+% \begin{align}
+$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$,
+% \end{align}
+where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
+\end{assumption}
+%
+\begin{assumption}
 \label{asmp:lipschitz}
 The drift is Lipschitz continuous, i.e.\ there exits $L < \infty$ such that
 % \begin{align}
