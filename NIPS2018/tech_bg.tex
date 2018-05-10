@@ -1,0 +1,30 @@
+%!TEX root = ./nips_2018_sketchmcmc.tex
+
+\section{Preliminaries and Technical Background}
+\label{sec:techbg}
+
+% \begin{itemize}
+% \item Brief intro to gradient flows in $\W$ 
+% \item Fokker-Planck equations and relations to SDEs
+% \item Langevin equation as a special case
+% \item SGLD for optimization \cite{raginsky17a,zhang17b}
+% \end{itemize}
+
+% \subsection{Notation}
+
+% For a vector $v \in \R^d$, we denote its $\ell_2$-norm by $\|v\| \triangleq \sqrt{v^\top v}$. We occasionally denote the Euclidean inner-product of two vectors by $\langle v, y \rangle \triangleq v^\top y$ for $v,y \in \R^d$. 
+
+\subsection{Optimal Transport, Wasserstein Spaces, Gradient Flows}
+
+
+For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
+\begin{align}
+\W(\mu,\nu) \triangleq \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy),
+\end{align}
+where ${\cal C}(\mu,\nu)$ denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$, more precisely ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | P_{1\#}\gamma = \mu, P_{2\#}\gamma = \nu  \}$. Here $P_1(x,y) \triangleq x$ and $P_2(x,y) \triangleq y$, therefore $P_{1\#}$ and $P_{2\#}$ are the marginalization operators.
+
+
+
+
+
+

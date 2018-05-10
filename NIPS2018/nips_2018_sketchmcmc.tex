@@ -27,15 +27,16 @@
 \usepackage{microtype}      % microtypography
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{xcolor}
 
-\newcommand{\W}{{\cal W}_2}
-\newcommand{\F}{{\cal F}}
-\newcommand{\He}{{\cal H}}
-\newcommand{\SW}{{\cal S}{\cal W}_2}
+% \newcommand{\W}{{\cal W}_2}
+% \newcommand{\F}{{\cal F}}
+% \newcommand{\He}{{\cal H}}
+% \newcommand{\SW}{{\cal S}{\cal W}_2}
 
-\DeclareMathOperator*{\argmin}{arg\min}
+% \DeclareMathOperator*{\argmin}{arg\min}
 
-
+\input{defs}
 
 \title{Sliced-Wasserstein Flows: Learning Generative Models via Single Data Pass with Guarantees}
 
@@ -80,6 +81,8 @@
   %% \texttt{email} \\
 }
 
+
+
 \begin{document}
 % \nipsfinalcopy is no longer used
 
@@ -89,47 +92,15 @@
 
 \end{abstract}
 
-\section{Introduction}
 
-\begin{itemize}
-\item Short intro to implicit generative models
-\item Connection with optimal transport \cite{genevay2017gan}, several other papers
-\item Information about sliced-Wasserstein distance and usage in generative modeling \cite{bonnotte2013unidimensional,kolouri2018sliced,wu2017generative}
-\item Contributions of the current paper
-\begin{itemize}
-\item Development of a novel gradient flow for generative modeling purpose
-\item Establish the connections with SDEs
-\item Develop a practical way to simulate the SDE
-\item Establish theoretical guarantees
-\item Experimental validation
-\end{itemize}
-\end{itemize}
+\input{intro}
 
-\section{Technical Background}
+\input{tech_bg}
 
-\begin{itemize}
-\item Brief intro to gradient flows in $\W$ 
-\item Fokker-Planck equations and relations to SDEs
-\item Langevin equation as a special case
-\item SGLD for optimization \cite{raginsky17a,zhang17b}
-\end{itemize}
+\input{method}
+\input{analysis_main}
 
-\section{Sliced-Wasserstein Flows for Generative Modeling}
 
-\begin{itemize}
-\item Start from the flow given in \cite{bonnotte2013unidimensional} and discuss the limitations 
-\begin{itemize}
-\item No convergence guarantee
-\item Over-fitting risk when the target is a collections of Dirac masses
-\end{itemize}
-\item Motivation for the entropy-regularization (discuss the differences with the Sinkhorn distances \cite{genevay2018learning})
-\item Development of the new gradient flow -- first theoretical result
-\item Establish the distance between the stationary measures of the two gradient flows (second theoretical result)
-\item View the new flow as a non-linear Fokker-Planck equation -- establish the connection with the appropriate SDE
-\item Develop the numerical scheme 
-\item Analyze the TV distance between the measure at iteration $k$ and the invariant measure
-\item We don't need to see the data, we just need the projections. In addition to its computational implications, this can be crucial for privacy preserving applications
-\end{itemize}
 
 \section{Experiments}
 

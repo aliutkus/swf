@@ -1,58 +1,30 @@
 %!TEX root = ./nips_2018_sketchmcmc_supp.tex
 
-\section{The Gradient Flow and the SDE}
+% \section{The Gradient Flow and the SDE}
 
-Let $\rho_t$ be the density of a measure $\mu_t$ with respect to the Lebesgue measure, such that $\mu_t(dx) = \rho_t(x) dx$. In this section, we will be interested in the following gradient flow in $\W$:
-\begin{align}
-\partial_t \rho_t &= - \nabla_{\W} \F_\lambda(\rho_t) \\
-&=  \nabla \cdot (\rho_t \> v_t) + \lambda \Delta \rho_t, \label{eqn:gradflow_reg}
-\end{align}
-where 
-\begin{align}
-v_t(x) \triangleq \nabla \Psi_t(x) = \int_{\Sp^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta \label{eqn:idt_v}
-\end{align}
-and
-\begin{align}
-\Psi_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi_{t,\theta}(\langle \theta, x \rangle) \> d\theta.
-\end{align}
-Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$ and $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$.
+% Let $\rho_t$ be the density of a measure $\mu_t$ with respect to the Lebesgue measure, such that $\mu_t(dx) = \rho_t(x) dx$. In this section, we will be interested in the following gradient flow in $\W$:
+% \begin{align}
+% \partial_t \rho_t &= - \nabla_{\W} \F_\lambda(\rho_t) \\
+% &=  \nabla \cdot (\rho_t \> v_t) + \lambda \Delta \rho_t, \label{eqn:gradflow_reg}
+% \end{align}
+% where 
+% \begin{align}
+% v_t(x) \triangleq \nabla \Psi_t(x) = \int_{\Sp^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta \label{eqn:idt_v}
+% \end{align}
+% and
+% \begin{align}
+% \Psi_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi_{t,\theta}(\langle \theta, x \rangle) \> d\theta.
+% \end{align}
+% Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$ and $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$.
 
-We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
-\begin{align}
-d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
-\end{align}
-where $W_t$ denotes the standard Brownian motion.
+% We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
+% \begin{align}
+% d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
+% \end{align}
+% where $W_t$ denotes the standard Brownian motion.
 
-\begin{assumption}
-\label{asmp:sde_ergo}
-For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
-\end{assumption}
+\section{Proof of Proposition~\ref{prop:dist_statmeas}}
 
-\begin{assumption}
-\label{asmp:sde_expconv}
-The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, such that there exists $C_0, C_1 >0$
-\begin{align}
-\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
-\end{align}
-\end{assumption}
-
-We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
-
-\begin{prop}
-\label{prop:dist_statmeas}
-Consider the following SDE
-\begin{align}
-d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
-\end{align}
-Assume that it satisfies \Cref{asmp:sde_ergo} with the invariant measure denoted by $\nu_\epsilon$. Let $\rho^\epsilon_t$ denote the probability density function of $Y_t$ at time $t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$  \umut{This assumption is a bit weird. I'll recheck it.}
-\begin{align}
-\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
-\end{align}
-Then the following bound holds:
-\begin{align}
-\lim_{\epsilon \rightarrow 0} \| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 \leq 2 C \lambda.
-\end{align}
-\end{prop}
 %
 \begin{proof}
 By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
@@ -65,69 +37,7 @@ where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result 
 \end{proof}
 %
 
-
-
-\section{Euler Discretization}
-
-
-Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
-samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, this is not possible since the drift $v_t$ cannot be computed analytically, and the SDE \eqref{eqn:sde} is a continuous-time process.
-
-We now consider the approximate Euler-Maruyama discretization, that is given as follows:
-\begin{align}
-\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_k(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
-\end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_{kh}$.
-
-
-By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. We consider the following assumptions:
-\begin{assumption}
-\label{asmp:lipschitz}
-The drift is Lipschitz continuous, i.e.\ there exits $L < \infty$ such that
-\begin{align}
-\| v_t(x) - v_{t'}(x') \| \leq L ( \|x-x' \| + |t-t'|).
-\end{align}
-\end{assumption}
-%
-\begin{assumption}
-\label{asmp:dissip}
-For all $t \geq 0$, $v_t$ is dissipative, i.e. for all $x \in \R^d$.
-\begin{align}
-\langle x, v_t(x) \rangle \geq m \|x\|^2 -b
-\end{align}
-for some $m,b >0$.
-\end{assumption}
-%
-\begin{assumption}
-\label{asmp:stochgrad}
-The estimator of the drift is unbiased, i.e.\ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and its variance satisfies the following condition for some $\delta \in (0,1)$ and for all $t\geq 0$, $x \in \R^d$:
-\begin{align}
-\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2).
-\end{align}
-\end{assumption}
-%
-\begin{assumption}
-\label{asmp:init_fun}
-The function $\Psi_t$ satisfies the following conditions for all $t \geq 0$:
-\begin{align}
-|\Psi_t(0)| \leq A, \qquad \text{and} \qquad \|v_t(0)\| \leq B
-\end{align}
-for $A,B \geq 0$.
-\end{assumption}
-
-
-We are interested in computing the distance $\| \muh_{Kh} - \nu_\lambda \|_{\TV}$, where $\muh_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$. %$(X_t)_t$ is the solution of the continuous-time SDE \eqref{eqn:sde} and 
-
-We start by upper-bounding the first term. 
-%
-\begin{lemma}
-\label{lem:euler}
-Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
-\begin{align}
-\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
-\end{align}
-where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
-\end{lemma}
+\section{Proof of Lemma~\ref{lem:euler}}
 %
 %
 \begin{proof}
@@ -201,30 +111,13 @@ This concludes the proof.
 \end{proof}
 
 
-\begin{thm}
-Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
-\begin{align}
-\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \left \lbrace  \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2  \delta K h}{8\lambda} \right \rbrace^{1/2} +  C_3 \exp(-C_4 Kh \lambda),
-\end{align}
-for some $C_1,C_2,C_3,C_4 > 0$.
-\end{thm}
+\section{Proof of Theorem~\ref{thm:euler}}
 %
 \begin{proof}
 The proof is a direct consequence of the triangle inequality, Lemma~\ref{lem:euler}, and assumption \Cref{asmp:sde_expconv}.
 \end{proof}
 
-\begin{cor}
-  \label{coro:precision}
-  Assume that \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then for all $\varepsilon >0$, setting
-  \begin{align}
-T = Kh  = \ceil{-\log(\varepsilon/(2C_3))/(C_4\lambda)} \, , \qquad 
-h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\right)^{1/2} \,,
-  \end{align}
-  we have
-  \begin{align}
-    \| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} . 
-  \end{align}
-\end{cor}
+\section{Proof of Corollary~\ref{coro:precision}}
 \begin{proof}
 Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$ imply that
 \begin{align}

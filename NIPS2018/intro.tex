@@ -1,0 +1,28 @@
+%!TEX root = ./nips_2018_sketchmcmc.tex
+
+\section{Introduction}
+
+% \begin{itemize}
+% \item Short intro to implicit generative models
+% \item Connection with optimal transport \cite{genevay2017gan}, several other papers
+% \item Information about sliced-Wasserstein distance and usage in generative modeling \cite{bonnotte2013unidimensional,kolouri2018sliced,wu2017generative}
+% \item Contributions of the current paper
+% \begin{itemize}
+% \item Development of a novel gradient flow for generative modeling purpose
+% \item Establish the connections with SDEs
+% \item Develop a practical way to simulate the SDE
+% \item Establish theoretical guarantees
+% \item Experimental validation
+% \end{itemize}
+% \end{itemize}
+
+
+Implicit generative modeling has become very popular and has proven successful in various fields. Variational auto-encoders (VAE) and generative adversarial networks (GAN) are the two well-known examples. The goal in these approaches can be briefly described as learning the underlying probability measure of a given data sample, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the outputs of this map will coincide with the target measure $\nu$. 
+
+This can be explained using some `push operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mathbb{B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
+
+Most of the current generative modeling strategies consider an operator that belongs to a parametric family $T_{\phi}$ with $\phi \in \Phi$, and aims to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by trying to minimize the following optimization problem:
+\begin{align}
+\phi^\star = \argmin_{\phi \in \Phi} \W(T_{\phi \#}\mu, \nu),
+\end{align}
+where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}. Genevay et al.\ \cite{genevay2017gan} showed that Wasserstein GANs and VAEs both use this formulation with different parametrizations. 

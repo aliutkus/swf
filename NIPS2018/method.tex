@@ -1,0 +1,115 @@
+%!TEX root = ./nips_2018_sketchmcmc.tex
+
+\section{Sliced-Wasserstein Flows for Generative Modeling}
+
+% \begin{itemize}
+% \item Start from the flow given in \cite{bonnotte2013unidimensional} and discuss the limitations 
+% \begin{itemize}
+% \item No convergence guarantee
+% \item Over-fitting risk when the target is a collections of Dirac masses
+% \end{itemize}
+% \item Motivation for the entropy-regularization (discuss the differences with the Sinkhorn distances \cite{genevay2018learning})
+% \item Development of the new gradient flow -- first theoretical result
+% \item Establish the distance between the stationary measures of the two gradient flows (second theoretical result)
+% \item View the new flow as a non-linear Fokker-Planck equation -- establish the connection with the appropriate SDE
+% \item Develop the numerical scheme 
+% \item Analyze the TV distance between the measure at iteration $k$ and the invariant measure
+% \item We don't need to see the data, we just need the projections. In addition to its computational implications, this can be crucial for privacy preserving applications
+% \end{itemize}
+
+
+Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pitie2005n} and develops a continuity equation, given as follows:
+\begin{align}
+\partial_t \rho_t - \nabla \cdot (\rho_t v_t) = 0,
+\end{align}
+where $\rho_t$ is the density of $\mu_t$ and
+\begin{align}
+v_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta. \label{eqn:idt_v}
+\end{align}
+Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. In fact, one can show that, this is nothing but a gradient flow in the Wasserstein spaces, given as follows:
+\begin{align}
+\partial_t \rho = - \nabla_{\W} \F(\rho) \label{eqn:gradflow}
+\end{align}
+where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
+\begin{align}
+\F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
+\end{align}
+where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
+\begin{align}
+\rho^\star = \argmin_\rho \F(\rho).
+\end{align}
+Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\rho_0$ and bring it closer to $\pi$ as $t$ evolves.
+
+% By following \cite{santambrogio2017euclidean}, the gradient given in \eqref{eqn:gradflow} can be written as follows:
+% \begin{align}
+% \nabla_{\W} \F(\rho) = -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho}(\rho) \bigr) \Bigr), \label{eqn:gradw2}
+% \end{align}
+% where $\frac{\delta \F}{\delta \rho}(\rho)$ denotes the first variation of $\F$.
+
+By this definition, $\mu_t$ should directly go to $\nu$. However, in practical settings, we will have finitely many samples from $\mu_0$ and $\nu$, therefore this scheme will somehow `overfit' to the data distribution. Therefore what we propose is to somehow `regularize' the gradient flow by introducing an entropy term to the minimization process. In particular, we modify the gradient flow given in \eqref{eqn:gradflow} as follows:
+\begin{align}
+\partial_t \rho = - \nabla_{\W} \F_\lambda(\rho),
+\end{align}
+where
+\begin{align}
+\F_\lambda(\rho) \triangleq \F(\rho) + \lambda \He(\rho).
+\end{align}
+Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
+
+This time the optimization problem is modified:
+\begin{align}
+\min_\rho \F_\lambda(\rho),
+\end{align}
+in which $\pi$ is no longer an optimizer. The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
+
+We can now construct the modified gradient flow as follows:
+\begin{align}
+\partial_t \rho &= - \nabla_{\W} \F_\lambda(\rho) \\
+&=  \nabla \cdot (\rho \> v_t) + \lambda \Delta \rho. \label{eqn:gradflow_reg}
+\end{align}
+
+Here, we present our first theoretical result. 
+\begin{thm}
+The gradient flow is a valid gradient flow. \umut{Szymon.}
+\end{thm}
+
+We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
+\begin{align}
+d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
+\end{align}
+where $W_t$ denotes the standard Brownian motion. In practice we can simulate this SDE by using the Euler-Maruyama scheme:
+\begin{align}
+X_{n+1} = X_n - h v_n(X_n) + \sqrt{2 \lambda h} Z_{n+1},
+\end{align}
+where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $h$ denotes the step-size. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. \umut{Mention particle method}
+
+\begin{assumption}
+\label{asmp:sde_ergo}
+For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
+\end{assumption}
+
+\begin{assumption}
+\label{asmp:sde_expconv}
+The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, such that there exists $C_0, C_1 >0$
+\begin{align}
+\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
+\end{align}
+\end{assumption}
+
+We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
+
+\begin{prop}
+\label{prop:dist_statmeas}
+Consider the following SDE
+\begin{align}
+d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
+\end{align}
+Assume that it satisfies \Cref{asmp:sde_ergo} with the invariant measure denoted by $\nu_\epsilon$. Let $\rho^\epsilon_t$ denote the probability density function of $Y_t$ at time $t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$  \umut{This assumption is a bit weird. I'll recheck it.}
+\begin{align}
+\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
+\end{align}
+Then the following bound holds:
+\begin{align}
+\lim_{\epsilon \rightarrow 0} \| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 \leq 2 C \lambda.
+\end{align}
+\end{prop}
