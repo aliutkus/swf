@@ -26,9 +26,9 @@ where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and d
 
 Since $\W$ is a linear program with linear constraints, it has a dual formulation, known as the Kantorovich problem:
 \begin{align}
-\W(\mu,\nu) = \max_{\psi \in \textnormal{1-Lipschitz}} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}, \label{eqn:w2dual}
+\W(\mu,\nu) = \sup_{\psi \in \textnormal{1-Lipschitz}} \sqrt{2}\Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2}, \label{eqn:w2dual}
 \end{align}
-where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the maximum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
+where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
 Provided that $\mu$ satisfies a mild regularity condition, we have the following nice uniqueness result.
 \begin{thm}[Theorem 1.4 of \cite{santambrogio2010introduction}]
