@@ -107,14 +107,18 @@ Finally, by using the data processing and Pinsker inequalities, we obtain:
 =& \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda}.
 \end{align}
 This concludes the proof.
-
+%
 \end{proof}
 
 
 \section{Proof of Theorem~\ref{thm:euler}}
 %
 \begin{proof}
-The proof is a direct consequence of the triangle inequality, Lemma~\ref{lem:euler}, and assumption \Cref{asmp:sde_expconv}.
+By triangle inequality, we have that
+\begin{align}
+\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}.
+\end{align}
+Then the desired result is a direct consequence of Lemma~\ref{lem:euler} and assumption \Cref{asmp:sde_expconv}.
 \end{proof}
 
 \section{Proof of Corollary~\ref{coro:precision}}

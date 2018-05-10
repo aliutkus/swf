@@ -1,6 +1,6 @@
 %!TEX root = ./nips_2018_sketchmcmc.tex
 
-\section{Sliced-Wasserstein Flows for Generative Modeling}
+\section{Regularized Sliced-Wasserstein Flows for Generative Modeling}
 
 % \begin{itemize}
 % \item Start from the flow given in \cite{bonnotte2013unidimensional} and discuss the limitations 
@@ -81,7 +81,7 @@ where $W_t$ denotes the standard Brownian motion. In practice we can simulate th
 \begin{align}
 X_{n+1} = X_n - h v_n(X_n) + \sqrt{2 \lambda h} Z_{n+1},
 \end{align}
-where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $h$ denotes the step-size. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$. \umut{Mention particle method}
+where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $h$ denotes the step-size. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$.
 
 \begin{assumption}
 \label{asmp:sde_ergo}
@@ -90,10 +90,11 @@ For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution deno
 
 \begin{assumption}
 \label{asmp:sde_expconv}
-The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, such that there exists $C_0, C_1 >0$
-\begin{align}
-\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
-\end{align}
+The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
+% \begin{align}
+$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$,
+% \end{align}
+where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
 \end{assumption}
 
 We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
@@ -113,3 +114,17 @@ Then the following bound holds:
 \lim_{\epsilon \rightarrow 0} \| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 \leq 2 C \lambda.
 \end{align}
 \end{prop}
+
+\subsection{Practical algorithm for simulation}
+
+Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
+samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, this is not possible since the drift $v_t$ cannot be computed analytically, and the SDE \eqref{eqn:sde} is a continuous-time process.  
+
+We now consider the approximate Euler-Maruyama discretization, that is given as follows:
+\begin{align}
+\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_k(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
+\end{align}
+where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_k$ is a computable unbiased estimator of $v_{kh}$.
+
+\umut{Mention particle method}
+

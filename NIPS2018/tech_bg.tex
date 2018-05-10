@@ -19,9 +19,18 @@
 
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
-\W(\mu,\nu) \triangleq \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy),
+\W(\mu,\nu) \triangleq \Biggl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Biggr\}^{1/2}, \label{eqn:w2}
 \end{align}
-where ${\cal C}(\mu,\nu)$ denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$, more precisely ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | P_{1\#}\gamma = \mu, P_{2\#}\gamma = \nu  \}$. Here $P_1(x,y) \triangleq x$ and $P_2(x,y) \triangleq y$, therefore $P_{1\#}$ and $P_{2\#}$ are the marginalization operators.
+where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$. More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
+
+Since $\W$ is a linear program with linear constraints, it has a dual formulation, known as the Kantorovich problem:
+\begin{align}
+\W(\mu,\nu) = \max_{\psi \in \textnormal{1-Lipschitz}} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}, \label{eqn:w2dual}
+\end{align}
+where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the maximum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
+
+
+
 
 
 

@@ -17,12 +17,23 @@
 % \end{itemize}
 
 
-Implicit generative modeling has become very popular and has proven successful in various fields. Variational auto-encoders (VAE) and generative adversarial networks (GAN) are the two well-known examples. The goal in these approaches can be briefly described as learning the underlying probability measure of a given data sample, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the outputs of this map will coincide with the target measure $\nu$. 
+Implicit generative modeling has become very popular recently and has proven successful in various fields. Variational auto-encoders (VAE) and generative adversarial networks (GAN) are the two well-known examples. Recently, it has been shown that these methods are trying to solve an optimal transport problem.
 
-This can be explained using some `push operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mathbb{B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
 
-Most of the current generative modeling strategies consider an operator that belongs to a parametric family $T_{\phi}$ with $\phi \in \Phi$, and aims to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by trying to minimize the following optimization problem:
+The goal in these approaches can be briefly described as learning the underlying probability measure of a given data sample, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability laws. The basic idea in these strategies is to start from a simple distribution denoted as $\mu \in \PS(\Omega_\mu)$ and find a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$ such that the law of the output of this map will coincide with the target measure $\nu$. 
+
+This can be explained using some `push operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$.
+
+Most of the current generative modeling strategies consider an operator that belongs to a parametric family $T_{\phi}$ with $\phi \in \Phi$, and aims to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 \begin{align}
 \phi^\star = \argmin_{\phi \in \Phi} \W(T_{\phi \#}\mu, \nu),
 \end{align}
 where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}. Genevay et al.\ \cite{genevay2017gan} showed that Wasserstein GANs and VAEs both use this formulation with different parametrizations. 
+
+In this study, we follow a completely different approach and we consider a functional optimization problem, that is defined through gradient flows for measures in the Wasserstein space. Informally, the flow will have a shape as follows:
+\begin{align}
+\partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \label{eqn:gradflow}
+\end{align}
+where the functional $\mathrm{Cost}$ computes a discrepancy between $\mu_t$ and $\nu$, $\mathrm{Reg}$ denotes a regularization functional, and $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric for probability measures. If this flow can be simulated, ideally one would hope that $\mu_t$ will converge to the minimum of the Cost functional.
+
+However, in general these flows cannot be either solved or simulated perfectly. \umut{discuss $\SW$.}
