@@ -86,3 +86,7 @@ $h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\r
     $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta K h}{8\lambda}\right)^{1/2} $. 
   % \end{align}
 \end{cor}
+
+\begin{remark}
+By following a similar approach, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, Assumption \Cref{asmp:sde_ergo}, and letting $\epsilon$ go to zero. 
+\end{remark} 

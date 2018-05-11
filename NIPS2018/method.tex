@@ -97,17 +97,17 @@ We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
 
 \begin{prop}
 \label{prop:dist_statmeas}
-Consider the following SDE
+Assume that the SDE \eqref{eqn:sde} satisfies \Cref{asmp:sde_ergo}. Denote the probability distribution of $X_t$ at time $t$ by $\mu_t(dx) = \rho_t (x) dx$. Furthermore, consider the following SDE
 \begin{align}
 d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
 \end{align}
-Assume that it satisfies \Cref{asmp:sde_ergo} with the invariant measure denoted by $\nu_\epsilon$. Let $\rho^\epsilon_t$ denote the probability density function of $Y_t$ at time $t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$  \umut{This assumption is a bit weird. I'll recheck it.}
+Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t$ at time $t$ by $\mu^\epsilon_t$ which admits a density $\rho^\epsilon_t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$ that depends on $t$, such that
 \begin{align}
 \int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
 \end{align}
 Then the following bound holds:
 \begin{align}
-\lim_{\epsilon \rightarrow 0} \| \nu_\lambda - \nu_\epsilon \|_{\TV}^2 \leq 2 C \lambda.
+\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda.
 \end{align}
 \end{prop}
 
