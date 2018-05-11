@@ -117,9 +117,9 @@ We now focus on the first issue. In order to highlight the fact that the drift i
 
 Our approach is based on defining a \emph{particle system}, that is given as follows:
 \begin{align}
-d X_t^i = - v(X_t^i, {\cal L}(\{X_t^j\}_{j=1}^N)) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N,
+d X_t^i = - v(X_t^i, \tilde{\mu}_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N,
 \end{align}
-where ${\cal L}(\{X_t^j\}_{j=1}^N)$ denotes the law of $\{X_t^j\}_{j=1}^N$. 
+where $i$ denotes the particle index, $N$ denotes the total number of particles, and $\tilde{\mu}_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. 
 
 We now consider the approximate Euler-Maruyama discretization, that is given as follows:
 \begin{align}
