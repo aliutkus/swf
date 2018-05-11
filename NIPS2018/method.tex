@@ -108,22 +108,22 @@ Then the following bound holds:
 where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
 \end{prop}
 
-\section{Practical Simulation Algorithm for the SDE}
+\section{Discretized Particle System for Simulating the SDE}
 
 Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
 samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
 
-We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be more clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drifts also depend on the distribution of $X_t$. By exploiting this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing and approximate simulation method for \eqref{eqn:sde}. 
+We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$ as well. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing and approximate simulation method for \eqref{eqn:sde}. 
 
-Our approach is based on defining a \emph{particle system}, that is given as follows:
+Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}, and is given as follows:
 \begin{align}
-d X_t^i = - v(X_t^i, \tilde{\mu}_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N,
+d X_t^i = - v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N$ denotes the total number of particles, and $\tilde{\mu}_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. 
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be efficiently simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
 
-We now consider the approximate Euler-Maruyama discretization, that is given as follows:
+We now consider the approximate Euler-Maruyama discretization for each particle, that is given as follows:
 \begin{align}
-\bar{X}_{k+1} = \bar{X}_k - h \hat{v}_{kh}(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
+\bar{X}^i_{k+1} = \bar{X}^i_k - h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \hat{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1},
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_{kh}$ is a computable unbiased estimator of $v_{kh}$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are i.i.d.\ samples from $\mu_0$.
 
