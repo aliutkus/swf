@@ -2,26 +2,30 @@
 
 \section{Theoretical Analysis}
 
-
+\newcommand{\minvsp}{-5}
 
 We are interested in computing the distance $\| \muh_{Kh} - \nu_\lambda \|_{\TV}$, where $\muh_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$.
 
-By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. We consider the following assumptions:
+% By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. 
+
+We consider the following assumptions: \vspace{\minvsp pt}
 \begin{assumption}
 \label{asmp:sde_expconv}
 The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially fast to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
 % \begin{align}
-$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$,
+$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$.
 % \end{align}
-where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
+\vspace{\minvsp pt}
 \end{assumption}
 %
 \begin{assumption}
 \label{asmp:lipschitz}
-The drift is Lipschitz continuous, i.e.\ there exits $L < \infty$ such that
+% The drift is Lipschitz continuous, i.e.\ t
+There exits $L < \infty$ such that
 % \begin{align}
 $\| v_t(x) - v_{t'}(x') \| \leq L ( \|x-x' \| + |t-t'|)$.
 % \end{align}
+\vspace{\minvsp pt}
 \end{assumption}
 %
 \begin{assumption}
@@ -31,23 +35,27 @@ For all $t \geq 0$, $v_t$ is dissipative, i.e. for all $x \in \R^d$,
 $\langle x, v_t(x) \rangle \geq m \|x\|^2 -b$,
 % \end{align}
 for some $m,b >0$.
+\vspace{\minvsp pt}
 \end{assumption}
 %
 \begin{assumption}
 \label{asmp:stochgrad}
-The estimator of the drift is unbiased, i.e.\ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and its variance satisfies the following condition for some $\delta \in (0,1)$ and for all $t\geq 0$, $x \in \R^d$:
+The estimator of the drift satisfies the following conditions: \ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and for all $t\geq 0$, $x \in \R^d$,
 % \begin{align}
-$\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2)$.
+$\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2)$,
 % \end{align}
+for some $\delta \in (0,1)$.
+\vspace{\minvsp pt}
 \end{assumption}
 %
 \begin{assumption}
 \label{asmp:init_fun}
-The function $\Psi_t$ satisfies the following conditions for all $t \geq 0$: $|\Psi_t(0)| \leq A$ and $\|v_t(0)\| \leq B$,
+For all $t \geq 0$: $|\Psi_t(0)| \leq A$ and $\|v_t(0)\| \leq B$,
 % \begin{align}
 % |\Psi_t(0)| \leq A, \qquad \text{and} \qquad \|v_t(0)\| \leq B
 % \end{align}
 for $A,B \geq 0$.
+% \vspace{\minvsp pt}
 \end{assumption}
 
 
@@ -88,5 +96,5 @@ $h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{L^2 T}(1+3\lambda d)^{-1}\r
 \end{cor}
 
 \begin{remark}
-By following a similar approach, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, Assumption \Cref{asmp:sde_ergo}, and letting $\epsilon$ go to zero. 
+By following a similar approach, for any $\epsilon > 0$, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, and Assumption \Cref{asmp:sde_ergo}. %and letting $\epsilon$ go to zero. 
 \end{remark} 

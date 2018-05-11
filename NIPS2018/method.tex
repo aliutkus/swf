@@ -76,15 +76,11 @@ The gradient flow is a valid gradient flow. \umut{Szymon.}
 
 \subsection{Connection with stochastic differential equations}
 
-We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is the Fokker-Planck equation associated with the following stochastic differential equation (SDE):
+We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is a Fokker-Planck-type equation that has a probabilistic counterpart. More precisely, the following stochastic differential equation (SDE):
 \begin{align}
 d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
 \end{align}
-where $W_t$ denotes the standard Brownian motion. In practice we can simulate this SDE by using the Euler-Maruyama scheme:
-\begin{align}
-X_{n+1} = X_n - h v_n(X_n) + \sqrt{2 \lambda h} Z_{n+1},
-\end{align}
-where $\{Z_n\}_{n}$ denotes a series of standard Gaussian random variables and $h$ denotes the step-size. In practical applications, it will not be possible to exactly simulate $v_n$, therefore we will need to develop an unbiased estimator of $v_n$, such that $\mathbb{E}[\hat{v}_n (x)] = v_n(x)$ for all $n$ and $x$.
+where $W_t$ denotes the standard Brownian motion, is associated with \eqref{eqn:gradflow_reg}, in the sense that the probability measures of the solution process $(X_t)_{t\geq0}$ satisfies the flow \eqref{eqn:gradflow_reg}.  
 
 \begin{assumption}
 \label{asmp:sde_ergo}
@@ -107,20 +103,27 @@ Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t
 \end{align}
 Then the following bound holds:
 \begin{align}
-\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda.
+\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda,
 \end{align}
+where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
 \end{prop}
 
 \section{Practical Simulation Algorithm for the SDE}
 
 Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
-samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, this is not possible since the drift $v_t$ cannot be computed analytically, and the SDE \eqref{eqn:sde} is a continuous-time process.  
+samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
+
+We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be more clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drifts also depend on the distribution of $X_t$. By exploiting this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing and approximate simulation method for \eqref{eqn:sde}. 
+
+Our approach is based on defining a \emph{particle system}, that is given as follows:
+\begin{align}
+d X_t^i = - v(X_t^i, {\cal L}(\{X_t^j\}_{j=1}^N)) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N,
+\end{align}
+where ${\cal L}(\{X_t^j\}_{j=1}^N)$ denotes the law of $\{X_t^j\}_{j=1}^N$. 
 
 We now consider the approximate Euler-Maruyama discretization, that is given as follows:
 \begin{align}
 \bar{X}_{k+1} = \bar{X}_k - h \hat{v}_{kh}(\bar{X}_k) + \sqrt{2 \lambda h} Z_{k+1},
 \end{align}
 where $k \in \mathbb{N}_+$ denotes the iteration number, $\{Z_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}_{kh}$ is a computable unbiased estimator of $v_{kh}$.
-
-\umut{Mention particle method}
 
