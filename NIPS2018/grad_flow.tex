@@ -2,4 +2,68 @@
 
 \section{Construction of the entropy-regularized gradient-flow}
 
-To be filled by Szymon
+We let $\mathcal{F}_{\lambda}(\mu) = \frac{1}{2} SW_2^2(\mu, \nu) + \lambda H(\mu)$ for a chosen reference measure $\nu$.
+
+\begin{lemma}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a time step $h > 0$, regularization constant $\lambda > 0$ and a radius $r > \sqrt{d}$. For a probability measure $\mu_0$ on $B(0, r)$ with density $\rho_0 \in L^{\infty}$, there is a probability measure $\mu$ on $\overline{B}(0,r)$ minimizing:
+\[
+\mathcal{G}(\mu) = \mathcal{F}_{\lambda} (\mu) + \frac{1}{2h} W_2^2(\mu, \mu_0) 
+\]
+Moreover the optimal $\mu$ has a density $\rho$ on $B(0,r)$ and:
+\begin{equation} \label{ineq:inf_norm_bound}
+||\rho||_{L^{\infty}} \leq (1 + h/\sqrt{d})^d ||\rho_0||_{L^{\infty}}
+\end{equation}
+\end{lemma}
+\begin{proof}
+The set of measures supported on $\cB(0,r)$ is compact in the topology given by $W_2$ metric. Furthermore it is well known [[some ref]] that functional $H$ is lower semicontinuous in this topology. Since $SW_2$ is a distance function [[Bonnotte]], dominated by $\frac{1}{\sqrt{d}} W_2$ [[Bonnotte]] we have:
+\[
+|SW_2(\pi_0, \nu) - SW_2(\pi_1, \nu)| \leq SW_2(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}W_2(\pi_0, \pi_1).
+\]
+The above means that $SW_2(\cdot, \nu)$ is continuous with respect to topology given by $W_2$, which implies that $SW_2^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $G$ is a lower semicontinuous function on a compact set, bounded from below. Hence there exists a minimum  $\mu$ of $G$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $H(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
+
+If $\rho_0$ is smooth and positive on $B(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by [[Bonnotte]] Lemma 5.4.3. When $\rho_0$ is just in $L^{\infty}(\cB(0,r))$, we proceed by smoothing. Let $\mu_t$ be the heat flow on $\cB(0,r)$ starting from $\mu_0$ ([[some ref on existance?]]). Then for any $t > 0$, $\mu_t$ has a smooth density $\rho_t$ such that $||\rho_t||_{L^{\infty}} \leq ||\rho_0||_{L^{\infty}}$. Let $\hat{\mu_t}$ be the minimum of $ \mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h} W_2^2(\cdot, \mu_t)$, and let $\hat{\rho_t}$ be the density of $\hat{\mu_t}$. Using [[Bonnotte]] Lemma 5.4.3 we get 
+\[
+||\hat{\rho_t} ||_{L^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{L^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_0||_{L^{\infty}}
+\]
+and so for all $t>0$ densities $\hat{\rho_t}$ lie in a ball of finite radius in $L^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $L^{\infty}(\cB(0,r))$ in weak star topology, we can choose a sequence $(t_k)_{k \geq 1}$  of positive numbers such that $\lim_{k \rightarrow \infty} t_k = 0$ and $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$ converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
+\[
+\int \hat{\rho} f dx = \lim_{k \rightarrow \infty} \int \rho_{t_k} f dx = \lim_{k \rightarrow \infty} \int f d\mu_{t_k} = \int f d\mu
+\]
+Furthermore, since $\hat{\rho}$ is the weak star limit of a bounded subsequence, it obeys the same bound as subsequence, that is:
+\[
+||\hat{\rho} ||_{L^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_0||_{L^{\infty}}
+\]
+To finish, we just need to prove that $\hat{\mu}$ is a minimum of $G$. We remind our reader, that we already established existence of some minimum $\mu$ (that might be different from $\hat{\mu}$). Since $\hat{\mu}_{t_k}$ converges weakly to $\hat{\mu}$ in $\mathcal{P}(\cB(0,r))$, it implies convergence of second moments (because $x^2$ is continuous and bounded on $\cB(0,r)$), and hence convergence in $W_2$ as well. Similarly $\mu_{t_k}$ converges to $\mu_0$ in $W_2$. Using the lower semicontinuity of $G$ we now have:
+\[
+\begin{aligned}
+\mathcal{F}_{\lambda}(\hat{\mu}) + \frac{1}{2h} W_2^2(\hat{\mu}, \mu_0)  & \leq \liminf_{k \rightarrow \infty} \left( \mathcal{F}_{\lambda}(\hat{\mu}_{t_k}) + \frac{1}{2h} W_2^2(\hat{\mu}_{t_k} , \mu_0) \right) \\
+& \leq \liminf_{k \rightarrow \infty}  \mathcal{F}_{\lambda}(\mu) + \frac{1}{2h} W_2^2(\mu , \mu_{t_k})   \\
+& + \frac{1}{2h}  W_2^2(\hat{\mu}_{t_k}, \mu_0) - \frac{1}{2h} W_2^2(\hat{\mu}_{t_k}, \mu_{t_k})   \\
+& = \mathcal{F}_{\lambda} (\mu) + \frac{1}{2h} W_2^2(\mu, \mu_0) 
+\end{aligned}
+\]
+where the second inequality comes from the fact, that $\hat{\mu}_{t_k}$ minimizes $\mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h}W_2^2(\cdot, \mu_{t_k})$. From the above inequality and previously established facts, it follows that $\hat{\mu}$ is a minimum of $G$ with density satisfying \ref{ineq:inf_norm_bound}.
+\end{proof}
+
+Existance of gradient flow (generalized minimizing movement scheme)
+\begin{thm} \label{thm:existance_gmm_scheme}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
+\[
+\mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}W_2^2(\mu_+, \mu_-)
+\]
+Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
+\[
+||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}
+\]
+\end{thm}
+\begin{proof}
+The proof is exactly the same as the proof of Theorem 5.5.3 in [[Bonnotte]], but we include it for completeness   ........
+\end{proof}
+
+\begin{thm}
+Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
+\[
+\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta 
+\]
+in a weak sense.
+\end{thm}
