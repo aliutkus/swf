@@ -56,21 +56,55 @@ where
 \end{align}
 Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
 
+
 This time the optimization problem is modified:
 \begin{align}
 \min_\rho \F_\lambda(\rho),
 \end{align}
 in which $\pi$ is no longer an optimizer. The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
 
-We can now construct the modified gradient flow as follows:
-\begin{align}
-\partial_t \rho &= - \nabla_{\W} \F_\lambda(\rho) \\
-&=  \nabla \cdot (\rho \> v_t) + \lambda \Delta \rho. \label{eqn:gradflow_reg}
-\end{align}
+% We can now construct the modified gradient flow as follows:
+% \begin{align}
+% \partial_t \rho &= - \nabla_{\W} \F_\lambda(\rho) \\
+% &=  \nabla \cdot (\rho \> v_t) + \lambda \Delta \rho. \label{eqn:gradflow_reg}
+% \end{align}
 
-Here, we present our first theoretical result. 
+% Here, we present our first theoretical result. 
+% \begin{thm}
+% The gradient flow is a valid gradient flow. \umut{Szymon.}
+% \end{thm}
+
+% We let $\mathcal{F}_{\lambda}(\mu) = \frac{1}{2} SW_2^2(\mu, \nu) + \lambda H(\mu)$ for a chosen reference measure $\nu$.
+
+% \begin{lemma}
+% Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a time step $h > 0$, regularization constant $\lambda > 0$ and a radius $r > \sqrt{d}$. For a probability measure $\mu_0$ on $B(0, r)$ with density $\rho_0 \in L^{\infty}$, there is a probability measure $\mu$ on $\overline{B}(0,r)$ minimizing:
+% \[
+% \mathcal{G}(\mu) = \mathcal{F}_{\lambda} (\mu) + \frac{1}{2h} W_2^2(\mu, \mu_0) 
+% \]
+% Moreover the optimal $\mu$ has a density $\rho$ on $B(0,r)$ and:
+% \begin{equation} \label{ineq:inf_norm_bound}
+% ||\rho||_{L^{\infty}} \leq (1 + h/\sqrt{d})^d ||\rho_0||_{L^{\infty}}
+% \end{equation}
+% \end{lemma}
+
+\begin{thm} \label{thm:existance_gmm_scheme}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
+\[
+\mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}W_2^2(\mu_+, \mu_-)
+\]
+Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
+\[
+||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}.
+\]
+\end{thm}
+
+
 \begin{thm}
-The gradient flow is a valid gradient flow. \umut{Szymon.}
+Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
+\begin{align}
+\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\end{align}
+in a weak sense.
 \end{thm}
 
 
@@ -113,15 +147,15 @@ where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two proba
 Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
 samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
 
-We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$ as well. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing and approximate simulation method for \eqref{eqn:sde}. 
+We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$ as well. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
 
 Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}, and is given as follows:
 \begin{align}
 d X_t^i = - v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be efficiently simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
 
-We now consider the approximate Euler-Maruyama discretization for each particle, that is given as follows:
+We now consider the approximate Euler-Maruyama discretization for each particle SDE, that is given as follows:
 \begin{align}
 \bar{X}^i_{k+1} = \bar{X}^i_k - h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \hat{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1},
 \end{align}

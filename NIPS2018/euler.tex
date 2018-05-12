@@ -131,51 +131,51 @@ Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$
 By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain the desired result. 
 \end{proof}
 
-\section{Discussion on the assumptions}
+% \section{Discussion on the assumptions}
 
-\umut{This section will be rewritten.}
+% \umut{This section will be rewritten.}
 
-\subsection{Conditions for the unique solution to the flow}
+% \subsection{Conditions for the unique solution to the flow}
 
-The following conditions ensure that there is a unique solution to the flow given in \eqref{eqn:gradflow_reg}:
-\begin{assumption}
-\label{asmp:flowunq_1}
-There exists $p>d+2$ such that for every open ball $B \subset \R^d$, one has
-\begin{align}
-\int_0^T \int_B \|v_t(x)\|^p dx\> dt < \infty.
-\end{align}
-\end{assumption}
-%
-\begin{assumption}
-\label{asmp:flowunq_2}
-The initial measure $\mu_0$ has finite entropy, such that
-\begin{align}
-\int_{\R^d} \rho_0(x) \log \rho_0(x) dx < \infty,
-\end{align}
-where $\mu_0(dx) = \rho_0(x)dx$ and $\rho_0 \in L^1(\R^d)$.
-\end{assumption}
-%
-\begin{assumption}
-\label{asmp:flowunq_3}
-There exist $\alpha, \gamma, \delta, c, k \in \R_+$ such that for all $(t,x) \in [0,T] \times \R^d$ 
-\begin{align}
-\langle v_t(x), x \rangle \leq \gamma - (ck + \delta) \| x\|^{2k},
-\end{align}
-and 
-\begin{align}
-\label{asmp:flowunq_4}
-\|v_t(x)\| \leq \alpha \exp(\frac{c}{2} \|x\|^{2k}), \qquad \text{and} \qquad \int_{\R^d} \exp(\frac{c}{2}\|x\|^{2k} ) \mu_0(dx) < \infty.
-\end{align}
-\end{assumption}
+% The following conditions ensure that there is a unique solution to the flow given in \eqref{eqn:gradflow_reg}:
+% \begin{assumption}
+% \label{asmp:flowunq_1}
+% There exists $p>d+2$ such that for every open ball $B \subset \R^d$, one has
+% \begin{align}
+% \int_0^T \int_B \|v_t(x)\|^p dx\> dt < \infty.
+% \end{align}
+% \end{assumption}
+% %
+% \begin{assumption}
+% \label{asmp:flowunq_2}
+% The initial measure $\mu_0$ has finite entropy, such that
+% \begin{align}
+% \int_{\R^d} \rho_0(x) \log \rho_0(x) dx < \infty,
+% \end{align}
+% where $\mu_0(dx) = \rho_0(x)dx$ and $\rho_0 \in L^1(\R^d)$.
+% \end{assumption}
+% %
+% \begin{assumption}
+% \label{asmp:flowunq_3}
+% There exist $\alpha, \gamma, \delta, c, k \in \R_+$ such that for all $(t,x) \in [0,T] \times \R^d$ 
+% \begin{align}
+% \langle v_t(x), x \rangle \leq \gamma - (ck + \delta) \| x\|^{2k},
+% \end{align}
+% and 
+% \begin{align}
+% \label{asmp:flowunq_4}
+% \|v_t(x)\| \leq \alpha \exp(\frac{c}{2} \|x\|^{2k}), \qquad \text{and} \qquad \int_{\R^d} \exp(\frac{c}{2}\|x\|^{2k} ) \mu_0(dx) < \infty.
+% \end{align}
+% \end{assumption}
 
-The following theorem ensures the uniqueness.
-\begin{thm}[Theorem 3.3 \cite{bogachev2007uniqueness}]
-Assume that \Cref{asmp:flowunq_1,asmp:flowunq_2,asmp:flowunq_3,asmp:flowunq_4} hold. Then, there exists a unique family $\{\mu_t, t\in(0,T]\}$ of probability measures on $\R^d$ solving \eqref{eqn:gradflow_reg}.
-\end{thm}
+% The following theorem ensures the uniqueness.
+% \begin{thm}[Theorem 3.3 \cite{bogachev2007uniqueness}]
+% Assume that \Cref{asmp:flowunq_1,asmp:flowunq_2,asmp:flowunq_3,asmp:flowunq_4} hold. Then, there exists a unique family $\{\mu_t, t\in(0,T]\}$ of probability measures on $\R^d$ solving \eqref{eqn:gradflow_reg}.
+% \end{thm}
 
-\subsection{The assumptions of Proposition~\ref{prop:dist_statmeas}}
+% \subsection{The assumptions of Proposition~\ref{prop:dist_statmeas}}
 
-The assumptions of Proposition~\ref{prop:dist_statmeas} can be satisfied if we further assume certain regularity assumptions on $v_t$. For more information and a discussion about these assumptions, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
+% The assumptions of Proposition~\ref{prop:dist_statmeas} can be satisfied if we further assume certain regularity assumptions on $v_t$. For more information and a discussion about these assumptions, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
 
 
 
