@@ -4,4 +4,7 @@
 
 
 # streaming version
-python streamIDT.py FashionMNIST  --memory_usage 2 --root_data_dir qsketch/data/FashionMNIST --num_quantiles 200  --projectors RandomProjectors  --input_dim 500 --num_samples 3000  --plot --stepsize 200 --reg 0.0001 --batchsize 5 --plot_dir samples_fmnist_stream
+# Sketch
+python streamIDT.py FashionMNIST  --memory_usage 2 --root_data_dir qsketch/data/FashionMNIST  --clip 5000 --num_quantiles 100  --projectors RandomProjectors  --input_dim 2000 --num_samples 3000 --plot_target toydata.npy --plot --stepsize 3000 --reg 0.0001 --batchsize 5 --plot_dir samples_fmnist_stream
+
+# python streamIDT.py FashionMNIST  --memory_usage 2 --root_data_dir qsketch/data/FashionMNIST --num_quantiles 200  --projectors RandomProjectors  --input_dim 500 --num_samples 3000  --plot --stepsize 200 --reg 0.0001 --batchsize 5 --plot_dir samples_fmnist_stream

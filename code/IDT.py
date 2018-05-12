@@ -49,10 +49,14 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
         zd = np.clip(zd, 0, 100)
         transported[:, d] = Ginv(zd)
 
+    shape_noise =  samples.shape # (1, samples.shape[1])
+    noise = np.random.randn(*shape_noise)
+    # from scipy.stats import levy_stable
+    # noise = levy_stable.rvs(alpha=1.5, beta=0, size= shape_noise)
     samples += (stepsize *
                 np.dot(transported - projections, projector)/num_thetas
                 + np.sqrt(stepsize) * reg
-                * np.random.randn(1, samples.shape[1]))
+                * noise)
                 #* np.random.randn(*samples.shape))
 
     return samples, source_qf
@@ -108,7 +112,7 @@ def streamIDT(sketches, samples, stepsize, reg, plot_function):
     for target_qf, projector in sketches:
         print('Transporting, sketch %d' % index, sep=' ', end='\r')
         samples = IDTiteration(samples, projector, None, target_qf,
-                               sketches.quantiles, stepsize, reg)[0]
+                               sketches.quantiles, stepsize, reg*10/(index+1))[0]
         if plot_function is not None:
             plot_function(samples, 0, index)
         index += 1

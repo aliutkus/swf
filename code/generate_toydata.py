@@ -7,7 +7,7 @@ import seaborn as sns
 
 def draw_GMM_parameters(d, K, seed = None):
     ''' randomly draws the parameters of the GMM'''
-    if seed:
+    if seed is not None:
         np.random.seed(seed)
     # weights
     w = rand(K)**2

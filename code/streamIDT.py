@@ -46,7 +46,7 @@ if __name__ == "__main__":
                          "Aborting.")
     if args.root_data_dir is None:
         args.root_data_dir = 'data/'+args.dataset
-    data_loader = sketch.load_data(args.dataset, None, args.root_data_dir,
+    data_loader = sketch.load_data(args.dataset, args.clip, args.root_data_dir,
                                    args.img_size, args.memory_usage)
     data_dim = int(np.prod(data_loader.dataset[0][0].shape))
 
@@ -56,7 +56,8 @@ if __name__ == "__main__":
 
     # prepare the sketch iterator
     sketches = sketch.SketchIterator(data_loader, projectors, args.batchsize,
-                                     args.num_quantiles, 0, args.stop)
+                                     args.num_quantiles, 0, args.stop,
+                                     args.clip)
 
     # get the initial samples
     if args.initial_samples is None:
@@ -123,7 +124,7 @@ if __name__ == "__main__":
 
             # it's an image, output a grid of samples
             [num_samples, data_dim] = samples.shape
-            samples = samples[:min(104, num_samples)]
+            samples = samples[:min(208, num_samples)]
             num_samples = samples.shape[0]
 
             samples = np.reshape(samples,
@@ -134,7 +135,6 @@ if __name__ == "__main__":
                                                         index+1))
     else:
         plot_function = None
-
 
     samples = streamIDT(sketches, samples, args.stepsize, args.reg,
                         plot_function)
