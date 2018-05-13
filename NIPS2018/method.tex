@@ -40,7 +40,7 @@
 
 By this definition, $\mu_t$ should directly go to $\nu$. However, in practical settings, we will have finitely many samples from $\mu_0$ and $\nu$, therefore this scheme will somehow `overfit' to the data distribution. Therefore what we propose is to somehow `regularize' the gradient flow by introducing an entropy term to the minimization process. In particular, we modify the gradient flow given in \eqref{eqn:gradflow} as follows:
 \begin{align}
-\partial_t \rho = - \nabla_{\W} \frac1{2} \SW^2(\rho, \pi) + \lambda \He(\rho),
+\partial_t \rho = - \nabla_{\W} \Biggl\{ \F_\lambda(\rho) \triangleq  \frac1{2} \SW^2(\rho, \pi) + \lambda \He(\rho) \Biggr\},
 \end{align}
 where $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
 
