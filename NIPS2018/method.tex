@@ -90,7 +90,7 @@ in which $\pi$ is no longer an optimizer. The idea in this new gradient flow for
 \begin{thm} \label{thm:existance_gmm_scheme}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
 \[
-\mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}W_2^2(\mu_+, \mu_-)
+\mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-)
 \]
 Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
 \[
@@ -102,13 +102,13 @@ Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
 \begin{thm}
 Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
 \begin{align}
-\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
 in a weak sense.
 \end{thm}
 
 
-\subsection{Connection with stochastic differential equations}
+\section{Connection with Stochastic Differential Equations}
 
 We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is a Fokker-Planck-type equation that has a probabilistic counterpart. More precisely, the following stochastic differential equation (SDE):
 \begin{align}
@@ -142,7 +142,7 @@ Then the following bound holds:
 where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
 \end{prop}
 
-\section{Discretized Particle System for Simulating the SDE}
+\subsection{Particle system for approximating the SDE and the Euler scheme}
 
 Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
 samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
@@ -159,5 +159,23 @@ We now consider the approximate Euler-Maruyama discretization for each particle 
 \begin{align}
 \bar{X}^i_{k+1} = \bar{X}^i_k - h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \hat{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1},
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables, $h$ denotes the step-size, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are i.i.d.\ samples from $\mu_0$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables in $\R^d$, $h$ denotes the step-size, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion.
+
+We now define a computationally tractable estimator $\hat{v}$ of the drift, given as follows:
+\begin{align}
+\hat{v}(x,\hat{\mu}) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\hat{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - x \Bigr] \theta_n , \label{eqn:approxdrift}
+\end{align}
+where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta_{n\#\hat{\mu}}^*}$ and $F_{\theta_{n\#\nu}^*}$ denote the (one-dimensional) CDFs of $\theta_{n\#\hat{\mu}}^*$ and $\theta_{n\#\nu}^*$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
+
+Given the fact that $\hat{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\hat{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\hat{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\hat{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard linear interpolation techniques \umut{cite}, whose details are given in the supplementary document. Since each of these computations are one-dimensional, the error induced at this step is negligible. 
+
+
+
+
+
+
+
+
+
+
 

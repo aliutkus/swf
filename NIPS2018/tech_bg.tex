@@ -42,18 +42,27 @@ This result implies that there exists a perfect solution for transporting sample
 
 \subsection{Gradient flows in the Wasserstein space}
 
-\umut{I'll fill this place once Szymon writes down his parts.}
+% \umut{I'll fill this place once Szymon writes down his parts.}
+
+\begin{itemize}
+\item Talk about generalized minimizing movements
+\end{itemize}
 
 
 \subsection{Sliced-Wasserstein distance}
+\label{sec:sw}
 
 In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distance has an analytical form, given as follows:
 \begin{align}
-\W(\mu,\nu) = \int_0^1 |F^{-1}(\tau) - G^{-1}(\tau)|^2 \> d\tau,
+\W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau,
 \end{align}
-where $F$ and $G$ denote the cumulative distribution functions of $\mu$ and $\nu$, respectively. In this case, the optimal transport map has a closed-form formula, given as follows: $T(x) = (G^{-1} \circ F) (x)$. Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich is therefore given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (G^{-1} \circ F) (x)$.
+where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs that can be interpreted as the \emph{quantile} functions.
+%
+In this case, the optimal transport map has a closed-form formula, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
+%
+Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich potential is given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (F_\nu^{-1} \circ F_\mu) (x)$.
  
-These nice properties of the one-dimensional Wasserstein distance motivate the usage of \emph{sliced-Wasserstein distance} ($\SW$) for practical applications. Before formally defining $\SW$, let us first define the orthogonal projection $\theta^* (x) \triangleq \langle \theta, x \rangle$ for any direction $\theta \in \Sp^{d-1}$ and $x \in \R^d$, where $\langle \cdot, \cdot \rangle$ denotes the Euclidean inner-product and $\Sp^{d-1} \subset \R^d$ denotes the $d$-dimensional unit sphere. Then, the $\SW$ distance is formally defined as follows:
+In the multidimensional case $d > 1$, building a transport map is much more difficult. The nice properties of the one-dimensional Wasserstein distance motivate the usage of \emph{sliced-Wasserstein distance} ($\SW$) for practical applications. Before formally defining $\SW$, let us first define the orthogonal projection $\theta^* (x) \triangleq \langle \theta, x \rangle$ for any direction $\theta \in \Sp^{d-1}$ and $x \in \R^d$, where $\langle \cdot, \cdot \rangle$ denotes the Euclidean inner-product and $\Sp^{d-1} \subset \R^d$ denotes the $d$-dimensional unit sphere. Then, the $\SW$ distance is formally defined as follows:
 \begin{align}
 \SW(\mu,\nu) \triangleq \int_{\Sp^{d-1}} \W (\theta^*_\#\mu, \theta^*_\#\nu) \> d \theta, \label{eqn:sw}
 \end{align}
