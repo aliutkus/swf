@@ -24,7 +24,7 @@ For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distan
 where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and denotes the space of all joint distributions whose marginals coincide with $\mu$ and $\nu$. More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators. 
 
 
-Since $\W$ is a linear program with linear constraints, it has a dual formulation, known as the Kantorovich problem:
+Since $\W$ is a linear program with linear constraints, it has a dual formulation, known as the Kantorovich problem, defined as follows:
 \begin{align}
 \W(\mu,\nu) = \sup_{\psi \in \textnormal{1-Lipschitz}} \sqrt{2}\Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2}, \label{eqn:w2dual}
 \end{align}

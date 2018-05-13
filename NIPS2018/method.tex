@@ -169,10 +169,10 @@ where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two proba
 		    $\hfill i = 1,\dots,N$
 		 }
 		 \caption{Sliced-Wasserstein Flow}
-		 \label{algo:master}
+		 \label{algo:flow}
 	 \end{algorithm2e}
 \end{minipage}
-% \vspace{-20pt}
+\vspace{-20pt}
 \end{wrapfigure}
 
 Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
@@ -201,7 +201,10 @@ where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples th
 
 
 
-Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\bar{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\bar{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. Even though the error induced by this approximation scheme can be incorporated into our current analysis framework, we choose to neglect this error, since these one-dimensional computations can be done very accurately. Therefore, $\hat{v}$ turns out to be an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x\in \Omega$ and $\mu \in \PS(\Omega)$, where the expectation is taken over $\theta_n$.
+Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\bar{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\bar{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. The overall algorithm is illustrated in Algorithm~\ref{algo:flow}.
+
+
+Even though the error induced by this approximation scheme can be incorporated into our current analysis framework, we choose to neglect this error, since these one-dimensional computations can be done very accurately. Therefore, $\hat{v}$ turns out to be an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x\in \Omega$ and $\mu \in \PS(\Omega)$, where the expectation is taken over $\theta_n$.
 
 \umut{If we generate the directions altogether, we can compute the projections of the data points as a preprocessing step, then we don't need to use the data directly.}
 
