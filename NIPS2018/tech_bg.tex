@@ -37,16 +37,32 @@ If $\mu$ is absolutely continuous with respect to the Lebesgue measure, then the
 \end{thm}
  
 
-This result implies that there exists a perfect solution for transporting samples from $\mu$ to samples from $\nu$ and even do so in a way that minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
+This result implies that there exists a solution for transporting samples from $\mu$ to samples from $\nu$ and this solution is optimal in the sense that it minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
 
-\subsection{Gradient flows in the Wasserstein space}
+\subsection{Wasserstein spaces and gradient flows}
 
-% \umut{I'll fill this place once Szymon writes down his parts.}
 
-\begin{itemize}
-\item Talk about generalized minimizing movements
-\end{itemize}
+For a compact domain $\Omega \in \R^d$, the $\W$-distance forms a distance over $\PS(\Omega)$, such that convergence in $\W$ is equivalent to the weak convergence of probability measures (cf.\ \cite{santambrogio2010introduction}[Theorem 2.1]). The metric space $(\PS(\Omega),\W) $ is often called the \emph{Wasserstein space} and is denoted as $\WS(\Omega)$ \cite{santambrogio2017euclidean}. 
+
+In this study, we are interested in functional optimization problems in $\WS$, such as $\min_{\mu\in \WS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.   
+
+The gradient flows in $\WS$ have strong connections with partial differential equations (PDE) of the form of a continuity equation. Assuming that the measure $\mu_t$ admits a density, denoted as $\rho_t$, such a continuity equation would have the following form:
+\begin{align}
+\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0,  \label{eqn:pde}
+\end{align}  
+where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $\WS$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve. 
+%
+In order to prove that the path $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
+\begin{align*}
+\mu^{h}_{(k+1)h} = \argmin_\mu \mathcal{G}(h, k , \mu, \mu^h_{kh}), \quad \text{where,} \quad \mathcal{G}(h, k , \mu_+, \mu_-) \triangleq \mathcal{F}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-). %\triangleq \mathcal{F}(\mu) + \frac{1}{2h}\W(\mu, \mu^k) %\argmin_\rho \Bigl\{ \F(\rho) + \frac1{2h}\W^2(\rho, \rho_k^h) \Bigr\},
+\end{align*} 
+If $(\mu_t)_{t\geq 0}$ appears as the limiting curve $\lim_{h\rightarrow 0}(\mu_t^h)_{t\geq 0}$, then $(\mu_t)_{t\geq 0}$ is called a \emph{generalized minimizing movement} \cite{santambrogio2017euclidean,bonnotte2013unidimensional}. Proving that $(\mu_t)_{t\geq 0}$ is a minimizing movement ensures that the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$ exists; however, the form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis. 
+
+% where, by abusing the notation, we denoted the functional $\F$ as a function of the density $\rho$.
+
+
+% This is formally defined by using \emph{generalized minimizing movements} . 
 
 
 \subsection{Sliced-Wasserstein distance}
@@ -58,7 +74,7 @@ In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distan
 \end{align}
 where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs that can be interpreted as the \emph{quantile} functions.
 %
-In this case, the optimal transport map has a closed-form formula, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
+In this case, the optimal transport map has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \umut{cite}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
 %
 Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich potential is given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (F_\nu^{-1} \circ F_\mu) (x)$.
  
@@ -66,7 +82,7 @@ In the multidimensional case $d > 1$, building a transport map is much more diff
 \begin{align}
 \SW(\mu,\nu) \triangleq \int_{\Sp^{d-1}} \W (\theta^*_\#\mu, \theta^*_\#\nu) \> d \theta, \label{eqn:sw}
 \end{align}
-where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$. As shown \cite{bonnotte2013unidimensional}[Chapter 5], $\SW$ is indeed a distance metric and induces the same topology as $\W$ in compact domains. 
+where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$. As shown \cite{bonnotte2013unidimensional}[Chapter 5], $\SW$ is indeed a distance metric and induces the same topology as $\W$ for compact domains. 
 
 The $\SW$ has a strong practical significance: provided that the distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed. Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replaces the integral in \eqref{eqn:sw} with a finite-sample average. 
 

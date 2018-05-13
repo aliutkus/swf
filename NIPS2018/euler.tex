@@ -23,19 +23,7 @@
 % \end{align}
 % where $W_t$ denotes the standard Brownian motion.
 
-\section{Proof of Proposition~\ref{prop:dist_statmeas}}
 
-%
-\begin{proof}
-By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
-\begin{align}
-\| \mu_t - \mu_t^\epsilon \|_{\TV}^2 &\leq \int_0^\infty \int_{\R^d} \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \frac{\|\nabla \rho^\epsilon_s(x)\|^2}{\rho^\epsilon_s(x)}  dx ds \\
-&\leq  C \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \label{eqn:prop_interm} \\
-&= \frac{2C}{\lambda} (\lambda - \epsilon)^2,
-\end{align}
-where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result is obtained by taking the taking the limit of both sides. 
-\end{proof}
-%
 
 \section{Proof of Lemma~\ref{lem:euler}}
 %
@@ -130,6 +118,43 @@ Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$
 \end{align}
 By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain the desired result. 
 \end{proof}
+
+\section{Relation to the Unregularized Gradient Flow}
+
+We now provide the following bound in order to have a better understanding between the entropy regularized problem that we propose and the case where there is no regularization.
+
+\begin{prop}
+\label{prop:dist_statmeas}
+Assume that the SDE \eqref{eqn:sde} satisfies \Cref{asmp:sde_ergo}. Denote the probability distribution of $X_t$ at time $t$ by $\mu_t(dx) = \rho_t (x) dx$. Furthermore, consider the following SDE
+\begin{align}
+d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
+\end{align}
+Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t$ at time $t$ by $\mu^\epsilon_t$ which admits a density $\rho^\epsilon_t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$ that depends on $t$, such that
+\begin{align}
+\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
+\end{align}
+Then the following bound holds:
+\begin{align}
+\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda.
+\end{align}
+\end{prop}
+%
+\begin{proof}
+By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
+\begin{align}
+\| \mu_t - \mu_t^\epsilon \|_{\TV}^2 &\leq \int_0^\infty \int_{\R^d} \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \frac{\|\nabla \rho^\epsilon_s(x)\|^2}{\rho^\epsilon_s(x)}  dx ds \\
+&\leq  C \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \label{eqn:prop_interm} \\
+&= \frac{2C}{\lambda} (\lambda - \epsilon)^2,
+\end{align}
+where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result is obtained by taking the taking the limit of both sides. 
+\end{proof}
+%
+
+\begin{remark}
+By following a similar approach that we used in Theorem~\ref{thm:euler}, for any $\epsilon > 0$, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, and Assumption \Cref{asmp:sde_ergo}. %and letting $\epsilon$ go to zero. 
+\end{remark} 
+
+
 
 \section{Discussion on the assumptions}
 

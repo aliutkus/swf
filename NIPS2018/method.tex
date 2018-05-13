@@ -78,25 +78,21 @@ The idea in this new gradient flow formulation is to take $\rho_t$ as close as p
 \begin{thm} \label{thm:existance_gmm_scheme}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
 \[
-\mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-)
+\mathcal{G}(h, k , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-)
 \]
 Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
-\[
-||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}.
-\]
+% \[
+$||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}$.
+% \]
 \end{thm}
 
 
 \begin{thm}
 Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
 \begin{align}
-\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\frac{\partial \rho_t}{\partial t} + \nabla \cdot (v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
-in a weak sense. Here 
-\begin{align}
-v_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta, \label{eqn:idt_v}
-\end{align}
-and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
+in a weak sense. Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
 \end{thm}
 
 % Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pitie2005n} and develops a continuity equation, given as follows:
@@ -114,38 +110,14 @@ We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can obse
 \begin{align}
 d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
 \end{align}
-where $W_t$ denotes the standard Brownian motion, is associated with \eqref{eqn:gradflow_reg}, in the sense that the probability measures of the solution process $(X_t)_{t\geq0}$ satisfies the flow \eqref{eqn:gradflow_reg}.  
-
-\begin{assumption}
-\label{asmp:sde_ergo}
-For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
-\end{assumption}
+where $W_t$ denotes the standard Brownian motion, is associated with \eqref{eqn:gradflow_reg}, in the sense that the probability distribution of the solution process $(X_t)_{t\geq0}$ satisfies the flow \eqref{eqn:gradflow_reg}.  
 
 
-
-We first provide a bound between the invariant measure $\nu_\lambda$ and $\nu$.
-
-\begin{prop}
-\label{prop:dist_statmeas}
-Assume that the SDE \eqref{eqn:sde} satisfies \Cref{asmp:sde_ergo}. Denote the probability distribution of $X_t$ at time $t$ by $\mu_t(dx) = \rho_t (x) dx$. Furthermore, consider the following SDE
-\begin{align}
-d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
-\end{align}
-Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t$ at time $t$ by $\mu^\epsilon_t$ which admits a density $\rho^\epsilon_t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$ that depends on $t$, such that
-\begin{align}
-\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
-\end{align}
-Then the following bound holds:
-\begin{align}
-\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda,
-\end{align}
-where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$, defined as follows: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
-\end{prop}
 
 \subsection{Particle system for approximating the SDE and the Euler-Maruyama discretization}
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-% \vspace{-10pt}
+% \vspace{-15pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
@@ -155,7 +127,7 @@ where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two proba
 		 \Input{${\cal D} \equiv \{y_i\}_{i=1}^P$, $\mu_0$, $N$, $N_\theta$, $h$, $\lambda$}
 		 \Output{$\{\bar{X}_K^i\}_{i=1}^N$}
 		 {\color{purple} \small \tcp{Initialize the particles}}
-		 $\bar{X}_0^i \sim \mu_0$, \hfill $i = 1,\dots,N$ \\%{\color{purple} \small \tcp{Initialize the particles}}  
+		 $\bar{X}_0^i \simiid \mu_0$, \hfill $i = 1,\dots,N$ \\%{\color{purple} \small \tcp{Initialize the particles}}  
 		 \For{$k = 0,\dots K-1$}{
 		    {\color{purple} \small \tcp{Generate random directions}}
 		    $\theta_n \sim \mathrm{Uniform}(\Sp^{d-1})$, \hfill $n = 1,\dots,N_\theta$\\
@@ -175,7 +147,7 @@ where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two proba
 \vspace{-20pt}
 \end{wrapfigure}
 
-Proposition~\ref{prop:dist_statmeas} shows that if we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
+If we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
 samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
 
 We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
