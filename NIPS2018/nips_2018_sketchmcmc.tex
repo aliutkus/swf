@@ -29,6 +29,9 @@
 \usepackage{amssymb}
 \usepackage{xcolor}
 
+\usepackage[algo2e,inoutnumbered,algoruled,vlined]{algorithm2e} %linesnumbered
+\usepackage{wrapfig}
+
 % \newcommand{\W}{{\cal W}_2}
 % \newcommand{\F}{{\cal F}}
 % \newcommand{\He}{{\cal H}}
@@ -101,23 +104,9 @@ We do generative modeling with sliced-Wasserstein flows.
 \input{analysis_main}
 
 
+\input{experiments}
 
-\section{Experiments}
 
-\begin{itemize}
-\item Experiments on GMM
-\begin{itemize}
-\item We can focus on the 2D problem
-\item Monitor the likelihood per iteration
-\item We need to show the behavior and the additional contribution of the entropy -- repeat experiments for different level of the Gaussian noise
-\end{itemize}
-\item Experiments on real data
-\begin{itemize}
-\item The more the number of real datasets, the better
-\item Experiments on emnist and Fashion mnist
-\item We should illustrate the behavior of the level of the Gaussian noise
-\end{itemize}
-\end{itemize}
 
 \section{Conclusion}
 
