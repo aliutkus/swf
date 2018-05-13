@@ -18,27 +18,19 @@
 % \end{itemize}
 
 
-Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pitie2005n} and develops a continuity equation, given as follows:
-\begin{align}
-\partial_t \rho_t - \nabla \cdot (\rho_t v_t) = 0,
-\end{align}
-where $\rho_t$ is the density of $\mu_t$ and
-\begin{align}
-v_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta. \label{eqn:idt_v}
-\end{align}
-Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. In fact, one can show that, this is nothing but a gradient flow in the Wasserstein spaces, given as follows:
-\begin{align}
-\partial_t \rho = - \nabla_{\W} \F(\rho) \label{eqn:gradflow}
-\end{align}
-where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
-\begin{align}
-\F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
-\end{align}
-where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
-\begin{align}
-\rho^\star = \argmin_\rho \F(\rho).
-\end{align}
-Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\rho_0$ and bring it closer to $\pi$ as $t$ evolves.
+
+% \begin{align}
+% \partial_t \rho = - \nabla_{\W} \F(\rho) \label{eqn:gradflow}
+% \end{align}
+% where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
+% \begin{align}
+% \F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
+% \end{align}
+% where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
+% \begin{align}
+% \rho^\star = \argmin_\rho \F(\rho).
+% \end{align}
+% Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\rho_0$ and bring it closer to $\pi$ as $t$ evolves.
 
 % By following \cite{santambrogio2017euclidean}, the gradient given in \eqref{eqn:gradflow} can be written as follows:
 % \begin{align}
@@ -48,20 +40,16 @@ Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $
 
 By this definition, $\mu_t$ should directly go to $\nu$. However, in practical settings, we will have finitely many samples from $\mu_0$ and $\nu$, therefore this scheme will somehow `overfit' to the data distribution. Therefore what we propose is to somehow `regularize' the gradient flow by introducing an entropy term to the minimization process. In particular, we modify the gradient flow given in \eqref{eqn:gradflow} as follows:
 \begin{align}
-\partial_t \rho = - \nabla_{\W} \F_\lambda(\rho),
+\partial_t \rho = - \nabla_{\W} \frac1{2} \SW^2(\rho, \pi) + \lambda \He(\rho),
 \end{align}
-where
-\begin{align}
-\F_\lambda(\rho) \triangleq \F(\rho) + \lambda \He(\rho).
-\end{align}
-Here, $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
+where $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
 
 
 This time the optimization problem is modified:
 \begin{align}
 \min_\rho \F_\lambda(\rho),
 \end{align}
-in which $\pi$ is no longer an optimizer. The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
+The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
 
 % We can now construct the modified gradient flow as follows:
 % \begin{align}
@@ -104,8 +92,20 @@ Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:exista
 \begin{align}
 \frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
-in a weak sense.
+in a weak sense. Here 
+\begin{align}
+v_t(x) \triangleq \int_{\mathbb{S}^{d-1}} \psi'_{t,\theta}(\langle \theta, x \rangle) \theta \> d\theta, \label{eqn:idt_v}
+\end{align}
+and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
 \end{thm}
+
+% Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pitie2005n} and develops a continuity equation, given as follows:
+% \begin{align}
+% \partial_t \rho_t - \nabla \cdot (\rho_t v_t) = 0,
+% \end{align}
+% $\rho_t$ is the density of $\mu_t$ and
+
+% In fact, one can show that, this is nothing but a gradient flow in the Wasserstein spaces, given as follows:
 
 
 \section{Connection with Stochastic Differential Equations}
