@@ -90,9 +90,8 @@ if __name__ == "__main__":
     params = draw_GMM_parameters(args.dim, args.num_components, args.seed)
     (X, Y) = rand_GMM(params, args.num_samples)
 
-    X = X-X.min()
-    X /= X.max()
-    #X *= 1000
+    X = X - np.mean(X.flatten())
+    X /= np.mean((np.linalg.norm(X, axis=1)))
 
     if args.plot:
         pl.plot(X[:, 0], X[:, 1], '.')

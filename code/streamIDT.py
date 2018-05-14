@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     # prepare the projectors
     ProjectorsClass = getattr(sketch, args.projectors)
-    projectors = ProjectorsClass(np.inf, data_dim)
+    projectors = ProjectorsClass(np.inf, args.num_thetas, data_dim)
 
     # prepare the sketch iterator
     sketches = sketch.SketchIterator(data_loader, projectors, args.batchsize,

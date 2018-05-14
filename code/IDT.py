@@ -49,15 +49,15 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
         zd = np.clip(zd, 0, 100)
         transported[:, d] = Ginv(zd)
 
-    shape_noise =  samples.shape # (1, samples.shape[1])
+    shape_noise = samples.shape
     noise = np.random.randn(*shape_noise)
     # from scipy.stats import levy_stable
     # noise = levy_stable.rvs(alpha=1.5, beta=0, size= shape_noise)
+
     samples += (stepsize *
                 np.dot(transported - projections, projector)/num_thetas
                 + np.sqrt(stepsize) * reg
                 * noise)
-                #* np.random.randn(*samples.shape))
 
     return samples, source_qf
 
