@@ -14,7 +14,7 @@
 
 % For a vector $v \in \R^d$, we denote its $\ell_2$-norm by $\|v\| \triangleq \sqrt{v^\top v}$. We occasionally denote the Euclidean inner-product of two vectors by $\langle v, y \rangle \triangleq v^\top y$ for $v,y \in \R^d$. 
 
-\subsection{Wasserstein distance, optimal transport maps, and Kantorovich potentials}
+\subsection{Wasserstein distance, optimal transport maps, Kantorovich potentials}
 
 
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
@@ -47,13 +47,13 @@ For a compact domain $\Omega \in \R^d$, the $\W$-distance forms a distance over 
 
 In this study, we are interested in functional optimization problems in $\WS$, such as $\min_{\mu\in \WS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.   
 
-The gradient flows in $\WS$ have strong connections with partial differential equations (PDE) of the form of a continuity equation. Assuming that the measure $\mu_t$ admits a density, denoted as $\rho_t$, such a continuity equation would have the following form:
+The gradient flows in $\WS$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Assuming that the measure $\mu_t$ admits a density, denoted as $\rho_t$, such a continuity equation would have the following form:
 \begin{align}
 \partial_t \rho_t + \nabla \cdot (v \rho_t) = 0,  \label{eqn:pde}
 \end{align}  
 where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $\WS$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve. 
 %
-In order to prove that the path $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. The form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis. We provide more information about gradient flows in $\WS$ in the supplementary document.
+In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. We provide more information about gradient flows in $\WS$ in the supplementary document.
 
 % In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
 % \begin{align*}
@@ -74,7 +74,7 @@ In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distan
 \begin{align}
 \W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau,
 \end{align}
-where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs that can be interpreted as the \emph{quantile} functions.
+where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs that can be interpreted as \emph{quantile} functions.
 %
 In this case, the optimal transport map has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \umut{cite}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
 %
@@ -86,7 +86,7 @@ In the multidimensional case $d > 1$, building a transport map is much more diff
 \end{align}
 where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$, such that $\int_{\Sp^{d-1}} d \theta = 1$. As shown \cite{bonnotte2013unidimensional}[Chapter 5], $\SW$ is indeed a distance metric and induces the same topology as $\W$ for compact domains. 
 
-The $\SW$ has a strong practical significance: provided that the distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed. Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replaces the integral in \eqref{eqn:sw} with a finite-sample average. 
+The $\SW$ distance has a important practical implications: provided that the distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed (since the projected measures are one-dimensional). Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replace the integral in \eqref{eqn:sw} with a finite-sample average. 
 
 
 

@@ -38,18 +38,29 @@
 % \end{align}
 % where $\frac{\delta \F}{\delta \rho}(\rho)$ denotes the first variation of $\F$.
 
-By this definition, $\mu_t$ should directly go to $\nu$. However, in practical settings, we will have finitely many samples from $\mu_0$ and $\nu$, therefore this scheme will somehow `overfit' to the data distribution. Therefore what we propose is to somehow `regularize' the gradient flow by introducing an entropy term to the minimization process. In particular, we modify the gradient flow given in \eqref{eqn:gradflow} as follows:
+In this section, we will construct a gradient flow in $\WS$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
 \begin{align}
-\partial_t \rho = - \nabla_{\W} \Biggl\{ \F_\lambda(\rho) \triangleq  \frac1{2} \SW^2(\rho, \pi) + \lambda \He(\rho) \Biggr\},
-\end{align}
-where $\He(\rho) \triangleq \int (h \circ \rho) (x) dx $ denotes the negative entropy of $\rho$ with $h(t) = t \log t$. This regularization somewhat corresponds to assuming a Gaussian prior on the density $\rho$: when $\lambda$ goes to infinity, the optimal $\rho$ that minimizes $\F_\lambda$ will be a Gaussian density since the Gaussian densities have the maximum entropy.
+\min_\mu \Bigl\{ \F_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
+\end{align} 
+where $\He(\mu) \triangleq \int \rho(x) \log \rho(x) dx $ denotes the negative entropy of $\mu(dx) = \rho(x)dx$. The aim in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure the measure is expressive enough for generative modeling purposes. 
 
+The importance of the entropy regularization becomes prominent in practical applications where we have finitely many samples drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution. 
 
-This time the optimization problem is modified:
+%Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
+
+In the light of the optimization problem \eqref{eqn:sw_optim}, in this section, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F_\lambda(\mu_t)$. In particular, for a curve $(\mu_t)_t$ satisfying the gradient flow, we are interested in identifying the PDE that the $(\rho_t)_t$ solves, where $\rho_t$ denotes the density of $\mu_t$.
+
+We now state our first main result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities. 
+\begin{thm}
+\label{thm:continuity}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density, where $\cB(0,a)$ denotes the closed unit ball with radius $a$. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with density $\rho_0 \in L^2$. Let $\mu_t$ be a generalized minimizing movement scheme given by Theorem~\umut{num} in the supplementary document. Then, $\rho_t$ satisfies the following continuity equation:
 \begin{align}
-\min_\rho \F_\lambda(\rho),
+\frac{\partial \rho_t}{\partial t}   = -\nabla \cdot (v_t \rho_t) + \lambda \Delta \rho_t,  \quad \quad \quad v_t(x) \triangleq v(x,\mu_t) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
-The idea in this new gradient flow formulation is to take $\rho_t$ as close as possible to $\pi$, while trying to keep its entropy at a certain level, so that it would be expressive for generative modeling purposes.
+in a weak sense. Here, $\Delta$ denotes the Laplacian operator and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
+\end{thm}
+The proof of Theorem~\ref{thm:continuity} as well as the proofs of all our theoretical results are given in the supplementary document. For proving this theorem, we use the technique introduced in \cite{bonnotte2013unidimensional}: we first prove the existence of the gradient flow by showing that the solution curve $(\mu_t)_t$ is a limit of the solution of a time-discretized problem \cite{jordan1998variational}. Then we prove that the curve $(\rho_t)_t$ solves the PDE given in \eqref{eqn:gradflow_reg}. 
+
 
 % We can now construct the modified gradient flow as follows:
 % \begin{align}
@@ -87,13 +98,7 @@ The idea in this new gradient flow formulation is to take $\rho_t$ as close as p
 % \end{thm}
 
 
-\begin{thm}
-Let $\mu_t$ be a generalized minimizing movement scheme given by Theorem~\umut{num} in the supplementary document. We denote by $\rho_t$ the density of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
-\begin{align}
-\frac{\partial \rho_t}{\partial t} + \nabla \cdot (v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) \triangleq v(x,\mu_t) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
-\end{align}
-in a weak sense. Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
-\end{thm}
+
 
 % Bonnotte \cite{bonnotte2013unidimensional} considers the IDT algorithm \cite{pitie2005n} and develops a continuity equation, given as follows:
 % \begin{align}
@@ -106,7 +111,7 @@ in a weak sense. Here, $\psi_{t,\theta}$ denotes the Kantorovich potential betwe
 
 \section{Connection with Stochastic Differential Equations}
 
-We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t\geq0}$, that is the solution following SDE:
+Let us consider the PDE given in \eqref{eqn:gradflow_reg}. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t\geq0}$, that is the solution following SDE:
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
 \end{align}
@@ -122,9 +127,9 @@ where $W_t$ denotes the standard Brownian motion. Then, the probability distribu
 We now focus on the first issue. 
 % In order to highlight the fact that the drift in \eqref{eqn:sde} depends on the distribution of $X_t$, denoted by $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. 
 % With this notation, it 
-We can clearly observe that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
+We can clearly observe that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence}, a family of SDEs whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
 
-Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}, and is given as follows:
+Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}. The particle system can be written as a collection of SDEs, given as follows:
 \begin{align}
 d X_t^i = v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
@@ -141,9 +146,9 @@ where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, 
 
 We now define a computationally tractable estimator $\hat{v}$ of the drift, given as follows:
 \begin{align}
-\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\mu}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - \langle \theta_n, x\rangle \Bigr] \theta_n , \label{eqn:approxdrift}
+\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ ({F^*_{\theta_{n\#}\mu}}^{-1} \circ F_{\theta^*_{n\#}\nu}) (\langle \theta_n, x\rangle) - \langle \theta_n, x\rangle \Bigr] \theta_n , \label{eqn:approxdrift}
 \end{align}
-where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta_{n\#\mu}^*}$ and $F_{\theta_{n\#\nu}^*}$ denote the (one-dimensional) CDFs of $\theta_{n\#\mu}^*$ and $\theta_{n\#\nu}^*$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
+where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
 
 
 \begin{wrapfigure}{R}{0.52\textwidth}
@@ -177,7 +182,9 @@ where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples th
 \vspace{-20pt}
 \end{wrapfigure}
 
-Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\bar{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. \umut{Discuss here that we don't have the full $\nu$ but a sample from it, so that the computations will be approximate. This should be ok for large datasizes.} Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\bar{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. The overall algorithm is illustrated in Algorithm~\ref{algo:flow}.
+% \newcommand{\shr}{{\lserif\#}}
+
+Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta^*_{n\#}\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta^*_{n\#}\nu = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. \umut{Discuss here that we don't have the full $\nu$ but a sample from it, so that the computations will be approximate. This should be ok for large datasizes.} Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta^*_{n\#}\bar{\mu}}^{-1} \circ F_{\theta^*_{n\#}\nu}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. The overall algorithm is illustrated in Algorithm~\ref{algo:flow}.
 
 
 Even though the error induced by this approximation scheme can be incorporated into our current analysis framework, we choose to neglect this error, since these one-dimensional computations can be done very accurately. Therefore, $\hat{v}$ turns out to be an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x\in \Omega$ and $\mu \in \PS(\Omega)$, where the expectation is taken over $\theta_n$.
