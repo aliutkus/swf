@@ -25,8 +25,78 @@
 
 
 
-\section{Proof of Lemma~\ref{lem:euler}}
+\section{Proof of Theorem~\ref{thm:euler}}
+
+\newcommand{\minvsp}{0}
+
+We consider the following assumptions: \vspace{\minvsp pt}
+\begin{assumption}
+\label{asmp:sde_ergo}
+For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
+\vspace{\minvsp pt}
+\end{assumption}
 %
+\begin{assumption}
+\label{asmp:sde_expconv}
+The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
+% \begin{align}
+$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$.
+% \end{align}
+\vspace{\minvsp pt}
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:lipschitz}
+% The drift is Lipschitz continuous, i.e.\ t
+There exits $L < \infty$ such that
+% \begin{align}
+$\| v_t(x) - v_{t'}(x') \| \leq L ( \|x-x' \| + |t-t'|)$.
+% \end{align}
+\vspace{\minvsp pt}
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:dissip}
+For all $t \geq 0$, $v_t$ is dissipative, i.e. for all $x \in \R^d$,
+% \begin{align}
+$\langle x, v_t(x) \rangle \geq m \|x\|^2 -b$,
+% \end{align}
+for some $m,b >0$.
+\vspace{\minvsp pt}
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:stochgrad}
+The estimator of the drift satisfies the following conditions: \ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and for all $t\geq 0$, $x \in \R^d$,
+% \begin{align}
+$\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2)$,
+% \end{align}
+for some $\delta \in (0,1)$.
+\vspace{\minvsp pt}
+\end{assumption}
+%
+\begin{assumption}
+\label{asmp:init_fun}
+For all $t \geq 0$: $|\Psi_t(0)| \leq A$ and $\|v_t(0)\| \leq B$,
+% \begin{align}
+% |\Psi_t(0)| \leq A, \qquad \text{and} \qquad \|v_t(0)\| \leq B
+% \end{align}
+for $A,B \geq 0$.
+% \vspace{\minvsp pt}
+\end{assumption}
+
+
+ 
+We decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$. We start by upper-bounding the first term. 
+%
+\begin{lemma}
+\label{lem:euler}
+Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
+\begin{align}
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
+\end{align}
+where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
+\end{lemma}
 %
 \begin{proof}
 We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}. Starting from the discrete-time process $(\bar{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
@@ -100,7 +170,7 @@ This concludes the proof.
 \end{proof}
 
 
-\section{Proof of Theorem~\ref{thm:euler}}
+\subsection{Proof of Theorem~\ref{thm:euler}}
 %
 \begin{proof}
 By triangle inequality, we have that

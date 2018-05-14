@@ -53,11 +53,13 @@ The gradient flows in $\WS$ have strong connections with partial differential eq
 \end{align}  
 where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $\WS$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve. 
 %
-In order to prove that the path $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
-\begin{align*}
-\mu^{h}_{(k+1)h} = \argmin_\mu \mathcal{G}(h, k , \mu, \mu^h_{kh}), \quad \text{where,} \quad \mathcal{G}(h, k , \mu_+, \mu_-) \triangleq \mathcal{F}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-). %\triangleq \mathcal{F}(\mu) + \frac{1}{2h}\W(\mu, \mu^k) %\argmin_\rho \Bigl\{ \F(\rho) + \frac1{2h}\W^2(\rho, \rho_k^h) \Bigr\},
-\end{align*} 
-If $(\mu_t)_{t\geq 0}$ appears as the limiting curve $\lim_{h\rightarrow 0}(\mu_t^h)_{t\geq 0}$, then $(\mu_t)_{t\geq 0}$ is called a \emph{generalized minimizing movement} \cite{santambrogio2017euclidean,bonnotte2013unidimensional}. Proving that $(\mu_t)_{t\geq 0}$ is a minimizing movement ensures that the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$ exists; however, the form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis. 
+In order to prove that the path $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. The form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis. We provide more information about gradient flows in $\WS$ in the supplementary document.
+
+% In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
+% \begin{align*}
+% \mu^{h}_{(k+1)h} = \argmin_\mu \mathcal{G}(h, k , \mu, \mu^h_{kh}), \quad \text{where,} \quad \mathcal{G}(h, k , \mu_+, \mu_-) \triangleq \mathcal{F}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-). %\triangleq \mathcal{F}(\mu) + \frac{1}{2h}\W(\mu, \mu^k) %\argmin_\rho \Bigl\{ \F(\rho) + \frac1{2h}\W^2(\rho, \rho_k^h) \Bigr\},
+% \end{align*} 
+% If $(\mu_t)_{t\geq 0}$ appears as the limiting curve $\lim_{h\rightarrow 0}(\mu_t^h)_{t\geq 0}$, then $(\mu_t)_{t\geq 0}$ is called a \emph{generalized minimizing movement} \cite{santambrogio2017euclidean,bonnotte2013unidimensional}. Proving that $(\mu_t)_{t\geq 0}$ is a minimizing movement ensures that the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$ exists; however, the form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis. 
 
 % where, by abusing the notation, we denoted the functional $\F$ as a function of the density $\rho$.
 

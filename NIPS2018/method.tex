@@ -75,20 +75,20 @@ The idea in this new gradient flow formulation is to take $\rho_t$ as close as p
 % \end{equation}
 % \end{lemma}
 
-\begin{thm} \label{thm:existance_gmm_scheme}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
-\[
-\mathcal{G}(h, k , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-)
-\]
-Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
+% \begin{thm} \label{thm:existance_gmm_scheme}
+% Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
 % \[
-$||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}$.
+% \mathcal{G}(h, k , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-)
 % \]
-\end{thm}
+% Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
+% % \[
+% $||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}$.
+% % \]
+% \end{thm}
 
 
 \begin{thm}
-Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
+Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the density of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
 \begin{align}
 \frac{\partial \rho_t}{\partial t} + \nabla \cdot (v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
@@ -166,7 +166,7 @@ where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, 
 
 We now define a computationally tractable estimator $\hat{v}$ of the drift, given as follows:
 \begin{align}
-\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\mu}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - x \Bigr] \theta_n , \label{eqn:approxdrift}
+\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\mu}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - \langle \theta_n, x\rangle \Bigr] \theta_n , \label{eqn:approxdrift}
 \end{align}
 where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta_{n\#\mu}^*}$ and $F_{\theta_{n\#\nu}^*}$ denote the (one-dimensional) CDFs of $\theta_{n\#\mu}^*$ and $\theta_{n\#\nu}^*$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
 
