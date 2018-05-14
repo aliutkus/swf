@@ -88,9 +88,9 @@ The idea in this new gradient flow formulation is to take $\rho_t$ as close as p
 
 
 \begin{thm}
-Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the density of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
+Let $\mu_t$ be a generalized minimizing movement scheme given by Theorem~\umut{num} in the supplementary document. We denote by $\rho_t$ the density of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
 \begin{align}
-\frac{\partial \rho_t}{\partial t} + \nabla \cdot (v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\frac{\partial \rho_t}{\partial t} + \nabla \cdot (v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) \triangleq v(x,\mu_t) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
 in a weak sense. Here, $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$. 
 \end{thm}
@@ -106,18 +106,48 @@ in a weak sense. Here, $\psi_{t,\theta}$ denotes the Kantorovich potential betwe
 
 \section{Connection with Stochastic Differential Equations}
 
-We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We can observe that, this equation is a Fokker-Planck-type equation that has a probabilistic counterpart. More precisely, the following stochastic differential equation (SDE):
+We now consider the modified flow given in \eqref{eqn:gradflow_reg}. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t\geq0}$, that is the solution following SDE:
 \begin{align}
-d X_t = - v_t(X_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
+d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
 \end{align}
-where $W_t$ denotes the standard Brownian motion, is associated with \eqref{eqn:gradflow_reg}, in the sense that the probability distribution of the solution process $(X_t)_{t\geq0}$ satisfies the flow \eqref{eqn:gradflow_reg}.  
-
+where $W_t$ denotes the standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to $\nu_\lambda$, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $\nu_\lambda$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
 
 
 \subsection{Particle system for approximating the SDE and the Euler-Maruyama discretization}
 
+
+
+
+
+We now focus on the first issue. 
+% In order to highlight the fact that the drift in \eqref{eqn:sde} depends on the distribution of $X_t$, denoted by $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. 
+% With this notation, it 
+We can clearly observe that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
+
+Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}, and is given as follows:
+\begin{align}
+d X_t^i = v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
+\end{align}
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
+
+
+
+
+We now consider the approximate Euler-Maruyama discretization for each particle SDE, that is given as follows:
+\begin{align}
+\bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1},
+\end{align}
+where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables in $\R^d$, $h$ denotes the step-size, $\bar{\mu}_{kh}^{(N)}$ denotes the law of $\{\bar{X}_{k}^j\}_{j=1}^N$, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion.
+
+We now define a computationally tractable estimator $\hat{v}$ of the drift, given as follows:
+\begin{align}
+\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\mu}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - \langle \theta_n, x\rangle \Bigr] \theta_n , \label{eqn:approxdrift}
+\end{align}
+where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta_{n\#\mu}^*}$ and $F_{\theta_{n\#\nu}^*}$ denote the (one-dimensional) CDFs of $\theta_{n\#\mu}^*$ and $\theta_{n\#\nu}^*$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
+
+
 \begin{wrapfigure}{R}{0.52\textwidth}
-% \vspace{-15pt}
+\vspace{-15pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
@@ -147,33 +177,7 @@ where $W_t$ denotes the standard Brownian motion, is associated with \eqref{eqn:
 \vspace{-20pt}
 \end{wrapfigure}
 
-If we could simulate \eqref{eqn:sde}, then we could use the sample paths $(X_t)_t$ as
-samples drawn from $\nu_\lambda$, which is not very far from $\nu$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the measure at time $t$, i.e.\ $\mu_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.  
-
-We now focus on the first issue. In order to highlight the fact that the drift in \eqref{eqn:sde} depends on $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. With this notation, it can be clearly observed that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence} whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
-
-Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}, and is given as follows:
-\begin{align}
-d X_t^i = - v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
-\end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
-
-We now consider the approximate Euler-Maruyama discretization for each particle SDE, that is given as follows:
-\begin{align}
-\bar{X}^i_{k+1} = \bar{X}^i_k - h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1},
-\end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables in $\R^d$, $h$ denotes the step-size, $\bar{\mu}_{kh}^{(N)}$ denotes the law of $\{\bar{X}_{k}^j\}_{j=1}^N$, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion.
-
-We now define a computationally tractable estimator $\hat{v}$ of the drift, given as follows:
-\begin{align}
-\hat{v}(x,\mu) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{t, \theta_n}'(\langle x , \theta_n \rangle ) \theta_n = \frac1{N_\theta} \sum_{n=1}^{N_\theta} \Bigl[ (F_{\theta_{n\#\mu}^*}^{-1} \circ F_{\theta_{n\#\nu}}) (x) - \langle \theta_n, x\rangle \Bigr] \theta_n , \label{eqn:approxdrift}
-\end{align}
-where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta_{n\#\mu}^*}$ and $F_{\theta_{n\#\nu}^*}$ denote the (one-dimensional) CDFs of $\theta_{n\#\mu}^*$ and $\theta_{n\#\nu}^*$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}. 
-
-
-
-
-Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\bar{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\bar{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. The overall algorithm is illustrated in Algorithm~\ref{algo:flow}.
+Given the fact that, in practical applications, $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta_{n\#\bar{\mu}^N_{kh}}^* = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. Similarly, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we have $\theta_{n\#\nu}^* = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. \umut{Discuss here that we don't have the full $\nu$ but a sample from it, so that the computations will be approximate. This should be ok for large datasizes.} Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta_{n\#\bar{\mu}}^*}^{-1} \circ F_{\theta_{n\#\nu}}) $ by using standard techniques that are based on sorting and linear interpolation \umut{cite}, whose details are given in the supplementary document. The overall algorithm is illustrated in Algorithm~\ref{algo:flow}.
 
 
 Even though the error induced by this approximation scheme can be incorporated into our current analysis framework, we choose to neglect this error, since these one-dimensional computations can be done very accurately. Therefore, $\hat{v}$ turns out to be an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x\in \Omega$ and $\mu \in \PS(\Omega)$, where the expectation is taken over $\theta_n$.
