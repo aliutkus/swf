@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
             # it's an image, output a grid of samples
             [num_samples, data_dim] = samples.shape
-            samples = samples[:min(104, num_samples)]
+            samples = samples[:min(208, num_samples)]
             num_samples = samples.shape[0]
 
             samples = np.reshape(samples,
