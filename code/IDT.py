@@ -41,7 +41,7 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
     target_qf = np.reshape(target_qf, [-1, len(quantiles)])
 
     if writer is not None:
-        writer.add_scalar('loss', np.sum((source_qf-target_qf)**2), index)
+        writer.add_scalar('loss', np.mean((source_qf-target_qf)**2), index)
     # transport the marginals
     transported = np.empty(projections.shape)
 

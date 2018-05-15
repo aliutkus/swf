@@ -87,6 +87,8 @@ if __name__ == "__main__":
             os.mkdir(args.plot_dir)
 
         def plot_function(samples, index):
+            if index % 200:
+                return
             data_dim = samples.shape[-1]
             image = False
 
