@@ -129,7 +129,7 @@ if __name__ == "__main__":
                                  [num_samples, nchan, img_dim, img_dim])
             pic = make_grid(torch.Tensor(samples),
                             nrow=8, padding=2, normalize=True, scale_each=True)
-            save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, index))
+            save_image(pic, '{}/image_{}.png'.format(args.plot_dir, index))
     else:
         plot_function = None
 
