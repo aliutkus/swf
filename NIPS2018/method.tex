@@ -154,7 +154,7 @@ In this work, we approximate the integral given in \eqref{eqn:gradflow_reg} for 
 
 where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the one-dimensional Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{(N)}$ to $\theta^*_\#\nu$:
 \begin{align}
-   \psi_{k, \theta}'(z) = \Bigl[ (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}} \circ F_{\theta^*_\#\nu}) (z) - z \Bigr].
+   \psi_{k, \theta}'(z) = \Bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}} \circ F_{\theta^*_\#\nu}) (z)  \Bigr], \qquad \forall z \in \R.
  \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
