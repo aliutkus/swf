@@ -149,7 +149,7 @@ where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard G
 In this work, we approximate the integral given in \eqref{eqn:gradflow_reg} for the computation of $v$ by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{nk}$, and then by taking:
 
 \begin{align}
-\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{k, \theta_{nk}}'(\langle x , \theta_{nk} \rangle ) \theta_{nk}, \label{eqn:approxdrift}
+\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{k, \theta_{nk}}'(\langle\theta_{nk},x\rangle ) \theta_{nk}, \label{eqn:approxdrift}
 \end{align}
 
 where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the one-dimensional Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{(N)}$ to $\theta^*_\#\nu$:
