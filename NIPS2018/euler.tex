@@ -33,7 +33,7 @@ Before proceeding to the proof, let us first define the following Euler-Maruyama
 \end{align}
 where $\mu_t$ denotes the probability distribution of $X_t$ with $(X_t)_t$ being the solution of the original SDE \eqref{eqn:sde}. Now, let us denote the probability distribution of $\hat{X}_k$ as $\muh_{kh}$. 
 %
-We will decompose the overall error into three terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \muh_{Kh} \|_{\TV} + \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$. 
+We will decompose the overall error into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $T = Kh$. 
 
 
 \newcommand{\minvsp}{0}
@@ -82,9 +82,9 @@ for some $m,b >0$.
 \label{asmp:stochgrad}
 The estimator of the drift satisfies the following conditions: \ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and for all $t\geq 0$, $x \in \R^d$,
 \begin{align}
-\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2),
+\E[ \|\hat{v}(x,\mu_t) - v(x,\mu_t) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2),
 \end{align}
-for some $\delta \in (0,1)$. Here, we denote the approximate drift as $\hat{v}_t(x) \triangleq \hat{v}(x,\muh_t)$.
+for some $\delta \in (0,1)$. %Here, we denote the approximate drift as $\hat{v}_t(x) \triangleq \hat{v}(x,\muh_t)$.
 \vspace{\minvsp pt}
 \end{assumption}
 %
@@ -108,7 +108,7 @@ Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:
 \begin{align}
 \| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
 \end{align}
-where the constants $C_1$ and $C_2$ are explicitly defined in the proof. 
+where $C_1 \triangleq 12(L^2 C_0 + B^2)+1$, $C_2 \triangleq 2 (L^2 C_0 + B^2)$, $C_0 \triangleq C_e +2  (1 \vee \frac1{m})(b+2B^2 + d \lambda)$, and $C_e$ denotes the entropy of $\mu_0$.
 \end{lemma}
 %
 \begin{proof}
@@ -217,19 +217,19 @@ By applying the data processing and Pinsker inequalities, we obtain the desired 
 \label{lem:euler3}
 Assume that the assumptions in Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2} hold. Then for $\lambda > \frac{KL^2h}{8}$, the following bound holds:
 \begin{align}
-\|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq \delta_\lambda \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \Biggr\},
+\|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq \delta_\lambda \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \Biggr\},
 \end{align}
 where $\delta_\lambda = (1 -\frac{KL^2h}{8\lambda})^{-1} $.
 \end{lemma}
 %
 \begin{proof}
-We have the following decomposition:
+We have the following decomposition: (with $T= Kh$)
 \begin{align}
 \|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq 2 \|\mub_{Kh} - \muh_{Kh} \|_{\TV}^2 + 2\|\muh_{Kh} - \mu_{T} \|_{\TV}^2 \\
-&\leq  \frac{L^2 K h}{8 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 + \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \\ 
-&\leq \Bigl(1 -\frac{KL^2h}{8\lambda} \Bigr)^{-1} \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \Biggr\}.
+&\leq  \frac{L^2 K h}{8 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 + \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \\ 
+&\leq \Bigl(1 -\frac{KL^2h}{8\lambda} \Bigr)^{-1} \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \Biggr\}.
 \end{align}
-The second line follows from Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2}. This completes the proof.
+The second line follows from Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2}. Last line follows from the assumption that $\lambda$ is large enough. This completes the proof.
 \end{proof}
 
 \subsection{Proof of Theorem~\ref{thm:euler}}
@@ -247,9 +247,17 @@ Then the result follows from Lemma~\ref{lem:euler3} and \Cref{asmp:sde_expconv}.
 \begin{proof}
 Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$ imply that
 \begin{align}
-\frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + \frac{6 \lambda d h^2}{2} \Bigr) \leq \frac{\varepsilon^2}{4}, \quad \text{and} \quad C_3 \exp(-C_4 Kh \lambda) \leq \frac{\varepsilon}{2}. \label{eqn:cor_Th}
+\frac{\delta_\lambda L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) \leq \frac{\varepsilon^2}{4}, \quad \text{and} \quad C_3 \exp(-C_4 Kh \lambda) \leq \frac{\varepsilon}{2}. \label{eqn:cor_Th}
 \end{align}
-By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain the desired result. 
+By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain 
+\begin{align}
+\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} .
+\end{align}
+By the assumption, we know that $\lambda > \frac{KL^2h}{8}$, we finally have
+\begin{align}
+\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{2 C_2 \delta_\lambda \delta}{L^2}\right)^{1/2} .
+\end{align}
+This finalizes the proof. 
 \end{proof}
 
 \section{Relation to the Unregularized Gradient Flow}
