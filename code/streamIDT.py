@@ -41,9 +41,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.dataset is None:
-        raise ValueError("Need either a sketch file or a dataset. "
-                         "Aborting.")
+    # load the data
     if args.root_data_dir is None:
         args.root_data_dir = 'data/'+args.dataset
     data_loader = sketch.load_data(args.dataset, args.clip, args.root_data_dir,
@@ -88,7 +86,7 @@ if __name__ == "__main__":
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)
 
-        def plot_function(samples, epoch, index):
+        def plot_function(samples, index):
             data_dim = samples.shape[-1]
             image = False
 
@@ -116,8 +114,8 @@ if __name__ == "__main__":
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
                 plt.grid(True)
-                plt.title('epoch %d, sketches %d'
-                          % (epoch, index+1))
+                plt.title('sketch %d'
+                          % (index+1))
                 plt.pause(0.05)
                 plt.show()
                 return
@@ -131,13 +129,12 @@ if __name__ == "__main__":
                                  [num_samples, nchan, img_dim, img_dim])
             pic = make_grid(torch.Tensor(samples),
                             nrow=8, padding=2, normalize=True, scale_each=True)
-            save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, epoch,
-                                                        index+1))
+            save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, index))
     else:
         plot_function = None
 
     samples = streamIDT(sketches, samples, args.stepsize, args.reg,
-                        plot_function)
+                        plot_function, args.logdir)
 
     if args.write is not None:
         np.save(args.write, samples)

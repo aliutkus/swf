@@ -101,7 +101,7 @@ if __name__ == "__main__":
         if not os.path.exists(args.plot_dir):
             os.mkdir(args.plot_dir)
 
-        def plot_function(samples, epoch, index):
+        def plot_function(samples, index):
             data_dim = samples.shape[-1]
             image = False
 
@@ -129,8 +129,8 @@ if __name__ == "__main__":
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
                 plt.grid(True)
-                plt.title('epoch %d, sketches %d'
-                          % (epoch, index+1))
+                plt.title('Sketch %d'
+                          % (index+1))
                 plt.pause(0.05)
                 plt.show()
                 return
@@ -144,15 +144,14 @@ if __name__ == "__main__":
                                  [num_samples, nchan, img_dim, img_dim])
             pic = make_grid(torch.Tensor(samples),
                             nrow=8, padding=2, normalize=True, scale_each=True)
-            save_image(pic, '{}/image_{}_{}.png'.format(args.plot_dir, epoch,
-                                                        index+1))
+            save_image(pic, '{}/image_{}.png'.format(args.plot_dir, index))
     else:
         plot_function = None
 
     # now call the actual IDT function
     samples, chain_out = batchIDT(target_qf, projectors, num_quantiles,
                                   input_chain, samples, plot_function,
-                                  compute_output_chain)
+                                  args.logdir, compute_output_chain)
 
     # save the output chain if asked to do it
     if compute_output_chain:
