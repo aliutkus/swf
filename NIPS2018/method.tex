@@ -50,7 +50,7 @@ The importance of the entropy regularization becomes prominent in practical appl
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
 
-In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F_\lambda(\mu_t)$. This gradient will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
+In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
 We now state our first theoretical main result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities. 
 \begin{thm}
@@ -129,20 +129,20 @@ where $W_t$ denotes the standard Brownian motion. Then, the probability distribu
 We now focus on the first issue. 
 % In order to highlight the fact that the drift in \eqref{eqn:sde} depends on the distribution of $X_t$, denoted by $\mu_t$, within this section we will denote the drift as $v_t(x) \equiv v(x, \mu_t)$. 
 % With this notation, it 
-We can clearly observe that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence}, a family of SDEs whose drift depends on the distribution of $X_t$. By using this connection, we borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
+We can clearly observe that the SDE \eqref{eqn:sde} is similar to McKean-Vlasov SDEs \cite{veretennikov2006ergodic,mishura2016existence}, a family of SDEs whose drift depends on the distribution of $X_t$. By using this connection, we can borrow tools from the relevant SDE literature \cite{malrieu03,cgm-08} for developing an approximate simulation method for \eqref{eqn:sde}. 
 
-Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}. The particle system can be written as a collection of SDEs, given as follows:
+Our approach is based on defining a \emph{particle system} that serves as an approximation to the original SDE \eqref{eqn:sde}. The particle system can be written as a collection of SDEs, given as follows \cite{bossy1997stochastic}:
 \begin{align}
-d X_t^i = v(X_t^i, \mu_t^{(N)}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
+d X_t^i = v(X_t^i, \mu_t^{N}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{(N)}= \mu_t $ and the distance between $\mu_t^{(N)}$ and $\mu_t$ is of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result is technically very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^{(N)}$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
 
 \subsection{Approximate Euler-Maruyama discretization}
 
 
 In order to be able to simulate the particle SDEs \ref{eqn:sde_particle}, in this section, we now an approximate Euler-Maruyama discretization for each particle SDE. The proposed scheme is given as follows:
 \begin{align}
-\bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\}
+\bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh}^N ) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\} \label{eqn:euler_particle}
 \end{align}
 where $k \in \mathbb{N}_+$ denotes the iteration number, for each particle $i$, $\{Z^i_k\}_{k}$ denotes a series of standard Gaussian random variables in $\R^d$, $h$ denotes the step-size, $\bar{\mu}_{kh}^{(N)}$ denotes the law of $\{\bar{X}_{k}^j\}_{j=1}^N$, and $\hat{v}$ is a computationally tractable estimator of $v$. Here, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion.
 %

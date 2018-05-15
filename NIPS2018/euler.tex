@@ -27,6 +27,15 @@
 
 \section{Proof of Theorem~\ref{thm:euler}}
 
+Before proceeding to the proof, let us first define the following Euler-Maruyama scheme which will be useful for our analysis:
+\begin{align}
+\hat{X}_{k+1}  = \hat{X}_k + h \hat{v}(\hat{X}_k, \mu_{kh}) + \sqrt{2\lambda h}Z_{n+1},
+\end{align}
+where $\mu_t$ denotes the probability distribution of $X_t$ with $(X_t)_t$ being the solution of the original SDE \eqref{eqn:sde}. Now, let us denote the probability distribution of $\hat{X}_k$ as $\muh_{kh}$. 
+%
+We will decompose the overall error into three terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \muh_{Kh} \|_{\TV} + \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$. 
+
+
 \newcommand{\minvsp}{0}
 
 We consider the following assumptions: \vspace{\minvsp pt}
@@ -39,9 +48,9 @@ For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution deno
 \begin{assumption}
 \label{asmp:sde_expconv}
 The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
-% \begin{align}
-$\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$.
-% \end{align}
+\begin{align}
+\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
+\end{align}
 \vspace{\minvsp pt}
 \end{assumption}
 %
@@ -49,18 +58,22 @@ $\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda)$.
 \label{asmp:lipschitz}
 % The drift is Lipschitz continuous, i.e.\ t
 There exits $L < \infty$ such that
-% \begin{align}
-$\| v_t(x) - v_{t'}(x') \| \leq L ( \|x-x' \| + |t-t'|)$.
-% \end{align}
+\begin{align}
+\| v_t(x) - v_{t'}(x') \| \leq L ( \|x-x' \| + |t-t'|),
+\end{align}
+where $v_t(x) = v(x,\mu_t)$ and
+\begin{align}
+\| \hat{v}(x,\mu) - \hat{v}(x',\mu') \| \leq L ( \|x-x' \| + \|\mu-\mu'\|_{\TV}).
+\end{align}
 \vspace{\minvsp pt}
 \end{assumption}
 %
 \begin{assumption}
 \label{asmp:dissip}
 For all $t \geq 0$, $v_t$ is dissipative, i.e. for all $x \in \R^d$,
-% \begin{align}
-$\langle x, v_t(x) \rangle \geq m \|x\|^2 -b$,
-% \end{align}
+\begin{align}
+\langle x, v_t(x) \rangle \geq m \|x\|^2 -b,
+\end{align}
 for some $m,b >0$.
 \vspace{\minvsp pt}
 \end{assumption}
@@ -68,10 +81,10 @@ for some $m,b >0$.
 \begin{assumption}
 \label{asmp:stochgrad}
 The estimator of the drift satisfies the following conditions: \ $\E[\hat{v}_t] = v_t$ for all $t \geq 0$, and for all $t\geq 0$, $x \in \R^d$,
-% \begin{align}
-$\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2)$,
-% \end{align}
-for some $\delta \in (0,1)$.
+\begin{align}
+\E[ \|\hat{v}_t(x) - v_t(x) \|^2] \leq 2 \delta(L^2 \|x\|^2 + B^2),
+\end{align}
+for some $\delta \in (0,1)$. Here, we denote the approximate drift as $\hat{v}_t(x) \triangleq \hat{v}(x,\muh_t)$.
 \vspace{\minvsp pt}
 \end{assumption}
 %
@@ -87,7 +100,7 @@ for $A,B \geq 0$.
 
 
  
-We decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$. We start by upper-bounding the first term. 
+We start by upper-bounding $\| \muh_{Kh} - \mu_T \|_{\TV}$. 
 %
 \begin{lemma}
 \label{lem:euler}
@@ -99,11 +112,11 @@ where the constants $C_1$ and $C_2$ are explicitly defined in the proof.
 \end{lemma}
 %
 \begin{proof}
-We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}. Starting from the discrete-time process $(\bar{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
+We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}. Starting from the discrete-time process $(\hat{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\hat{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
 \begin{align}
 d Y_t = \tilde{v}_t(Y) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear}
 \end{align}
-where $\tilde{v}_t(Y) \triangleq - \sum_{k=0}^{\infty} \hat{v}_k (Y_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mathds{1}$ denotes the indicator function. It is easy to verify that for all $k \in \mathbb{N}_+$, we have $Y_{kh} = \bar{X}_k$. 
+where $\tilde{v}_t(Y) \triangleq - \sum_{k=0}^{\infty} \hat{v}_{kh} (Y_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mathds{1}$ denotes the indicator function. It is easy to verify that for all $k \in \mathbb{N}_+$, we have $Y_{kh} = \hat{X}_k$. 
 
 Let us denote the distributions of $(X_t)_{t \in [0,T]}$ and $(Y_t)_{t \in [0,T]}$ as $\pi_{X}^T$ and $\pi_{Y}^T$ with $T = Kh$. Then we can use Girsanov's formula to express the Kullback-Leibler (KL) divergence between these two distributions, given as follows:
 \begin{align}
@@ -170,14 +183,64 @@ This concludes the proof.
 \end{proof}
 
 
+Now, we bound the term $\| \mub_{Kh} - \muh_{Kh} \|_{\TV}$.
+\begin{lemma}
+\label{lem:euler2}
+Assume that \Cref{asmp:lipschitz} holds. Then the following bound holds:
+\begin{align}
+\| \mub_{Kh} - \muh_{Kh} \|_{\TV}^2 \leq \frac{L^2 K h}{16 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 .
+\end{align}
+\end{lemma}
+%
+\begin{proof}
+By using the same approach that we used in Lemma~\ref{lem:euler}, we first define a continuous-time process $(U_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
+\begin{align}
+d U_t = \bar{v}_t(U) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear2}
+\end{align}
+where $\bar{v}_t(U) \triangleq - \sum_{k=0}^{\infty} \hat{v} (U_{kh}, \mub_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mub_kh$ denotes the probability distribution of $\bar{X}_k$. By using Girsanov's formula once again, we have
+\begin{align}
+\KL (\pi_{Y}^T || \pi_{U}^T) &= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|\hat{v}(U_{kh}, \mu_{kh}) - \hat{v}(U_{kh},\mub_{kh}) \|^2 ] \> dt,
+\end{align}
+where $\pi_U^T$ denotes the distributions of $(U_t)_{t \in [0,T]}$ with $T = Kh$. By using \Cref{asmp:lipschitz}, we have
+\begin{align}
+\KL (\pi_{Y}^T || \pi_{U}^T) &\leq \frac{L^2 h}{4 \lambda} \sum_{k=0}^{K-1} \|\mu_{kh} - \mub_{kh} \|_{\TV}^2   \\
+&\leq \frac{L^2 K h}{4 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2  .
+\end{align}
+By applying the data processing and Pinsker inequalities, we obtain the desired result.
+% \begin{align}
+% \| \mub_{Kh} - \muh_{Kh} \|_{\TV}^2  \leq \frac{L^2 K h}{4 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 
+% \end{align}
+\end{proof}
+
+
+\begin{lemma}
+\label{lem:euler3}
+Assume that the assumptions in Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2} hold. Then for $\lambda > \frac{KL^2h}{8}$, the following bound holds:
+\begin{align}
+\|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq \delta_\lambda \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \Biggr\},
+\end{align}
+where $\delta_\lambda = (1 -\frac{KL^2h}{8\lambda})^{-1} $.
+\end{lemma}
+%
+\begin{proof}
+We have the following decomposition:
+\begin{align}
+\|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq 2 \|\mub_{Kh} - \muh_{Kh} \|_{\TV}^2 + 2\|\muh_{Kh} - \mu_{T} \|_{\TV}^2 \\
+&\leq  \frac{L^2 K h}{8 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 + \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \\ 
+&\leq \Bigl(1 -\frac{KL^2h}{8\lambda} \Bigr)^{-1} \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda} \Biggr\}.
+\end{align}
+The second line follows from Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2}. This completes the proof.
+\end{proof}
+
 \subsection{Proof of Theorem~\ref{thm:euler}}
 %
 \begin{proof}
-By triangle inequality, we have that
+By using the triangle inequality, we can decompose the error $\| \mub_{Kh} - \nu_\lambda \|_{\TV}$ as follows:
 \begin{align}
-\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}.
+\| \mub_{Kh} - \nu_\lambda \|_{\TV}\leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}.
 \end{align}
-Then the desired result is a direct consequence of Lemma~\ref{lem:euler} and assumption \Cref{asmp:sde_expconv}.
+Then the result follows from Lemma~\ref{lem:euler3} and \Cref{asmp:sde_expconv}.
+
 \end{proof}
 
 \section{Proof of Corollary~\ref{coro:precision}}
