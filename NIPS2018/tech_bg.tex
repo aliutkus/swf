@@ -49,12 +49,13 @@ Since $\Omega \subset \R^d$ is compact, the $\W$-distance forms a distance over 
 In this study, we are interested in functional optimization problems in $(\PS(\Omega),\W)$, such as $\min_{\mu\in\PS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
 
 The gradient flows in $(\PS(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Assuming that the measure $\mu_t$ admits a density, denoted as $\rho_t$, such a continuity equation would have the following form:
-\begin{align}
-\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0,  \label{eqn:pde}
-\end{align}
+% \begin{align}
+$\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
+% \end{align}
 where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
-In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
+% In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. 
+We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
 
 % In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
 % \begin{align*}
@@ -71,7 +72,7 @@ In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient 
 \subsection{Sliced-Wasserstein distance}
 \label{sec:sw}
 
-In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, the Wasserstein distance has an analytical form, given as follows:
+In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, $\W$ has an analytical form, given as follows:
 \begin{align}
 \W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau,
 \end{align}

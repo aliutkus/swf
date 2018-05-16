@@ -153,13 +153,13 @@ In this work, we approximate the integral given in \eqref{eqn:gradflow_reg} for 
 \end{align}
 
 where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the one-dimensional Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{(N)}$ to $\theta^*_\#\nu$:
-\begin{align}
-   \psi_{k, \theta}'(z) = \Bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}} \circ F_{\theta^*_\#\nu}) (z)  \Bigr], \qquad \forall z \in \R.
- \end{align}
+% \begin{align}
+   $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
+ % \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-\vspace{-3pt}
+\vspace{-15pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
@@ -177,9 +177,9 @@ where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the one-dimensi
         \For{$\theta\in\{\theta_{nk}\}_{n=1}^{N_\theta}$}
         {
         {\color{purple} \small \tcp{CDF of projected target}}
-        $F_{\theta^*_\#\nu}=CDF\{\langle\theta,y_i\rangle\}_{i=1}^P$\\
+        $F_{\theta^*_\#\nu}=\textnormal{CDF}\{\langle\theta,y_i\rangle\}_{i=1}^P$\\
         {\color{purple} \small \tcp{Quantiles of projected particles}}
-        $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}}=QF\{\langle\theta,\bar{X}_k^i\rangle\}_{i=1}^N$\\
+        $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}}=\textnormal{QF}\{\langle\theta,\bar{X}_k^i\rangle\}_{i=1}^N$\\
           %$\theta^*_{n\#}\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle}$, \hfill $n = 1,\dots,N_\theta$ \\
           %$\theta^*_{n\#}\nu = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, \hfill $n = 1,\dots,N_\theta$ \\
         }
