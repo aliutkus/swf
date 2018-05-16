@@ -20,8 +20,8 @@ We first illustrate SWF on a toy example. We randomly drew the parameters for a 
 \begin{centering}
 \begin{tabular}{ccc|c}
 $k=1$ & $k=7$ & $k=70$ & target\tabularnewline
-\includegraphics[width=3cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
-\includegraphics[width=3cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm]{figures/target-crop.pdf}\tabularnewline
+\includegraphics[width=3cm,height=2cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm,height=2cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm,height=2cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm,height=2cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
+\includegraphics[width=3cm,height=2cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm,height=2cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm,height=2cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm,height=2cm]{figures/target-crop.pdf}\tabularnewline
 \end{tabular}
 \par\end{centering}
 \caption{Toy example: training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$.\label{fig:toy_example}}
@@ -48,4 +48,4 @@ $k=200$ & $k=2000$ & $k=10000$ & $k=40000$ & target\tabularnewline
 
 On figure \ref{fig:fashionmnist}, we can see that a few thousand iterations of SWF is sufficient to get generated samples that capture most features of the training data. We note however that we are currently missing generation of fine-grained textures. We also display the SW2 loss of this run along iterations. Interestingly, such an experiment requires around $1h$ of computing power for a laptop computer on CPU, to be compared with the important ressources required by many other generative models.
 
-\end{itemize}
+% \end{itemize}
