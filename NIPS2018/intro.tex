@@ -20,10 +20,26 @@
 
 % implicit modeling
 
-Implicit generative modeling \cite{diggle1984monte, mohamed2016learning} has become very popular recently and has proven successful in various fields. Variational auto-encoders (VAE \cite{kingma2013VAE}) and generative adversarial networks (GAN \cite{goodfellow2014generative}) are the two well-known examples.
-The goal in these approaches can be briefly described as learning the underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega_\nu)$, without assuming any explicit probability law for it.
-Instead, the implicit generative framework models the data as the output $T(x)$ of a measurable map $T: \Omega_\mu \mapsto \Omega_\nu$, with inputs $x$ generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g. with Gaussian or uniform i.i.d.\ entries). while its outputs should match the target measure $\nu$ on $\Omega_\nu$, which can be very complicated in real applications.
-For the sake of simplicity, we only consider in this study the case where the target measure $\nu$ is not known in closed form, but rather only through $N$ elements from a learning database $D = \{y_1 , \dots , y_N \}$ that are assumed independently sampled from it. It is common in applications to have a very large amount of millions or billions of such samples.
+Implicit generative modeling \cite{diggle1984monte,
+  mohamed2016learning} has become very popular recently and has proven
+successful in various fields. Variational auto-encoders (VAE
+\cite{kingma2013VAE}) and generative adversarial networks (GAN
+\cite{goodfellow2014generative}) are the two well-known examples.  The
+goal in these approaches can be briefly described as learning the
+underlying probability measure of a given dataset, denoted as
+$\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measure
+on the measurable space $(\Omega,\mcf)$. In the sequel, we assume that
+$\Omega \subset \rset^d$ is a compact domain of $\rset^d$ and $\mcf$ is the
+associated Borel $\sigma$-field. The implicit generative framework
+models the data as the output $T(x)$ of a measurable map
+$T: \Omega_\mu \mapsto \Omega$, with inputs $x$ generated from a known
+and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g. with
+Gaussian or uniform i.i.d.\ entries), and its outputs should match the
+unknown target measure $\nu$ on $\Omega$. While $\nu$ is not known in
+closed form, we have accessed to $N$ elements from a learning database
+$D = \{y_1 , \dots , y_N \}$ which are assumed independently sampled
+from $\nu$. It is common in applications to have a very large amount
+of millions or billions of such samples.
 
 
 % VAE and GAN quickly
@@ -35,23 +51,23 @@ While VAE showed great potential in generative modeling, they are known to yield
 
 While GAN were both found effective, although delicate to train, theoretical foundations for them were highlighted only recently \cite{bousquet2017optimal} as minimizing the so-called Wasserstein distance between the output distribution and the target $\nu$. More specifically, GAN and VAE were shown to tackle the same problem in a dual way \cite{bousquet2017optimal,genevay2017gan}. The common ground of such approaches was hence recently understood to be the theory of Optimal Transport (OT), in which such distances between distributions arise naturally.
 
-As it turns out, the venerable old topic of optimal transport brings new light on the generative modeling problem. In short, OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.
+As it turns out, the field of optimal transport brings new light on the generative modeling problem. In short, OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.
 %
-This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel set $A \subset {\cal B}(\Omega_\nu)$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided very mild conditions on these distributions are respected (notably that $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed. However, it remains challenging to construct it in practice.
+This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel set $A \subset \mcf$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided very mild conditions on these distributions are respected (notably that $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed. However, it remains challenging to construct it in practice.
 
 One common point between VAE and GAN is to adopt an approximate strategy for this purpose and to consider transport maps that belong to a parametric family $T_{\phi}$ with $\phi \in \Phi$. Then, they both aim to find the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 \begin{align}
 \phi^\star = \argmin_{\phi \in \Phi} \W(T_{\phi \#}\mu, \nu),
 \end{align}
-where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}. Genevay et al.\ \cite{genevay2017gan} showed that Wasserstein GANs \cite{arjovsky2017wasserstein} and VAEs both use this formulation with different parameterizations and different equivalent definitions for the Wasserstein distance, additionally showing that GAN actually learn parameterized Kantorovitch potentials, which are derivatives of transport maps and much less well-behaved. This is advocated as possibly explaining the difficulty of GAN training.
+where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}.  \cite{genevay2017gan} showed that Wasserstein GANs \cite{arjovsky2017wasserstein} and VAEs both use this formulation with different parameterizations and different equivalent definitions for the Wasserstein distance, additionally showing that GAN actually learn parameterized Kantorovitch potentials, which are derivatives of transport maps and much less well-behaved. This is advocated as possibly explaining the difficulty of GAN training.
 
-In this study, we follow a completely different approach for implicit generative modeling and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit. Formally, we take $T_t$ as the constructed transport map at time $t$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will be the solution of a functional optimization problem, defined through gradient flows for measures in the Wasserstein space. Informally, the flow will have a shape as follows:
+In this study, we follow a completely different approach for implicit generative modeling and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit. Formally, we take $T_t$ as the constructed transport map at time $t$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will be the solution of a functional optimization problem, defined through a gradient flow in the Wasserstein space $(\PS(\Omega),\W)$. Informally, the flow will have a shape as follows:
 \begin{align}
-\partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \label{eqn:gradflow}
+\partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \, , \mu_0 = \mu,\label{eqn:gradflow}
 \end{align}
 where the functional $\mathrm{Cost}$ computes a discrepancy between $\mu_t$ and $\nu$, $\mathrm{Reg}$ denotes a regularization functional, and $\nabla_{\W}$ denotes a notion of gradient with respect to a probability density function in the $\W$ metric for probability measures\footnote{This gradient flow is similar to the the usual Euclidean gradient flows, i.e.\ $dx/dt = - \nabla (f(x) + r(x))$, where $f$ is typically the data-dependent cost function and $r$ is a regularization term. The (explicit) Euler discretization of this flow results in the well-known gradient descent algorithm for solving $\min_x (f(x)+r(x))$.}. If this flow can be simulated, one would hope for $\mu_t=T_t\#\mu$ to converge to the minimum of the functional optimization problem: $\min_\mu ( \mathrm{Cost}(\mu, \nu) + \mathrm{Reg}(\mu)$).
 
-However, these flows cannot in general be either solved or simulated perfectly whatever the cost functional chosen. For instance, derivations based on the Wassertein measure are difficult in the multidimensional case.  Here, we show how the \textit{sliced Wasserstein distance} written $\SW$ is a good candidate in \eqref{eqn:gradflow}. $\SW$ was originally introduced in \cite{pitie2005n} and was shown equivalent to Wasserstein in \cite{bonnotte2013unidimensional}. Although we will define it more rigorously later, it may be understood as applying many scalar transportations of randomized projections of the data, for which analytical expressions are available. Its most import feature is to allow the straightforward treatment of the primal OT problem, thus avoiding the delicate training brought in by the dual formulation considered by Wasserstein-GAN. They were recently considered for fitting the code distribution of parameterized auto-encoders to the target in~\cite{kolouri2018sliced}, appearing as a stable alternative to the dual (adversarial) method described in~\cite{makhzani2015adversarial}
+However, these flows cannot in general be either solved or simulated perfectly whatever the cost functional chosen. For instance, derivations based on the Wassertein measure are difficult in the multidimensional case.  Here, we show how the \textit{sliced Wasserstein distance} written $\SW$ is a good candidate for the choice of the cost function in \eqref{eqn:gradflow}. $\SW$ was originally introduced in \cite{pitie2005n} and was shown equivalent to Wasserstein distance in \cite{bonnotte2013unidimensional}. Although we will define it more rigorously later, it may be understood as applying many scalar transportations of randomized projections of the data, for which analytical expressions are available. Its most import feature is to allow the straightforward treatment of the primal OT problem, thus avoiding the delicate training brought in by the dual formulation considered by Wasserstein-GAN. They were recently considered for fitting the code distribution of parameterized auto-encoders to the target in~\cite{kolouri2018sliced}, appearing as a stable alternative to the dual (adversarial) method described in~\cite{makhzani2015adversarial}
 
 % \item Contributions of the current paper
 % \begin{itemize}
@@ -61,3 +77,8 @@ However, these flows cannot in general be either solved or simulated perfectly w
 % \item Establish theoretical guarantees
 % \item Experimental validation
 % \end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "nips_2018_sketchmcmc"
+%%% End:
