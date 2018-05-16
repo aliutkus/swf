@@ -184,8 +184,7 @@ def add_plotting_arguments(parser):
 
 def base_plot_function(samples, index, error, log_writer, args, axis_lim,
                        target_samples):
-    if index < 69:
-        return
+    
     # hacky code to plot the SW cost
     """if os.path.exists('logs.npy'):
         data = np.load('logs.npy').item()
