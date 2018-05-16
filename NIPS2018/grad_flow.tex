@@ -4,7 +4,7 @@
 
 We let $\mathcal{F}_{\lambda}(\mu) = \frac{1}{2} SW_2^2(\mu, \nu) + \lambda H(\mu)$ for a chosen reference measure $\nu$.
 
-\begin{lemma}
+\begin{thm}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a time step $h > 0$, regularization constant $\lambda > 0$ and a radius $r > \sqrt{d}$. For a probability measure $\mu_0$ on $B(0, r)$ with density $\rho_0 \in L^{\infty}$, there is a probability measure $\mu$ on $\overline{B}(0,r)$ minimizing:
 \[
 \mathcal{G}(\mu) = \mathcal{F}_{\lambda} (\mu) + \frac{1}{2h} W_2^2(\mu, \mu_0) 
@@ -13,9 +13,9 @@ Moreover the optimal $\mu$ has a density $\rho$ on $B(0,r)$ and:
 \begin{equation} \label{ineq:inf_norm_bound}
 ||\rho||_{L^{\infty}} \leq (1 + h/\sqrt{d})^d ||\rho_0||_{L^{\infty}}
 \end{equation}
-\end{lemma}
+\end{thm}
 \begin{proof}
-The set of measures supported on $\cB(0,r)$ is compact in the topology given by $W_2$ metric. Furthermore it is well known [[some ref]] that functional $H$ is lower semicontinuous in this topology. Since $SW_2$ is a distance function [[Bonnotte]], dominated by $\frac{1}{\sqrt{d}} W_2$ [[Bonnotte]] we have:
+The set of measures supported on $B(0,r)$ is compact in the topology given by $W_2$ metric. Furthermore it is well known [[some ref]] that functional $H$ is lower semicontinuous in this topology. Since $SW_2$ is a distance function [[Bonnotte]], dominated by $\frac{1}{\sqrt{d}} W_2$ [[Bonnotte]] we have:
 \[
 |SW_2(\pi_0, \nu) - SW_2(\pi_1, \nu)| \leq SW_2(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}W_2(\pi_0, \pi_1).
 \]
@@ -47,7 +47,7 @@ where the second inequality comes from the fact, that $\hat{\mu}_{t_k}$ minimize
 
 Existance of gradient flow (generalized minimizing movement scheme)
 \begin{thm} \label{thm:existance_gmm_scheme}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a Lipschitz generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
 \[
 \mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}W_2^2(\mu_+, \mu_-)
 \]
@@ -57,13 +57,90 @@ Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
 \]
 \end{thm}
 \begin{proof}
-The proof is exactly the same as the proof of Theorem 5.5.3 in [[Bonnotte]], but we include it for completeness   ........
+The proof is (almost) exactly the same as the proof of Theorem 5.5.3 in [[Bonnotte]]. 
 \end{proof}
 
 \begin{thm}
 Let $\mu_t$ be a generalized minimizing movement scheme given by \ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
 \[
-\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) = \lambda \Delta \rho_t  \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta 
+\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) + \lambda \Delta \rho_t = 0  \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta 
 \]
-in a weak sense.
+in a weak sense, that is for all $\xi \in \mathcal{C}_c^{\infty} ([0, \infty)\times B(0,r))$ we have:
+\[
+\int_0^{\infty} \int_{B(0,r)} \left[\frac{\partial \xi}{\partial t}(t,x) - v_t \nabla \xi(t,x)  - \lambda \Delta \xi(t,x)\right] \rho_t(x) dx dt = -\int_{B(0,r)} \xi(0,x)\rho_0(x) dx
+\]
 \end{thm}
+\begin{proof}
+Our proof is based on the proof of Theorem 5.6.1 from [[Bonnotte]]. We proceed in five steps.
+
+1. Let $h_n \rightarrow 0$ be a sequence given by existance of generalized movement scheme, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $L^r$ and in weak-star topology in $L^{\infty}$. Let $\xi \in \mathcal{C}_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of theorem $5.6.1$ from [[Bonnotte]], we obtain:
+\begin{multline} \label{thm:cont_proof_part1}
+\int \xi(0, x) \rho_0(x) dx + \int_0^{\infty} \int \frac{\partial \xi}{\partial t}(t,x) \rho_t(x) dx dt \\
+= \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx
+\end{multline}
+
+2. Again, this part is the same as part $2$ of the proof of Theorem 5.6.1 in [[Bonnotte]]. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of Theorem $5.6.1$ in [[Bonnotte]], we get:
+
+\begin{multline} \label{thm:cont_proof_part2}
+\int_0^{\infty} \int \fint (\psi_{t, \theta})' (\langle \theta, x \rangle ) \langle \theta , \nabla \xi (x, t) \rangle d\theta d\mu_t(x) dt \\
+= \lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n}
+\end{multline}
+
+3. Since $\xi$ is compactly supported and smooth, $\Delta \xi$ is Lipschitz, and so for any $ t \geq 0$ if we take $k = \lfloor t/h_n \rfloor$ we get $| \Delta \xi_k^n(x) - \Delta \xi(t,x) | \leq C h_n$ for some constant $C$. Let $T > 0$ be such that $\xi(t,x) = 0 $ for $t > T$. We have:
+\[
+\left| \sum_{k=1}^{\infty} h_n \int \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx - \int \int \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt \right| \leq CTh_n 
+\]
+On the other hand,  we know, that $\rho^{h_n}$ converges to $\rho$ in $L^1([0,T] \times \cB(0,r))$, and $\Delta \xi$ is bounded, so:
+\[
+\left| \int \int \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt - \int \int \Delta \xi (t,x) \rho_t(x) dx dt \right| \rightarrow_{n \rightarrow \infty} 0
+\]
+Combined those two results give:
+\begin{equation} \label{thm:cont_proof_part3}
+\lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx = \int \int \Delta \xi (t,x) \rho_t(x) dx dt
+\end{equation}
+
+
+
+4. We follow the argument presented in the third part of the proof of Theorem $5.6.1$ in [[Bonnotte]].
+
+Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using propositions $1.5.7$ and $5.1.7$ from Bonnotte, as well as [[JKO]] equation (38) (maybe a better reference?) and optimality of $\mu_{kh_n}^{h_n}$, we get:
+\begin{multline} \label{thm:cont_proof_eq0}
+\frac{1}{h_n} \int \langle \nabla \phi_k^{h_n} , \nabla \xi_{k}^n \rangle d\mu_{kh_n}^{h_n} =  - \int \fint (\psi_{kh_n}^{h_n})'(\theta^{*}) \langle \theta, \nabla \xi_k^n \rangle d\theta d\mu_{kh_n}^{h_n} - \lambda \int  \rho_{kh_n}^{h_n}(x) \Delta \xi_k^n(x)  dx 
+\end{multline}
+that is the derivative of $\mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h_n}W_2^2(\cdot, \mu_{(k-1)h_n})$ in the direction given by vector field $\nabla \xi_k^n$ is zero.
+
+Let $\gamma$ be optimal transport between $\mu_{kh_n}^{h_n}$ and $\mu_{(k-1)h_n}^{h_n}$. Then:
+\begin{equation} \label{thm:cont_proof_eq1}
+\int \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x)}{h_n} dx = \frac{1}{h_n} \int (\xi_k^n(y) - \xi_k^n(x)) d\gamma(x,y)
+\end{equation}
+\begin{equation} \label{thm:cont_proof_eq2}
+\frac{1}{h_n}\int \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_k^n(x) \rangle dx = \frac{1}{h_n} \int \langle \nabla \xi_k^n(x), y-x \rangle d\gamma(x,y) 
+\end{equation}
+Since $\xi$ is $\mathcal{C}_c^{\infty}$, it has Lipschitz gradient. Let $C$ be twice the Lipschitz constant of $\nabla \xi$. Then we have $| \xi(y) - \xi(x) - \langle \nabla \xi(x), y-x \rangle | \leq C|x- y|^2$, and hence:
+\begin{equation} \label{thm:cont_proof_eq3}
+\int |\xi_k^n(y) - \xi_k^n(x) - \langle \nabla \xi_k^n(x), y-x \rangle | d \gamma(x,y) \leq CW_2^2( \mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n})
+\end{equation}
+Combining \ref{thm:cont_proof_eq1}, \ref{thm:cont_proof_eq2} and \ref{thm:cont_proof_eq3}, we get:
+\begin{multline} \label{thm:cont_proof_eq4}
+\left|\sum_{k=1}^{\infty} h_n \int \xi_k^n(x) \frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx  + 
+\sum_{k=1}^{\infty} \int \langle \nabla \phi_k^{h_n} , \nabla \xi_k^n \rangle d\mu_{kh_n}^{h_n} \right| \\
+\leq C\sum_{k=1}^{\infty} W_2^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n})
+\end{multline}
+
+As in the proof of \ref{thm:existance_gmm_scheme}, we let $\mu_{min}$ be some minimum of $\mathcal{F}_{\lambda}$ on $\mathcal{P}(\cB(0,r))$ and we have:
+\begin{equation} \label{thm:cont_proof_eq5}
+\begin{aligned}
+\sum_{k=1}^{\infty} W_2^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}) & \leq  2 h_n \sum_{k=1}^{\infty} \mathcal{F}_{\lambda}(\mu_{(k-1)h_n}^{h_n}) - \mathcal{F}_{\lambda}(\mu_{kh_n}^{h_n}) \\ & \leq 2h_n \left(\mathcal{F}_{\lambda}(\mu_0) - \mathcal{F}_{\lambda}(\mu_{min}) \right)
+\end{aligned}
+\end{equation}
+and so the sum on the right hand side of the equation goes to zero as $n$ goes to infinity.
+
+From \ref{thm:cont_proof_eq4}, \ref{thm:cont_proof_eq5} and \ref{thm:cont_proof_eq0} we conclude:
+\begin{multline} \label{thm:cont_proof_part4}
+\lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \xi_k^n(x)\frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx = \\
+\lim_{n \rightarrow \infty} \left( h_n \sum_{k=1}^{\infty} \int \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n} + h_n \sum_{k=1}^{\infty} \int \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx  \right)
+\end{multline}
+where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \ref{thm:cont_proof_part1}.
+
+5. Combining \ref{thm:cont_proof_part1}, \ref{thm:cont_proof_part2}, \ref{thm:cont_proof_part3} and \ref{thm:cont_proof_part4} we get the result.
+\end{proof}
