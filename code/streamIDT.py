@@ -1,13 +1,16 @@
 # imports
 import os
-import torch
-from torchvision.utils import save_image, make_grid
+import IDT
 from qsketch.sketch import add_sketch_arguments, add_data_arguments
 import numpy as np
 from qsketch import sketch
-from IDT import streamIDT, add_IDT_arguments
+from IDT import streamIDT, add_IDT_arguments, add_plotting_arguments
 import argparse
 import matplotlib.pyplot as plt
+from tensorboardX import SummaryWriter
+from time import strftime, gmtime
+import socket
+
 
 plt.ion()
 
@@ -18,27 +21,18 @@ if __name__ == "__main__":
     parser = add_data_arguments(parser)
     parser = add_sketch_arguments(parser)
     parser = add_IDT_arguments(parser)
+    parser = add_plotting_arguments(parser)
 
     parser.add_argument("--output",
                         help="If provided, save the generated samples to "
                              "this file path after transportation. Be sure "
                              "to add a `stop` parameter for the transport "
                              "to terminate for this to happen.")
-    parser.add_argument("--plot",
-                        help="Flag indicating whether or not to plot samples",
-                        action="store_true")
-    parser.add_argument("--plot_target",
-                        help="Samples from the target. Same constraints as "
-                             "the `dataset` argument.")
     parser.add_argument("--stop",
                         help="Number of sketches done before stopping. "
                              "A negative value means endless transport.",
                         type=int,
                         default=-1)
-    parser.add_argument("--plot_dir",
-                        help="Output directory for saving the plots",
-                        default="./samples")
-
     args = parser.parse_args()
 
     # load the data
@@ -74,6 +68,14 @@ if __name__ == "__main__":
                              'They should be num_samples x %d for this '
                              'sketch file.' % (args.initial_samples, data_dim))
 
+    if args.log:
+        log_writer = SummaryWriter(os.path.join(args.logdir,
+                                                strftime('%Y-%m-%d-%h-%s-',
+                                                         gmtime())
+                                                + socket.gethostname()))
+    else:
+        log_writer = None
+
     if args.plot_target is not None:
         # just handle numpy arrays now
         target_samples = sketch.load_data(args.plot_target, None).dataset.data
@@ -82,61 +84,16 @@ if __name__ == "__main__":
         ntarget = min(10000, target_samples.shape[0])
         target_samples = target_samples[:ntarget]
         axis_lim = [[v.min(), v.max()] for v in target_samples.T]
-    if args.plot:
-        if not os.path.exists(args.plot_dir):
-            os.mkdir(args.plot_dir)
-
-        def plot_function(samples, index):
-            if index % 200:
-                return
-            data_dim = samples.shape[-1]
-            image = False
-
-            # try to identify if it's an image or not
-            if data_dim > 700:
-                # if the data dimension is large: probably an image.
-                square_dim_bw = np.sqrt(data_dim)
-                square_dim_col = np.sqrt(data_dim/3)
-                if not (square_dim_col % 1):  # check monochrome
-                    image = True
-                    nchan = 3
-                    img_dim = int(square_dim_col)
-                elif not (square_dim_bw % 1):  # check color
-                    image = True
-                    nchan = 1
-                    img_dim = int(square_dim_bw)
-
-            if not image:
-                # no image: just plot second data dimension vs first one
-                plt.figure(1, figsize=(8, 8))
-                plt.clf()
-                if args.plot_target is not None:
-                    plt.plot(target_samples[:, 0], target_samples[:, 1], 'or')
-                plt.plot(samples[:, 0], samples[:, 1], 'ob')
-                plt.xlim(axis_lim[0])
-                plt.ylim(axis_lim[1])
-                plt.grid(True)
-                plt.title('sketch %d'
-                          % (index+1))
-                plt.pause(0.05)
-                plt.show()
-                return
-
-            # it's an image, output a grid of samples
-            [num_samples, data_dim] = samples.shape
-            samples = samples[:min(208, num_samples)]
-            num_samples = samples.shape[0]
-
-            samples = np.reshape(samples,
-                                 [num_samples, nchan, img_dim, img_dim])
-            pic = make_grid(torch.Tensor(samples),
-                            nrow=8, padding=2, normalize=True, scale_each=True)
-            save_image(pic, '{}/image_{}.png'.format(args.plot_dir, index))
     else:
-        plot_function = None
+        target_samples = None
+        axis_lim = None
+
+    def plot_function(samples, index, error):
+        return IDT.base_plot_function(samples, index, error, log_writer,
+                                      args, axis_lim, target_samples)
 
     samples = streamIDT(sketches, samples, args.stepsize, args.reg,
-                        plot_function, args.logdir)
+                        plot_function)
 
-    if args.write is not None:
-        np.save(args.write, samples)
+    if args.output is not None:
+        np.save(args.output, samples)
