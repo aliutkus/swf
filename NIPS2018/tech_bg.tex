@@ -32,7 +32,7 @@ In the case where $\Omega$ is finite, computing the wasserstein distance between
 where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
 Provided that $\mu$ satisfies a mild regularity condition, we have the following nice uniqueness result.
-\begin{thm}{ \cite[Theorem 1.4]{santambrogio2010introduction}]
+\begin{thm}[ \protect{\cite[Theorem 1.4]{santambrogio2010introduction}}]
 \label{thm:unqmap}
 Assume that  $\mu$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable transport map $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The optimal transport map $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
 \end{thm}
