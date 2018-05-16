@@ -15,15 +15,14 @@ CLIPTO=5000
 
 # parameters for SWF
 STEPSIZE=1
-REG=0.0001
+REG=0.5
 INPUT_DIM=5
 BATCHSIZE=1
 
 EPOCHS=1
-PLOTDIR_STRING=""
-#--plot_dir toydata_print"
-PLOT_STRING="--plot"
-SEED_STRING=""
+PLOTDIR_STRING="--plot_dir toydata_reg0.5"
+PLOT_STRING=""
+SEED_STRING="--seed 0"
 
 # Generate data:
  python ./generate_toydata.py  --output toydata --dim $DIMENSION --num_samples 50000 --num_components $NUM_COMPONENTS $SEED_STRING
@@ -68,5 +67,5 @@ if [ $1 = "stream" ]; then
   if [ "$PLOTDIR_STRING" != "" ]; then
     PLOTDIR_STRING=$PLOTDIR_STRING"_stream"
   fi
-  python streamIDT.py ./toydata.npy  --stop 100 $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples 3000 --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
+  python streamIDT.py ./toydata.npy  --stop 500 $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples 3000 --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
 fi

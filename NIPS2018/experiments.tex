@@ -7,13 +7,13 @@ In this section, we evaluate the proposed SWF Algorithm~\ref{algo:flow} on diffe
 \subsection{Toy example: multivariate Gaussian Mixture Model}
 \label{sub:toy_example}
 
-We first illustrate SWF on a toy example. We randomly drew the parameters for a GMM with $20$ components and a dimension $d=5$. The weights of the components were drawn randomly, as well as their covariance matrices and centroids. In all draws, the first centroid was sent far from the other ones (multiplied by $3$) so as to test the model for mode collapse.
+We first illustrate SWF on a toy example. We randomly drew the parameters for a GMM with $20$ components and various dimensions $d$. The weights of the components were drawn randomly, as well as their covariance matrices and centroids. In all draws, the first centroid was sent far from the other ones (multiplied by $3$) so as to test the model for mode collapse.
 
 \begin{figure}
 \begin{centering}
-  Here some figure with the sliced wasserstein cost along iterations
+\includegraphics[width=5cm]{figures/SW2_cost-crop.pdf}
 \par\end{centering}
-\caption{Sliced Wasserstein distance between output $\bar{\mu}_{k}^{(N)}$ and the target $\nu$ distributions in the toy example GMM case. Averaged over 50 independent trials.\label{fig:toy_sw}}
+\caption{Sliced Wasserstein distance between output $\bar{\mu}_{k}^{(N)}$ and target $\nu$ distributions in the toy example GMM case for different data dimensions $d$.\label{fig:toy_sw}}
 \end{figure}
 
 
