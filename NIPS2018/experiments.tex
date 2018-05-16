@@ -19,10 +19,11 @@ We first illustrate SWF on a toy example. We randomly drew the parameters for a 
 
 \begin{figure}
 \begin{centering}
+\setlength\tabcolsep{1pt}
 \begin{tabular}{ccc|c}
 $k=1$ & $k=7$ & $k=70$ & target\tabularnewline
-\includegraphics[width=3cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
-\includegraphics[width=3cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=3cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=3cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=3cm]{figures/target-crop.pdf}\tabularnewline
+\includegraphics[width=2cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
+\includegraphics[width=2cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/target-crop.pdf}\tabularnewline
 \end{tabular}
 \par\end{centering}
 \caption{Toy example: training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$.\label{fig:toy_example}}
@@ -73,6 +74,8 @@ In a second set of experiments, we tested the SWF for implicit generative modeli
 
 \begin{figure}
 \begin{centering}
+  \setlength\tabcolsep{1pt}
+
 \begin{tabular}{cccc|c}
 $k=200$ & $k=2000$ & $k=10000$ & $k=40000$ & target\tabularnewline
 \includegraphics[height=6cm]{figures/FashionMNIST/image_200} & \includegraphics[height=6cm]{figures/FashionMNIST/image_2000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_10000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_38400} & \includegraphics[height=6cm]{figures/FashionMNIST/dataset_example}\tabularnewline
