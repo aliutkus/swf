@@ -6,7 +6,7 @@
 
 In this section we will analyze the behavior of the proposed algorithm in the asymptotic regime where the number of particles $N \rightarrow \infty$. Within this regime, we will assume that the original SDE \eqref{eqn:sde} can be directly simulated by using an approximate Euler-Maruyama scheme, defined as follows:
 \begin{align}
-\bar{X}_0 \simiid \mu_0, \quad \qquad \bar{X}_{k+1} = \bar{X}_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh} ) + \sqrt{2 \lambda h} Z_{k+1}, \qquad
+\bar{X}_0 \simiid \mu_0, \quad \qquad \bar{X}_{k+1} = \bar{X}_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh} ) + \sqrt{2 \lambda h} Z_{k+1}, \qquad \label{eqn:euler_asymp}
 \end{align}
 where $\mub_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it captures the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
 
@@ -14,7 +14,7 @@ We are interested in analyzing the distance $\| \mub_{Kh} - \nu_\lambda \|_{\TV}
 %
 In order to upper-bound this distance, we decompose it into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV} \triangleq {\cal A}_1 + {\cal A}_2$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$. The term ${\cal A}_2$ is related to the weak convergence of the continuous Markov process to its invariant distribution and it often decays exponentially with increasing $T$. 
 
-In order to bound ${\cal A}_1$ is more delicate. 
+In order to bound ${\cal A}_1$, we exploit the connections between the discretized scheme \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}. The SGLD algorithm is a Bayesian posterior sampling method, which is also obtained as a discretization of an SDE whose drift has a much simpler form than our drift.   
 
 We now present our second main theoretical result. Due to space limitations we present all our assumptions and the explicit forms of the constants in the supplementary document. 
 \begin{thm}
@@ -23,7 +23,7 @@ Assume that the conditions given in the supplementary document hold. Then, the f
 \begin{align}
 \| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \sqrt{\delta_\lambda} \left \lbrace  \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2  \delta K h}{4\lambda} \right \rbrace^{1/2} +  C_3 \exp(-C_4 Kh \lambda),
 \end{align} 
-for some $C_1,C_2,C_3,C_4,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$. The explicit forms of the constants are given in the proof.
+for some $C_1,C_2,C_3,C_4,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$. % The explicit forms of the constants are given in the proof.
 \end{thm}
 
 

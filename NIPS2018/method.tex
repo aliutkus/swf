@@ -135,7 +135,7 @@ Our approach is based on defining a \emph{particle system} that serves as an app
 \begin{align}
 d X_t^i = v(X_t^i, \mu_t^{N}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and we leave it out of the scope of this study. %We will support this claim with experimental results.
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N$ denotes the law of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for $t$ large enough \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and it is out of the scope of this study. %We will support this claim with experimental results.
 
 \subsection{Approximate Euler-Maruyama discretization}
 
@@ -146,20 +146,20 @@ In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in pr
 \end{align}
 where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{(N)}$ being the law of $\{\bar{X}_{k}^j\}_{j=1}^N$. A question of fundamental practical importance is how to compute this function.
 
-In this work, we approximate the integral given in \eqref{eqn:gradflow_reg} for the computation of $v$ by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{nk}$, and then by taking:
+In this work, we approximate the integral in \eqref{eqn:gradflow_reg} for the computation of $v$ by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{nk}$, and then by taking:
 
 \begin{align}
-\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum_{n=1}^{N_\theta} \psi_{k, \theta_{nk}}'(\langle\theta_{nk},x\rangle ) \theta_{nk}, \label{eqn:approxdrift}
+\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum\nolimits_{n=1}^{N_\theta} \psi_{k, \theta_{nk}}'(\langle\theta_{nk},x\rangle ) \theta_{nk}, \label{eqn:approxdrift}
 \end{align}
 
-where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the one-dimensional Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{(N)}$ to $\theta^*_\#\nu$:
+where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{(N)}$ to $\theta^*_\#\nu$:
 % \begin{align}
    $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
  % \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-\vspace{-15pt}
+\vspace{-2pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
