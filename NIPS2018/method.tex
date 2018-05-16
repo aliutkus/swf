@@ -40,13 +40,13 @@
 % \end{align}
 % where $\frac{\delta \F}{\delta \rho}(\rho)$ denotes the first variation of $\F$.
 
-In this section, we will construct a gradient flow in $\WS$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
+In this section, we will construct a gradient flow in $(\PS(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
 \begin{align}
 \min_\mu \Bigl\{ \F_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
 \end{align}
-where $\He(\mu) \triangleq \int \rho(x) \log \rho(x) dx $ denotes the negative entropy of $\mu(dx) = \rho(x)dx$. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
+where $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
 
-The importance of the entropy regularization becomes prominent in practical applications where we have finitely many samples drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.
+The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
 
@@ -61,7 +61,7 @@ Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth
 \end{align}
 in a weak sense. Here, $\Delta$ denotes the Laplacian operator and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$.
 \end{thm}
-The proof of Theorem~\ref{thm:continuity} as well as the proofs of all our theoretical results are given in the supplementary document. For proving this theorem, we use the technique introduced in \cite{bonnotte2013unidimensional}: we first prove the existence of the gradient flow by showing that the solution curve $(\mu_t)_t$ is a limit of the solution of a time-discretized problem \cite{jordan1998variational}. Then we prove that the curve $(\rho_t)_t$ solves the PDE given in \eqref{eqn:gradflow_reg}.
+The precise statement of this Theorem, related results and its proof are postponed to the the supplementary document. For proving this theorem, we use the technique introduced in \cite{bonnotte2013unidimensional}: we first prove the existence of the gradient flow by showing that the solution curve $(\mu_t)_t$ is a limit of the solution of a time-discretized problem \cite{jordan1998variational}. Then we prove that the curve $(\rho_t)_t$ solves the PDE given in \eqref{eqn:gradflow_reg}.
 
 
 % We can now construct the modified gradient flow as follows:
@@ -144,7 +144,7 @@ In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in pr
 \begin{align}
 \bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}_k(\bar{X}^i_k) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\} \label{eqn:euler_particle}
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{(N)}$ being the law of $\{\bar{X}_{k}^j\}_{j=1}^N$. A question of fundamental practical importance is how to compute this function.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{i=1}^N \delta_{\bar{X}_k^i}$ is the empirical distribution of $\{\bar{X}_k^i\}_{i=1}^N$. A question of fundamental practical importance is how to compute this function.
 
 In this work, we approximate the integral in \eqref{eqn:gradflow_reg} for the computation of $v$ by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{nk}$, and then by taking:
 
