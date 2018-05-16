@@ -31,7 +31,22 @@ Before proceeding to the proof, let us first define the following Euler-Maruyama
 \begin{align}
 \hat{X}_{k+1}  = \hat{X}_k + h \hat{v}(\hat{X}_k, \mu_{kh}) + \sqrt{2\lambda h}Z_{n+1},
 \end{align}
-where $\mu_t$ denotes the probability distribution of $X_t$ with $(X_t)_t$ being the solution of the original SDE \eqref{eqn:sde}. Now, let us denote the probability distribution of $\hat{X}_k$ as $\muh_{kh}$. 
+where $\mu_t$ denotes the probability distribution of $X_t$ with $(X_t)_t$ being the solution of the original SDE \eqref{eqn:sde}. Now, consider the probability distribution of $\hat{X}_k$ as $\muh_{kh}$.  Starting from the discrete-time process $(\hat{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\hat{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
+\begin{align}
+d Y_t = \tilde{v}_t(Y) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear}
+\end{align}
+where $\tilde{v}_t(Y) \triangleq - \sum_{k=0}^{\infty} \hat{v}_{kh} (Y_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mathds{1}$ denotes the indicator function.
+Similarly, we define a continuous-time process $(U_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, defined by \eqref{eqn:euler_asymp}, given as follows: 
+\begin{align}
+d U_t = \bar{v}_t(U) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear2}
+\end{align}
+where
+$\bar{v}_t(U) \triangleq - \sum_{k=0}^{\infty} \hat{v} (U_{kh},
+\mub_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mub_{kh}$ denotes the
+probability distribution of $\bar{X}_k$.  Let us denote the
+distributions of $(X_t)_{t \in [0,T]}$, $(Y_t)_{t \in [0,T]}$ and
+$(U_t)_{t \in \ccint{0,T}}$ as $\pi_{X}^T$, $\pi_{Y}^T$ and $\pi_{U}^T$
+respectively with $T = Kh$.
 %
 We will decompose the overall error into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $T = Kh$. 
 
@@ -94,7 +109,7 @@ For all $t \geq 0$: $|\Psi_t(0)| \leq A$ and $\|v_t(0)\| \leq B$,
 % \begin{align}
 % |\Psi_t(0)| \leq A, \qquad \text{and} \qquad \|v_t(0)\| \leq B
 % \end{align}
-for $A,B \geq 0$.
+for $A,B \geq 0$, where $\Psi_t = \int_{\mathbb{S}^{d-1}} \psi_{t}(\ps{\theta}{\cdot}) d \theta$. 
 % \vspace{\minvsp pt}
 \end{assumption}
 
@@ -106,19 +121,15 @@ We start by upper-bounding $\| \muh_{Kh} - \mu_T \|_{\TV}$.
 \label{lem:euler}
 Assume that the conditions \Cref{asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun} hold. Then, the following bound holds:
 \begin{align}
-\| \muh_{Kh} - \mu_{T} \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
+\| \muh_{Kh} - \mu_{T} \|_{\TV}^2\leq \| \pi^T_{Y} - \pi_{X}^T \|_{\TV}^2 \leq \frac{L^2 K}{4\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{8\lambda},
 \end{align}
 where $C_1 \triangleq 12(L^2 C_0 + B^2)+1$, $C_2 \triangleq 2 (L^2 C_0 + B^2)$, $C_0 \triangleq C_e +2  (1 \vee \frac1{m})(b+2B^2 + d \lambda)$, and $C_e$ denotes the entropy of $\mu_0$.
 \end{lemma}
 %
 \begin{proof}
-We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}. Starting from the discrete-time process $(\hat{X}_k)_{k\in \mathbb{N}_+}$, we first define a continuous-time process $(Y_t)_{t\geq 0}$ that linearly interpolates $(\hat{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
-\begin{align}
-d Y_t = \tilde{v}_t(Y) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear}
-\end{align}
-where $\tilde{v}_t(Y) \triangleq - \sum_{k=0}^{\infty} \hat{v}_{kh} (Y_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mathds{1}$ denotes the indicator function. It is easy to verify that for all $k \in \mathbb{N}_+$, we have $Y_{kh} = \hat{X}_k$. 
+We use the proof technique presented in \cite{dalalyan2017theoretical,raginsky17a}.  It is easy to verify that for all $k \in \mathbb{N}_+$, we have $Y_{kh} = \hat{X}_k$. 
 
-Let us denote the distributions of $(X_t)_{t \in [0,T]}$ and $(Y_t)_{t \in [0,T]}$ as $\pi_{X}^T$ and $\pi_{Y}^T$ with $T = Kh$. Then we can use Girsanov's formula to express the Kullback-Leibler (KL) divergence between these two distributions, given as follows:
+By Girsanov's theorem to express the Kullback-Leibler (KL) divergence between these two distributions, given as follows:
 \begin{align}
 \KL (\pi_{X}^T || \pi_{Y}^T) &= \frac1{4 \lambda} \int_0^{Kh} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ]  \> dt \\
 &= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|v_t(Y_t) + \tilde{v}_t(Y) \|^2 ] \> dt \\
@@ -188,23 +199,19 @@ Now, we bound the term $\| \mub_{Kh} - \muh_{Kh} \|_{\TV}$.
 \label{lem:euler2}
 Assume that \Cref{asmp:lipschitz} holds. Then the following bound holds:
 \begin{align}
-\| \mub_{Kh} - \muh_{Kh} \|_{\TV}^2 \leq \frac{L^2 K h}{16 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 .
+\| \pi_{U}^T - \pi_{Y}^T \|_{\TV}^2  \leq \frac{L^2 K h}{16 \lambda}  \|\pi_{X}^T - \pi_{U}^T \|_{\TV}^2 .
 \end{align}
 \end{lemma}
 %
 \begin{proof}
-By using the same approach that we used in Lemma~\ref{lem:euler}, we first define a continuous-time process $(U_t)_{t\geq 0}$ that linearly interpolates $(\bar{X}_k)_{k\in \mathbb{N}_+}$, given as follows: 
-\begin{align}
-d U_t = \bar{v}_t(U) dt + \sqrt{2 \lambda} dW_t, \label{eqn:sde_linear2}
-\end{align}
-where $\bar{v}_t(U) \triangleq - \sum_{k=0}^{\infty} \hat{v} (U_{kh}, \mub_{kh}) \mathds{1}_{[kh, (k+1)h)}(t)$ and $\mub_kh$ denotes the probability distribution of $\bar{X}_k$. By using Girsanov's formula once again, we have
+We use that same approach than in Lemma~\ref{lem:euler}. By Girsanov's theorem once again, we have
 \begin{align}
 \KL (\pi_{Y}^T || \pi_{U}^T) &= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|\hat{v}(U_{kh}, \mu_{kh}) - \hat{v}(U_{kh},\mub_{kh}) \|^2 ] \> dt,
 \end{align}
 where $\pi_U^T$ denotes the distributions of $(U_t)_{t \in [0,T]}$ with $T = Kh$. By using \Cref{asmp:lipschitz}, we have
 \begin{align}
 \KL (\pi_{Y}^T || \pi_{U}^T) &\leq \frac{L^2 h}{4 \lambda} \sum_{k=0}^{K-1} \|\mu_{kh} - \mub_{kh} \|_{\TV}^2   \\
-&\leq \frac{L^2 K h}{4 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2  .
+&\leq \frac{L^2 K h}{4 \lambda}  \|\pi_{X}^T - \pi_{U}^T \|_{\TV}^2  .
 \end{align}
 By applying the data processing and Pinsker inequalities, we obtain the desired result.
 % \begin{align}
@@ -225,8 +232,8 @@ where $\delta_\lambda = (1 -\frac{KL^2h}{8\lambda})^{-1} $.
 \begin{proof}
 We have the following decomposition: (with $T= Kh$)
 \begin{align}
-\|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq 2 \|\mub_{Kh} - \muh_{Kh} \|_{\TV}^2 + 2\|\muh_{Kh} - \mu_{T} \|_{\TV}^2 \\
-&\leq  \frac{L^2 K h}{8 \lambda}  \|\mu_{Kh} - \mub_{Kh} \|_{\TV}^2 + \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \\ 
+\|\pi_{X}^T - \pi_{U}^T \|_{\TV}^2 &\leq 2 \|\pi_{X}^T - \pi_Y^T \|_{\TV}^2 + 2\|\pi_Y^T - \pi_{U}^T \|_{\TV}^2 \\
+&\leq  \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} +  \frac{L^2 K h}{8 \lambda}  \|\pi_X^T - \pi_{U}^T \|_{\TV}^2 \\ 
 &\leq \Bigl(1 -\frac{KL^2h}{8\lambda} \Bigr)^{-1} \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \Biggr\}.
 \end{align}
 The second line follows from Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2}. Last line follows from the assumption that $\lambda$ is large enough. This completes the proof.
