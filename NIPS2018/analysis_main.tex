@@ -14,9 +14,10 @@ We are interested in analyzing the distance $\| \mub_{Kh} - \nu_\lambda \|_{\TV}
 %
 In order to upper-bound this distance, we decompose it into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV} \triangleq {\cal A}_1 + {\cal A}_2$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$. The term ${\cal A}_2$ is related to the weak convergence of the continuous Markov process to its invariant distribution and it often decays exponentially with increasing $T$. 
 
-In order to bound ${\cal A}_1$, we exploit the connections between the discretized scheme \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}. The SGLD algorithm is a Bayesian posterior sampling method, which is also obtained as a discretization of an SDE whose drift has a much simpler form than our drift.   
+For the term ${\cal A}_1$, we exploit the connections between \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}, which is a Bayesian posterior sampling method, and is obtained as a discretization of an SDE whose drift has a much simpler form. We bound ${\cal A}_1$ by extending the recent results on SGLD \cite{raginsky17a} to time- and measure-dependent drifts, that are of our interest.
 
 We now present our second main theoretical result. Due to space limitations we present all our assumptions and the explicit forms of the constants in the supplementary document. 
+\vspace{-5pt}
 \begin{thm}
 \label{thm:euler}
 Assume that the conditions given in the supplementary document hold. Then, the following bound holds for $\lambda$ large enough:
@@ -25,10 +26,10 @@ Assume that the conditions given in the supplementary document hold. Then, the f
 \end{align} 
 for some $C_1,C_2,C_3,C_4,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$. % The explicit forms of the constants are given in the proof.
 \end{thm}
-
-
-
-
+Here, the constants $C_1$, $C_2$, $L$ are related to the regularity and smoothness of the functions $v$ and $\hat{v}$, $C_3$, $C_4$ are related to the rate of convergence of the continuous-time process to its invariant measure, $\delta$ is inversely proportional to the variance of $\hat{v}$, and $\delta_\lambda$ decreases as $\lambda$ increases. The theorem shows that 
+% the error of the infinite-particle is bounded for all $K$ and the the bound has two terms, one increasing as $\sqrt{K}$ and the other one exponentially decreasing with $K$. Therefore, 
+if we choose $K$ large enough and $h$ small enough, we can have a non-asymptotic error guarantee, which is formally shown in the following corollary. 
+\vspace{-5pt}
 \begin{cor}
   \label{coro:precision}
   Assume that the conditions given in the supplementary document hold. Then for all $\varepsilon >0$, setting
@@ -41,4 +42,4 @@ $h = (3/C_1)\wedge\left(\frac{\varepsilon^2 \lambda}{2\delta_\lambda L^2 T}(1+3\
     $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{2 C_2 \delta_\lambda \delta}{L^2}\right)^{1/2} $. 
   % \end{align}
 \end{cor}
-
+This corollary shows that we would need ${\cal O}(\log(1/\varepsilon)/\varepsilon)$ iterations for achieving the desired accuracy.
