@@ -60,8 +60,7 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
         transported[:, d] = Ginv(zd)
 
     shape_noise = samples.shape
-    noise = np.random.randn(*shape_noise)
-    noise /= np.mean(np.linalg.norm(noise, axis=1))
+    noise = np.random.randn(*shape_noise)/np.sqrt(d)
     # from scipy.stats import levy_stable
     # noise = levy_stable.rvs(alpha=1.5, beta=0, size= shape_noise)
 
@@ -185,6 +184,19 @@ def add_plotting_arguments(parser):
 
 def base_plot_function(samples, index, error, log_writer, args, axis_lim,
                        target_samples):
+    if index < 69:
+        return
+    # hacky code to plot the SW cost
+    """if os.path.exists('logs.npy'):
+        data = np.load('logs.npy').item()
+        if index < data['errors'][-1].size:
+            data['errors'] += [np.array([error])]
+        else:
+            data['errors'][-1] = np.concatenate((data['errors'][-1], [error]))
+    else:
+        data = {'errors': [np.array([error])]}
+    np.save('logs.npy', data)"""
+
     if log_writer is not None:
         log_writer.add_scalar('data/loss', error, index)
 
@@ -209,7 +221,7 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
             img_dim = int(square_dim_bw)
 
     if not image:
-        contour = False
+        contour = True
         if contour:
             def contour_plot(x, y, fignum, colors, title, axis_lim, *kwargs):
                 fig = plt.figure(num=fignum, figsize=(2, 2))
@@ -237,15 +249,13 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
             if index == 0:
                 x0 = target_samples[:, 0]
                 y0 = target_samples[:, 1]
-                fig = contour_plot(x0, y0, 2, 'Greens', None,# 'target distribution',
-                                   axis_lim)
+                fig = contour_plot(x0, y0, 2, 'Greens', None, axis_lim)
                 if args.plot_dir:
                     fig.savefig(os.path.join(args.plot_dir,
                                              'target.pdf'))
             x = samples[:, 0]
             y = samples[:, 1]
-            fig = contour_plot(x, y, 1, 'Blues', None, #'k=%d' % (index+1),
-                               axis_lim)
+            fig = contour_plot(x, y, 1, 'Blues', None, axis_lim)
             if args.plot:
                 plt.pause(0.05)
                 plt.show()
