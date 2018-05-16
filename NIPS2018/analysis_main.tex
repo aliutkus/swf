@@ -8,14 +8,15 @@ In this section we will analyze the behavior of the proposed algorithm in the as
 \begin{align}
 \bar{X}_0 \simiid \mu_0, \quad \qquad \bar{X}_{k+1} = \bar{X}_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh} ) + \sqrt{2 \lambda h} Z_{k+1}, \qquad
 \end{align}
-where $\muh_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it would capture the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
+where $\mub_{Kh}$ denotes the law of $\bar{X}_K$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it captures the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
 
-We are interested in computing the distance $\| \mub_{Kh} - \nu_\lambda \|_{\TV}$, where , assuming , and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. In order to upper-bound this distance, we follow the approach presented in \cite{dalalyan2017theoretical} and \cite{raginsky17a}, where we decompose the into two terms: $\| \muh_{Kh} - \nu_\lambda \|_{\TV} \leq \| \muh_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$.
+We are interested in analyzing the distance $\| \mub_{Kh} - \nu_\lambda \|_{\TV}$, where $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. 
+%
+In order to upper-bound this distance, we decompose it into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_T \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV} \triangleq {\cal A}_1 + {\cal A}_2$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$. The term ${\cal A}_2$ is related to the weak convergence of the continuous Markov process to its invariant distribution and it often decays exponentially with increasing $T$. 
 
-% By Theorem 5.6.1 of \cite{bonnotte2013unidimensional}, we know that $\Psi_t$ is Lipschitz continuous. 
+In order to bound ${\cal A}$_1 is more delicate. 
 
-% \Cref{asmp:sde_ergo,asmp:sde_expconv,asmp:lipschitz,asmp:stochgrad,asmp:dissip,asmp:init_fun}
-
+We now present our second main theoretical result. Due to space limitations we present all our assumptions and the explicit forms of the constants in the supplementary document. 
 \begin{thm}
 \label{thm:euler}
 Assume that the conditions given in the supplementary document hold. Then, the following bound holds for $\lambda$ large enough:
@@ -24,6 +25,9 @@ Assume that the conditions given in the supplementary document hold. Then, the f
 \end{align}
 for some $C_1,C_2,C_3,C_4,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$. The explicit forms of the constants are given in the proof.
 \end{thm}
+
+
+
 
 \begin{cor}
   \label{coro:precision}
