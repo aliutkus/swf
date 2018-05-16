@@ -25,9 +25,9 @@ where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and d
 % More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
 
 
-In the case where $\Omega$ is finite, computing the wasserstein distance between two probability measures turn to be  a linear program with linear constraints, and has therefore a dual formulation. Since $\Omega$ is a Polish space\footnote{$\Omega$ is a complete and separable metric space}, this dual formulation can be generalized as follows:
+In the case where $\Omega$ is finite, computing the Wasserstein distance between two probability measures turn to be  a linear program with linear constraints, and has therefore a dual formulation. Since $\Omega$ is a Polish space\footnote{$\Omega$ is a complete and separable metric space}, this dual formulation can be generalized as follows \cite[Theorem 5.10]{villani2008optimal}:
 \begin{align}
-\W(\mu,\nu) = \sup_{\psi \in \textnormal{1-Lipschitz}} \sqrt{2}\Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2}, \label{eqn:w2dual}
+\W(\mu,\nu) = \sup_{\psi \in \mathrm{L}^1(\mu)} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2}, \label{eqn:w2dual}
 \end{align}
 where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
@@ -48,7 +48,7 @@ Since $\Omega \subset \R^d$ is compact, the $\W$-distance forms a distance over 
 
 In this study, we are interested in functional optimization problems in $(\PS(\Omega),\W)$, such as $\min_{\mu\in\PS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
 
-The gradient flows in $(\PS(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Assuming that the measure $\mu_t$ admits a density, denoted as $\rho_t$, such a continuity equation would have the following form:
+Gradient flows $\partial_t \mu_t = \nabla_{\W} \mathcal{F}(\mu_t)$ with respect to a functional $\mathcal{F}$ in $(\PS(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Indeed, it is shown than under appropriate conditions on $\mathcal{F}$ (see \eg \cite{ambrosio2008gradient}), $(\mu_t)_t$ is a solution of the gradient flow if and only if it admits a density $\rho_t$ with respect to the Lebesgue measure for all $t \geq 0$, and solves the continuity equation given by:
 % \begin{align}
 $\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
 % \end{align}
