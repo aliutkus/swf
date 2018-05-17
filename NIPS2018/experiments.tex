@@ -2,32 +2,119 @@
 
 \section{Experiments}
 
+\begin{figure}
+\subfigure[]{
+	\includegraphics[width=0.685\columnwidth]{figures/gmm_iter.pdf}
+	\label{fig:toy_example}
+} \hfill
+\subfigure[]{ 
+\includegraphics[width=0.268\columnwidth]{figures/gmm_reg.pdf}
+\label{fig:lambda_supp}
+ }
+\caption{a) Toy example. training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$. b) Influence of the regularization parameter $\lambda$. The higher $\lambda$, the more entropic the output distribution.}
+\end{figure}
+
 In this section, we evaluate the proposed SWF Algorithm~\ref{algo:flow} on different datasets. In all cases, the $N$ initial particles $\bar{X}^i_0\in\mathbb{R}^d$ are obtained by first drawing i.i.d. $\bar{Z}^i\in\mathbb{R}^r$ with $r\leq d$, each one with i.i.d standard Gaussian entries. Then we take $\bar{X}^i_0=A\bar{Z}^i$ with $A$ being a random $d\times r$ matrix. This results in a proposal distribution $\mu=\mathcal{N}(0,AA^\star)$. This procedure allows to have an arbitrary input dimension and yet use SWF.
 
-\subsection{Toy example: multivariate Gaussian Mixture Model}
-\label{sub:toy_example}
+% \subsection{Toy example: multivariate Gaussian Mixture Model}
+% \label{sub:toy_example}
 
+\begin{wrapfigure}{R}{0.40\textwidth}
+\begin{centering}
+\includegraphics[width=0.40\columnwidth]{figures/SW2_cost-crop.pdf}
+\par\end{centering}
+\caption{Approximately computed $\SW$ between output $\bar{\mu}_{k}^{N}$ and data distributions $\nu$ in the toy example GMM case for different data dimensions $d$.
+\label{fig:toy_sw}}
+\vspace{-10pt}
+\end{wrapfigure}
 We first illustrate SWF on a toy example. We randomly drew the parameters for a GMM with $20$ components and various dimensions $d$. The weights of the components were drawn randomly, as well as their covariance matrices and centroids. In all draws, the first centroid was sent far from the other ones (multiplied by $3$) so as to test the model for mode collapse.
 
-\begin{figure}
-\begin{centering}
-\includegraphics[width=5cm]{figures/SW2_cost-crop.pdf}
-\par\end{centering}
-\caption{Sliced Wasserstein distance between output $\bar{\mu}_{k}^{(N)}$ and target $\nu$ distributions in the toy example GMM case for different data dimensions $d$.\label{fig:toy_sw}}
-\end{figure}
 
 
+
+
+\textbf{Toy example: multivariate Gaussian Mixture Model: }
+Our first experiment is to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{N}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance. In Figure~\ref{fig:toy_sw}, we see a steady decrease of the cost for all runs, as predicted by the theory presented above.
+
+Then, we illustrate the generating power of the model with one particular such example, depicted on Figure~\ref{fig:toy_example}. There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. As can be seen, the output converges rapidly to the target. Furthermore, we can see that the QF $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ computed with one set of particles (so-called \textit{training} stage) can perfectly be reused for new unseen particles in a subsequent \textit{test} stage. In any case, two remarkable things may be seen on this figure. First, even when some modes lie far away from the others, SWF is able to generate them successfully and we never observed mode collapse. This is due to the OT nature of the procedure. Second, the genenerated samples do not reproduce the learning data, which is in particular enforced by the regularization term $\lambda$.
+
+
+
+
+% \subsection{Experiments on real data}
+% \label{sub:real_data}
+
+\textbf{Experiments on real data: }
+%
+In a second set of experiments, we tested the SWF for implicit generative modeling of larger more challenging datasets than our GMM toy example. Here, we report the results we obtained on the recently proposed FashionMNIST dataset \cite{xiao2017fashion}, that is advocated as much more challenging than the traditional MNIST, although also featuring $50000$ training samples that are gray-scale images, dispatched into $10$ classes\footnote{Results for MNIST can be found in the supplementary material for this paper.}. All images were interpolated as $64\times 64$, yielding $d=4096$. $h=300$, $\lambda=10^{-6}$, $N_\theta=200$
+
+
+
 \begin{figure}
-\begin{centering}
-\setlength\tabcolsep{1pt}
-\begin{tabular}{ccc|c}
-$k=1$ & $k=7$ & $k=70$ & target\tabularnewline
-\includegraphics[width=2cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
-\includegraphics[width=2cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/target-crop.pdf}\tabularnewline
-\end{tabular}
-\par\end{centering}
-\caption{Toy example: training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$.\label{fig:toy_example}}
+\centering
+\subfigure[]{
+\includegraphics[width=0.55\columnwidth]{figures/fmnist2.pdf}
+\label{fig:fashionmnist}	
+}\hfill
+\subfigure[]{
+\includegraphics[width=0.41\columnwidth]{figures/mnist.pdf}
+\label{fig:fashionmnist}	
+}
+\caption{Applying SWF on the Fashion MNIST dataset.}
 \end{figure}
+
+% \begin{figure}
+% \begin{centering}
+%   \setlength\tabcolsep{1pt}
+
+% \begin{tabular}{cccc|c}
+% $k=200$ & $k=2000$ & $k=10000$ & $k=40000$ & target\tabularnewline
+% \includegraphics[height=6cm]{figures/FashionMNIST/image_200} & \includegraphics[height=6cm]{figures/FashionMNIST/image_2000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_10000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_38400} & \includegraphics[height=6cm]{figures/FashionMNIST/dataset_example}\tabularnewline
+% \end{tabular}
+% \par\end{centering}
+% \caption{Applying SWF on the Fashion MNIST dataset.\label{fig:fashionmnist}}
+% \end{figure}
+
+On figure \ref{fig:fashionmnist}, we can see that a few thousand iterations of SWF is sufficient to get generated samples that capture most features of the training data. We note however that we are currently missing generation of fine-grained textures. We also display the SW2 loss of this run along iterations. Interestingly, such an experiment requires around $1h$ of computing power for a laptop computer on CPU, to be compared with the important ressources required by many other generative models.
+
+% \end{itemize}
+
+
+
+% \begin{figure}
+% \begin{subfigure}[t]{0.5\textwidth}
+% \begin{centering}
+% \setlength\tabcolsep{1pt}
+% \begin{tabular}{ccc|c}
+% $k=1$ & $k=7$ & $k=70$ & target\tabularnewline
+% \includegraphics[width=2cm]{figures/toy_save/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_save/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/scatter_output_particles_k=70-crop.pdf}\tabularnewline
+% \includegraphics[width=2cm]{figures/toy_load/output_dist_k=1-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=20-crop.pdf} & \includegraphics[width=2cm]{figures/toy_load/output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/target-crop.pdf}\tabularnewline
+% \end{tabular}
+% % \par
+% \end{centering}
+% \caption{Toy example.}
+% \label{fig:toy_example}
+% \end{subfigure}
+% \end{figure}
+
+% \begin{figure}
+% \begin{centering}
+% \setlength\tabcolsep{1pt}
+% \begin{tabular}{cccccc}
+% $\lambda=0$ & $\lambda=0.1$ & $\lambda=0.2$ & $\lambda=0.3$ & $\lambda=0.5$ & $\lambda=1$\tabularnewline
+% \includegraphics[width=2cm]{figures/supplementary/regularization/r0_output_dist_k=70-crop.pdf} & \includegraphics[width=2cm]{figures/supplementary/regularization/r01_output_dist_k=70-crop.pdf} & \includegraphics[width=2cm]{figures/supplementary/regularization/r02_output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/supplementary/regularization/r03_output_dist_k=70-crop.pdf}&  \includegraphics[width=2cm]{figures/supplementary/regularization/r05_output_dist_k=70-crop.pdf} &  \includegraphics[width=2cm]{figures/supplementary/regularization/r1_output_dist_k=70-crop.pdf}
+% \end{tabular}
+% \par
+% \end{centering}
+% \caption{Influence of the regularization parameter $\lambda$. The higher $\lambda$, the more entropic the output distribution.\label{fig:lambda_supp}}
+% \end{figure}
+
+
+
+
+
+
+
 
 % \newcommand{\ww}{0.2}
 
@@ -60,30 +147,3 @@ $k=1$ & $k=7$ & $k=70$ & target\tabularnewline
 % \end{figure}
 % \end{minipage}
 % \end{minipage}
-
-
-
-Our first experiment is to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{(N)}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance. In Figure~\ref{fig:toy_sw}, we see a steady decrease of the cost for all runs, as predicted by the theory presented above.
-
-Then, we illustrate the generating power of the model with one particular such example, depicted on Figure~\ref{fig:toy_example}. There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. As can be seen, the output converges rapidly to the target. Furthermore, we can see that the QF $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{(N)}}$ computed with one set of particles (so-called \textit{training} stage) can perfectly be reused for new unseen particles in a subsequent \textit{test} stage. In any case, two remarkable things may be seen on this figure. First, even when some modes lie far away from the others, SWF is able to generate them successfully and we never observed mode collapse. This is due to the OT nature of the procedure. Second, the genenerated samples do not reproduce the learning data, which is in particular enforced by the regularization term $\lambda$.
-
-\subsection{Experiments on real data}
-\label{sub:real_data}
-
-In a second set of experiments, we tested the SWF for implicit generative modeling of larger more challenging datasets than our GMM toy example. Here, we report the results we obtained on the recently proposed FashionMNIST dataset \cite{xiao2017fashion}, that is advocated as much more challenging than the traditional MNIST, although also featuring $50000$ training samples that are gray-scale images, dispatched into $10$ classes\footnote{Results for MNIST can be found in the supplementary material for this paper.}. All images were interpolated as $64\times 64$, yielding $d=4096$. $h=300$, $\lambda=10^{-6}$, $N_\theta=200$
-
-\begin{figure}
-\begin{centering}
-  \setlength\tabcolsep{1pt}
-
-\begin{tabular}{cccc|c}
-$k=200$ & $k=2000$ & $k=10000$ & $k=40000$ & target\tabularnewline
-\includegraphics[height=6cm]{figures/FashionMNIST/image_200} & \includegraphics[height=6cm]{figures/FashionMNIST/image_2000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_10000} & \includegraphics[height=6cm]{figures/FashionMNIST/image_38400} & \includegraphics[height=6cm]{figures/FashionMNIST/dataset_example}\tabularnewline
-\end{tabular}
-\par\end{centering}
-\caption{Applying SWF on the Fashion MNIST dataset.\label{fig:fashionmnist}}
-\end{figure}
-
-On figure \ref{fig:fashionmnist}, we can see that a few thousand iterations of SWF is sufficient to get generated samples that capture most features of the training data. We note however that we are currently missing generation of fine-grained textures. We also display the SW2 loss of this run along iterations. Interestingly, such an experiment requires around $1h$ of computing power for a laptop computer on CPU, to be compared with the important ressources required by many other generative models.
-
-% \end{itemize}
