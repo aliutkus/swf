@@ -229,7 +229,9 @@ The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarka
 % \umut{We don't have any experiments for this at the moment}
 % We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.
 
-Besides, we can obtain further reductions in the computing time when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we may control the number of $\theta$s for which a given data point $y_i$ is used by SWF through its projections $\langle\theta,y_i\rangle$, we may guarantee that these projections do not allow to recover $y_i$, by simply picking fewer than necessary for reconstruction, as predicted by the compressed sensing theory \cite{donoho2009observed}.
+Besides, we can obtain further reductions in the computing time when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
+
+
 
 %%% Local Variables:
 %%% mode: latex
