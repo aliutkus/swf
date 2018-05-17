@@ -1,3 +1,5 @@
+\usepackage{xargs}
+
 \newcommand{\x}{\mathbf{x}}
 \newcommand{\thb}{\mathbf{x}} 
 \newcommand{\Ths}{{\cal X}} 
@@ -61,6 +63,7 @@
 \newcommand{\tmpeqno}{{\color{red} (TEMPEQ) }}
 
 \newcommand{\umut}[1]{{\color{red} (#1)} }
+\newcommand{\alain}[1]{{\color{blue} (#1)} }
 
 \DeclareMathOperator{\sign}{sign}
 \newcommand{\sas}{{\cal S} \alpha {\cal S} }
@@ -240,3 +243,8 @@
 \def\rmc{\mathrm{C}}
 \def\rma{\mathrm{a}}
 \def\mra{\mathrm{a}}
+
+\newcommandx{\norm}[2][1=]{\ifthenelse{\equal{#1}{}}{\left\Vert #2 \right\Vert}{\left\Vert #2 \right\Vert^{#1}}}
+\newcommandx{\normLigne}[2][1=]{\ifthenelse{\equal{#1}{}}{\Vert #2 \Vert}{\Vert #2\Vert^{#1}}}
+
+\def\plusinfty{+\infty}

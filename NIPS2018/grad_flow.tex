@@ -18,17 +18,17 @@ The set of measures supported on $\cB(0,r)$ is compact in the topology given by 
 \[
 |\SW(\pi_0, \nu) - \SW(\pi_1, \nu)| \leq \SW(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}\W(\pi_0, \pi_1).
 \]
-The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology given by $\W$, which implies that $\SW^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $\mcg$ is a lower semicontinuous function on the compact set $(\PS(\cB(0,r)),\W)$ such that for any $\mu \in . Hence there exists a minimum  $\mu$ of $\mcg$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $\mch(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
+The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology given by $\W$, which implies that $\SW^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $\mcg : \PS(\cB(0,r)) \to \ocint{-\infty,\plusinfty}$ is a lower semicontinuous function on the compact set $(\PS(\cB(0,r)),\W)$. Hence there exists a minimum  $\mu$ of $\mcg$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $\mch(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
 
 If $\rho_0$ is smooth and positive on $\cB(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} When $\rho_0$ is just in $\mrl^{\infty}(\cB(0,r))$, we proceed by smoothing. 
-For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $\mathcal{N}(0, t)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $\rho_t$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
+For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $(t,x,y) \mapsto (2\pi)^{d/2} \exp(\norm[2]{x-y}/2)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $(\rho_t)_{t}$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
 %Let $\mu_t$ be the heat flow on $\cB(0,r)$ starting from $\mu_0$ ([[some ref on existance?]]). 
 %Then for any $t > 0$, $\mu_t$ has a smooth density $\rho_t$ such that  
-For $t \in (0, 1]$ let $\hat{\mu_t}$ be the minimum of $ \mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho_t}$ be the density of $\hat{\mu_t}$. Using \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} we get 
+For $t \in (0, 1]$ let $\hat{\mu}_t$ be the minimum of $ \mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho}_t$ be the density of $\hat{\mu}_t$. Using \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} we get 
 \[
-||\hat{\rho_t} ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
+||\hat{\rho}_t ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
 \]
-so for $n \geq 1$ densities $\hat{\rho_{1/n}}$ lie in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $(t_k)_{k \geq 1}$  of $(1/n)_{n \geq 1}$ such that $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$ converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
+so $\hat{\rho_{t}}$ lies in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$, $\lim_{k \to \plusinfty} t_k =0$, converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
 \[
 \int \hat{\rho} f dx = \lim_{k \rightarrow \infty} \int \rho_{t_k} f dx = \lim_{k \rightarrow \infty} \int f d\mu_{t_k} = \int f d\mu
 \]
