@@ -22,23 +22,23 @@
 
 
 % \begin{align}
-% \partial_t \rho = - \nabla_{\W} \F(\rho) \label{eqn:gradflow}
+% \partial_t \rho = - \nabla_{\W} \F^{\nu}(\rho) \label{eqn:gradflow}
 % \end{align}
-% where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
+% where $\nabla_{\W}$ denotes a notion of gradient in the $\W$ metric and the functional $\F^{\nu}$ is chosen as the squared sliced-Wasserstein distance between $\mu$ and $\nu$:
 % \begin{align}
-% \F(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
+% \F^{\nu}(\rho) \triangleq \frac1{2} \SW^2(\rho, \pi)
 % \end{align}
-% where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
+% where $\pi$ denotes the density of $\nu$. Here we abused the notation by defining $\SW$ on the densities instead of the measures; we implicitly assume that both measures $\mu$ and $\nu$ are dominated by the Lebesgue measure. This gradient flow basically constructs a path $(\rho_t)_{t\geq 0}$ that minimizes $\F^{\nu}$ as $t$ increases. In other words, the goal in construction such a flow is to solve the following problem:
 % \begin{align}
-% \rho^\star = \argmin_\rho \F(\rho).
+% \rho^\star = \argmin_\rho \F^{\nu}(\rho).
 % \end{align}
 % Since we obviously have $\rho^\star = \pi$, this gradient flow will start from $\rho_0$ and bring it closer to $\pi$ as $t$ evolves.
 
 % By following \cite{santambrogio2017euclidean}, the gradient given in \eqref{eqn:gradflow} can be written as follows:
 % \begin{align}
-% \nabla_{\W} \F(\rho) = -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F}{\delta \rho}(\rho) \bigr) \Bigr), \label{eqn:gradw2}
+% \nabla_{\W} \F^{\nu}(\rho) = -\nabla \cdot \Bigl( \rho \nabla \bigl( \frac{\delta \F^{\nu}}{\delta \rho}(\rho) \bigr) \Bigr), \label{eqn:gradw2}
 % \end{align}
-% where $\frac{\delta \F}{\delta \rho}(\rho)$ denotes the first variation of $\F$.
+% where $\frac{\delta \F^{\nu}}{\delta \rho}(\rho)$ denotes the first variation of $\F^{\nu}$.
 
 % \subsection{Construction of the gradient flow}
 
@@ -48,7 +48,7 @@
 %
 In this section, we will construct a gradient flow in $(\PS(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
 \begin{align}
-\min_\mu \Bigl\{ \F_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
+\min_\mu \Bigl\{ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
 \end{align}
 where $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
 
@@ -56,7 +56,7 @@ The importance of the entropy regularization becomes prominent in practical appl
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
 
-In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
+In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F^{\nu}_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
 We now state our first main theoretical result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities.
 \begin{thm}
@@ -72,7 +72,7 @@ The precise statement of this Theorem, related results and its proof are postpon
 
 % We can now construct the modified gradient flow as follows:
 % \begin{align}
-% \partial_t \rho &= - \nabla_{\W} \F_\lambda(\rho) \\
+% \partial_t \rho &= - \nabla_{\W} \F^{\nu}_\lambda(\rho) \\
 % &=  \nabla \cdot (\rho \> v_t) + \lambda \Delta \rho. \label{eqn:gradflow_reg}
 % \end{align}
 

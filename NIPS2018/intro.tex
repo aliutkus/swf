@@ -4,7 +4,7 @@
 
 
 Implicit generative modeling (IGM) \cite{diggle1984monte, mohamed2016learning} has become very popular recently and has proven
-successful in various fields. Variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being its two well-known examples, the goal in IGM can be briefly described as learning the
+successful in various fields, variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being its two well-known examples, the goal in IGM can be briefly described as learning the
 underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mcf)$, $\Omega \subset \rset^d$ is a domain and $\mcf$ is the associated Borel $\sigma$-field. 
 
 Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models the data points as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$. 
