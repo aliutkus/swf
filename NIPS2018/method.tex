@@ -2,7 +2,7 @@
 
 \section{Regularized Sliced-Wasserstein Flows for Generative Modeling}
 
-\subsection{Construction of the gradient flow}
+
 
 % \begin{itemize}
 % \item Start from the flow given in \cite{bonnotte2013unidimensional} and discuss the limitations
@@ -40,6 +40,12 @@
 % \end{align}
 % where $\frac{\delta \F}{\delta \rho}(\rho)$ denotes the first variation of $\F$.
 
+% \subsection{Construction of the gradient flow}
+
+\vspace{-5pt}
+
+\textbf{Construction of the gradient flow: }
+%
 In this section, we will construct a gradient flow in $(\PS(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
 \begin{align}
 \min_\mu \Bigl\{ \F_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
@@ -111,8 +117,10 @@ The precise statement of this Theorem, related results and its proof are postpon
 % In fact, one can show that, this is nothing but a gradient flow in the Wasserstein spaces, given as follows:
 
 
-\subsection{Connection with stochastic differential equations}
+% \subsection{Connection with stochastic differential equations}
 
+\textbf{Connection with stochastic differential equations: }
+%
 Let us consider the PDE given in \eqref{eqn:gradflow_reg}. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution following SDE:
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
@@ -137,9 +145,9 @@ d X_t^i = v(X_t^i, \mu_t^{N}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\d
 \end{align}
 where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N = (1/N) \sum_{i=1}^N \delta_{X_t^i}$ denotes the empirical distribution of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for all $t$ \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and it is out of the scope of this study. %We will support this claim with experimental results.
 
-\subsection{Approximate Euler-Maruyama discretization}
-
-
+% \subsection{Approximate Euler-Maruyama discretization}
+\textbf{Approximate Euler-Maruyama discretization:}
+%
 In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in practice, we propose an approximate Euler-Maruyama discretization for each particle SDE. First, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion. Then, they are updated at each step $k$ following:
 \begin{align}
 \bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}_k(\bar{X}^i_k) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\} \label{eqn:euler_particle}
@@ -149,17 +157,17 @@ where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard G
 In this work, we approximate the integral in \eqref{eqn:gradflow_reg} for the computation of $v$ by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{k,n}$, and then by taking:
 
 \begin{align}
-\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum\nolimits_{n=1}^{N_\theta} \psi_{k, \theta_{k,n}}'(\langle\theta_{k,n},x\rangle ) \theta_{k,n}, \label{eqn:approxdrift}
+\hat{v}_k(x) \triangleq - \frac1{N_\theta} \sum\limits_{n=1}^{N_\theta} \psi_{k, \theta_{k,n}}'(\langle\theta_{k,n},x\rangle ) \theta_{k,n}, \label{eqn:approxdrift}
 \end{align}
 
-where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the Kantorovich potential defined in Section~\ref{sec:sw}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$:
+where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the Kantorovich potential defined in Section~\ref{sec:techbg}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$:
 % \begin{align}
    $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
  % \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-\vspace{-2pt}
+\vspace{-15pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}

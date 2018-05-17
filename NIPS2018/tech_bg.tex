@@ -14,9 +14,12 @@
 
 % For a vector $v \in \R^d$, we denote its $\ell_2$-norm by $\|v\| \triangleq \sqrt{v^\top v}$. We occasionally denote the Euclidean inner-product of two vectors by $\langle v, y \rangle \triangleq v^\top y$ for $v,y \in \R^d$.
 
-\subsection{Wasserstein distance, optimal transport maps and Kantorovich potentials}
+% \subsection{Wasserstein distance, optimal transport maps and Kantorovich potentials}
 
+\vspace{-5pt}
 
+\textbf{Wasserstein distance, optimal transport maps and Kantorovich potentials: }
+%
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
 \W(\mu,\nu) \triangleq \Biggl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Biggr\}^{1/2}, \label{eqn:w2}
@@ -41,9 +44,10 @@ Assume that  $\mu$ is absolutely continuous with respect to the Lebesgue measure
 This result implies that there exists a solution for transporting samples from $\mu$ to samples from $\nu$ and this solution is optimal in the sense that it minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
 
-\subsection{Wasserstein spaces and gradient flows}
+% \subsection{Wasserstein spaces and gradient flows}
 
-
+\textbf{Wasserstein spaces and gradient flows: }
+%
 Since $\Omega \subset \R^d$ is compact, the $\W$-distance forms a distance over $\PS(\Omega)$, such that convergence in $\W$ is equivalent to the weak convergence of probability measures (cf.\ \cite[Theorem 2.1]{santambrogio2010introduction}). The metric space $(\PS(\Omega),\W) $ is often called the \emph{Wasserstein space}.
 
 In this study, we are interested in functional optimization problems in $(\PS(\Omega),\W)$, such as $\min_{\mu\in\PS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
@@ -69,13 +73,15 @@ We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the su
 % This is formally defined by using \emph{generalized minimizing movements} .
 
 
-\subsection{Sliced-Wasserstein distance}
-\label{sec:sw}
+% \subsection{Sliced-Wasserstein distance}
+% \label{sec:sw}
 
+\textbf{Sliced-Wasserstein distance: }
+%
 In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, $\W$ has an analytical form, given as follows:
-\begin{align}
-\W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau,\label{eq:W1D}
-\end{align}
+% \begin{align}
+$\W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau$, %\label{eq:W1D}
+% \end{align}
 where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs that can be interpreted as \emph{quantile} functions (QF).
 %
 In this case, the optimal transport map has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \cite{villani2008optimal}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.

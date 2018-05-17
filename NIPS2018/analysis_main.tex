@@ -1,9 +1,8 @@
 %!TEX root = ./nips_2018_sketchmcmc.tex
 
-\subsection{Finite-time analysis for the infinite particle regime}
-
-
-
+% \subsection{Finite-time analysis for the infinite particle regime}
+\textbf{Finite-time analysis for the infinite particle regime: }
+%
 In this section we will analyze the behavior of the proposed algorithm in the asymptotic regime where the number of particles $N \rightarrow \infty$. Within this regime, we will assume that the original SDE \eqref{eqn:sde} can be directly simulated by using an approximate Euler-Maruyama scheme, defined as follows:
 \begin{align}
 \bar{X}_0 \simiid \mu_0, \quad \qquad \bar{X}_{k+1} = \bar{X}_k + h \hspace{0.5pt} \hat{v}(\bar{X}^i_k, \bar{\mu}_{kh} ) + \sqrt{2 \lambda h} Z_{k+1}, \qquad \label{eqn:euler_asymp}
