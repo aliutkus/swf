@@ -18,17 +18,17 @@ The set of measures supported on $\cB(0,r)$ is compact in the topology given by 
 \[
 |\SW(\pi_0, \nu) - \SW(\pi_1, \nu)| \leq \SW(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}\W(\pi_0, \pi_1).
 \]
-The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology given by $\W$, which implies that $\SW^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $\mcg$ is a lower semicontinuous function on the compact set $(\PS(\cB(0,r)),\W)$, bounded from below. Hence there exists a minimum  $\mu$ of $\mcg$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $\mch(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
+The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology given by $\W$, which implies that $\SW^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $\mcg : \PS(\cB(0,r)) \to \ocint{-\infty,\plusinfty}$ is a lower semicontinuous function on the compact set $(\PS(\cB(0,r)),\W)$. Hence there exists a minimum  $\mu$ of $\mcg$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $\mch(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
 
-If $\rho_0$ is smooth and positive on $\cB(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by [[Bonnotte]] Lemma 5.4.3. When $\rho_0$ is just in $\mrl^{\infty}(\cB(0,r))$, we proceed by smoothing. 
-For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $\mathcal{N}(0, t)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $\rho_t$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
+If $\rho_0$ is smooth and positive on $\cB(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} When $\rho_0$ is just in $\mrl^{\infty}(\cB(0,r))$, we proceed by smoothing. 
+For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $(t,x,y) \mapsto (2\pi)^{d/2} \exp(\norm[2]{x-y}/2)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $(\rho_t)_{t}$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
 %Let $\mu_t$ be the heat flow on $\cB(0,r)$ starting from $\mu_0$ ([[some ref on existance?]]). 
 %Then for any $t > 0$, $\mu_t$ has a smooth density $\rho_t$ such that  
-For $t \in (0, 1]$ let $\hat{\mu_t}$ be the minimum of $ \mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho_t}$ be the density of $\hat{\mu_t}$. Using [[Bonnotte]] Lemma 5.4.3 we get 
+For $t \in (0, 1]$ let $\hat{\mu}_t$ be the minimum of $ \mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho}_t$ be the density of $\hat{\mu}_t$. Using \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} we get 
 \[
-||\hat{\rho_t} ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
+||\hat{\rho}_t ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
 \]
-so for $n \geq 1$ densities $\hat{\rho_{1/n}}$ lie in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $(t_k)_{k \geq 1}$  of $(1/n)_{n \geq 1}$ such that $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$ converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
+so $\hat{\rho_{t}}$ lies in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$, $\lim_{k \to \plusinfty} t_k =0$, converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
 \[
 \int \hat{\rho} f dx = \lim_{k \rightarrow \infty} \int \rho_{t_k} f dx = \lim_{k \rightarrow \infty} \int f d\mu_{t_k} = \int f d\mu
 \]
@@ -148,15 +148,15 @@ in a weak sense, that is for all $\xi \in \mathcal{C}_c^{\infty} ([0, \infty)\ti
 \]
 \end{thm}
 \begin{proof}
-Our proof is based on the proof of Theorem 5.6.1 from [[Bonnotte]]. We proceed in five steps.
+Our proof is based on the proof of \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. We proceed in five steps.
 
-1. Let $h_n \rightarrow 0$ be a sequence given by existance of generalized movement scheme, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$ and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \mathcal{C}_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of theorem $5.6.1$ from [[Bonnotte]], we obtain:
+1. Let $h_n \rightarrow 0$ be a sequence given by existance of generalized movement scheme, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$ and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \mathcal{C}_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
 \begin{multline} \label{thm:cont_proof_part1}
 \int \xi(0, x) \rho_0(x) dx + \int_0^{\infty} \int \frac{\partial \xi}{\partial t}(t,x) \rho_t(x) dx dt \\
 = \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx
 \end{multline}
 
-2. Again, this part is the same as part $2$ of the proof of Theorem 5.6.1 in [[Bonnotte]]. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of Theorem $5.6.1$ in [[Bonnotte]], we get:
+2. Again, this part is the same as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we get:
 
 \begin{multline} \label{thm:cont_proof_part2}
 \int_0^{\infty} \int \fint (\psi_{t, \theta})' (\langle \theta, x \rangle ) \langle \theta , \nabla \xi (x, t) \rangle d\theta d\mu_t(x) dt \\
@@ -178,9 +178,9 @@ Combined those two results give:
 
 
 
-4. We follow the argument presented in the third part of the proof of Theorem $5.6.1$ in [[Bonnotte]].
+4. 
 
-Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using propositions $1.5.7$ and $5.1.7$ from Bonnotte, as well as [[JKO]] equation (38) (maybe a better reference?) and optimality of $\mu_{kh_n}^{h_n}$, we get:
+Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using  \cite[Propositions 1.5.7 and 5.1.7]{bonnotte2013unidimensional}, as well as [[JKO]] equation (38) (maybe a better reference?) and optimality of $\mu_{kh_n}^{h_n}$, we get:
 \begin{multline} \label{thm:cont_proof_eq0}
 \frac{1}{h_n} \int \langle \nabla \phi_k^{h_n} , \nabla \xi_{k}^n \rangle d\mu_{kh_n}^{h_n} =  - \int \fint (\psi_{kh_n}^{h_n})'(\theta^{*}) \langle \theta, \nabla \xi_k^n \rangle d\theta d\mu_{kh_n}^{h_n} - \lambda \int  \rho_{kh_n}^{h_n}(x) \Delta \xi_k^n(x)  dx 
 \end{multline}

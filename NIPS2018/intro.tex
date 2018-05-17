@@ -5,7 +5,7 @@
 
 Implicit generative modeling (IGM) \cite{diggle1984monte, mohamed2016learning} has become very popular recently and has proven
 successful in various fields; variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being its two well-known examples. The goal in IGM can be briefly described as learning the
-underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mcf)$, $\Omega \subset \rset^d$ is a domain and $\mcf$ is the associated Borel $\sigma$-field. 
+underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mca)$, $\Omega \subset \rset^d$ is a domain and $\mca$ is the associated Borel $\sigma$-field. 
 
 Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models the data points as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$. 
 
@@ -20,7 +20,7 @@ As it turns out, OT brings new light on the generative modeling problem: there h
 
 
 OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.  
-This can be explained by using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mcf$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided mild conditions on these distributions hold (notably $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
+This can be explained by using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mca$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided mild conditions on these distributions hold (notably $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
 
 One common point between VAE and GAN is to adopt an approximate strategy and consider transport maps that belong to a parametric family $T_{\phi}$ with $\phi \in \Phi$. Then, they aim at finding the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 % \begin{align}
@@ -28,7 +28,7 @@ $\phi^\star = \argmin_{\phi \in \Phi} \W(T_{\phi \#}\mu, \nu)$,
 % \end{align}
 where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}.  \cite{genevay2017gan} showed that Wasserstein GANs \cite{arjovsky2017wasserstein} and Wasserstein VAEs \cite{tolstikhin2017wasserstein} both use this formulation with different parameterizations and different equivalent definitions of the Wasserstein distance. 
 
-In this study, we follow a completely different approach for IGM and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit along iterations. Formally, we take $T_t$ as the constructed transport map at time $t$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will converge to the solution of a functional optimization problem, defined through a gradient flow in the Wasserstein space $(\PS(\Omega),\W)$. Informally, we will consider a gradient flow that have the following form:
+In this study, we follow a completely different approach for IGM and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit along iterations. Formally, we take $T_t$ as the constructed transport map at time $t$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will converge to the solution of a functional optimization problem, defined through a gradient flow in the Wasserstein space $(\PS_2(\Omega),\W)$. Informally, we will consider a gradient flow that have the following form:
 \begin{align}
 \partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \, , \qquad \mu_0 = \mu,\label{eqn:gradflow}
 \end{align}

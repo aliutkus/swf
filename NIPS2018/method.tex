@@ -46,15 +46,18 @@
 
 \textbf{Construction of the gradient flow: }
 %
-In this section, we will construct a gradient flow in $(\PS(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
+In this section, we will construct a gradient flow in $(\PS_2(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
 \begin{align}
 \min_\mu \Bigl\{ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
 \end{align}
-where $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
+where $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int_{\Omega} \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
 
 The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
+
+\alain{write again this part}
+
 
 In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F^{\nu}_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
@@ -121,7 +124,7 @@ The precise statement of this Theorem, related results and its proof are postpon
 
 \textbf{Connection with stochastic differential equations: }
 %
-Let us consider the PDE given in \eqref{eqn:gradflow_reg}. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution following SDE:
+Let us consider the PDE given in \eqref{eqn:gradflow_reg} on $\rset^d$. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution following SDE:
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
 \end{align}
@@ -224,3 +227,8 @@ Even though the error induced by these approximation schemes can be incorporated
 The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a distributed manner that is independent of the sliced Wasserstein flow. We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.
 
 Then, significant reductions in computing time may also be obtained when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches from the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences: since we may control the number of $\theta$ for which a given data point $y_i$ is used by SWF through its projections $\langle\theta,y_i\rangle$, we may guarantee that these projections do not allow to recover $y_i$, by simply picking fewer than necessary for reconstruction, as predicted by the compressed sensing theory \cite{donoho2009observed}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "nips_2018_sketchmcmc"
+%%% End:
