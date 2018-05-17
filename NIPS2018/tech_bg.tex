@@ -22,7 +22,7 @@
 %
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
-\W(\mu,\nu) \triangleq \Biggl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Biggr\}^{1/2}, \label{eqn:w2}
+\W(\mu,\nu) \triangleq \Bigl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Bigr\}^{1/2}, \label{eqn:w2}
 \end{align}
 where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and defined as the set of probability $\gamma$ on $\Omega \times \Omega$ satisfying for all $A \in \mcf$, $\gamma(A \times \Omega) = \mu(A)$ and $\gamma(\Omega \times A)=\nu(A)$, i.e. the  marginals of $\gamma$  coincide with $\mu$ and $\nu$. From now on, we will assume that $\Omega$ is a compact subset of $\R^d$.
 % More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
