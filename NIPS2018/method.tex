@@ -58,7 +58,7 @@ The importance of the entropy regularization becomes prominent in practical appl
 
 In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
-We now state our first theoretical main result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities.
+We now state our first main theoretical result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities.
 \begin{thm}
 \label{thm:continuity}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density, where $\cB(0,a)$ denotes the closed unit ball with center $0$ and radius $a$. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with density $\rho_0 \in L^2$. Let $\mu_t$ be a generalized minimizing movement scheme given by Theorem~\umut{num} in the supplementary document. Then, $\rho_t$ satisfies the following continuity equation:
@@ -125,7 +125,7 @@ Let us consider the PDE given in \eqref{eqn:gradflow_reg}. We observe that this 
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
 \end{align}
-where $W_t$ denotes the standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to $\nu_\lambda$, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $\nu_\lambda$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
+where $W_t$ denotes the standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to the solution of \eqref{eqn:sw_optim}, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $(\mu_t)_t$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
 
 
 % \subsection{Particle system for approximating the SDE and the Euler-Maruyama discretization}
