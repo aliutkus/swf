@@ -22,7 +22,7 @@
 %
 For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
-\W(\mu,\nu) \triangleq \Biggl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Biggr\}^{1/2}, \label{eqn:w2}
+\W(\mu,\nu) \triangleq \Bigl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Bigr\}^{1/2}, \label{eqn:w2}
 \end{align}
 where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and defined as the set of probability $\gamma$ on $\Omega \times \Omega$ satisfying for all $A \in \mcf$, $\gamma(A \times \Omega) = \mu(A)$ and $\gamma(\Omega \times A)=\nu(A)$, i.e. the  marginals of $\gamma$  coincide with $\mu$ and $\nu$. From now on, we will assume that $\Omega$ is a compact subset of $\R^d$.
 % More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
@@ -59,7 +59,10 @@ $\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
 where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
 % In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. 
-We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
+% We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
+%
+% this sentence is grammatically Correct :)
+Such PDEs are of our particular interest since they have a key role for building practical algorithms.
 
 % In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
 % \begin{align*}
