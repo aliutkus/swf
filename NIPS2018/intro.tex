@@ -20,36 +20,32 @@
 
 % implicit modeling
 
-Implicit generative modeling \cite{diggle1984monte,
-  mohamed2016learning} has become very popular recently and has proven
-successful in various fields. Variational auto-encoders (VAE
-\cite{kingma2013VAE}) and generative adversarial networks (GAN
-\cite{goodfellow2014generative}) are the two well-known examples.  The
-goal in these approaches can be briefly described as learning the
-underlying probability measure of a given dataset, denoted as
-$\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measure
-on the measurable space $(\Omega,\mcf)$. In the sequel, we assume that
-$\Omega \subset \rset^d$ is a compact domain of $\rset^d$ and $\mcf$ is the
-associated Borel $\sigma$-field. The implicit generative framework
-models the data as the output $T(x)$ of a measurable map
-$T: \Omega_\mu \mapsto \Omega$, with inputs $x$ generated from a known
-and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g. with
-Gaussian or uniform i.i.d.\ entries), and its outputs should match the
-unknown target measure $\nu$ on $\Omega$. While $\nu$ is not known in
-closed form, we have accessed to $N$ elements from a learning database
-$D = \{y_1 , \dots , y_N \}$ which are assumed independently sampled
-from $\nu$. It is common in applications to have a very large amount
-of millions or billions of such samples.
+Implicit generative modeling \cite{diggle1984monte, mohamed2016learning} has become very popular recently and has proven
+successful in various fields. Variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} are the two well-known examples. The goal in these approaches can be briefly described as learning the
+underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mcf)$, $\Omega \subset \rset^d$ is a (usually compact) domain of $\rset^d$ and $\mcf$ is the associated Borel $\sigma$-field. 
+
+Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models the data points as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$. 
+
+% While $\nu$ is not known in closed form, we have accessed to $N$ elements from a learning database $D = \{y_1 , \dots , y_N \}$ which are assumed independently sampled from $\nu$. It is common in applications to have a very large amount of millions or billions of such samples.
 
 
 % VAE and GAN quickly
-In that context, learning generative networks witnessed several groundbreaking contributions in the recent years. First, variational auto-encoders (VAE \cite{kingma2013VAE}) were proposed that adopt an encoder-decoder strategy, for which the output of the encoder ought to match some prescribed distribution $\mu$, while the combination of encoder and decoder should be as close as possible to identity when evaluated on the training data. The hope of such an approach is to easily generate samples from $\nu$ by applying the decoder to new samples from $\mu$, and not only to encoded training points.%maybe a bit more of references ?
+% In that context, learning generative networks witnessed several groundbreaking contributions in the recent years. First, variational auto-encoders (VAE \cite{kingma2013VAE}) were proposed that adopt an encoder-decoder strategy, for which the output of the encoder ought to match some prescribed distribution $\mu$, while the combination of encoder and decoder should be as close as possible to identity when evaluated on the training data. The hope of such an approach is to easily generate samples from $\nu$ by applying the decoder to new samples from $\mu$, and not only to encoded training points.%maybe a bit more of references ?
 
-While VAE showed great potential in generative modeling, they are known to yield blurry samples and yet another important contribution came with Generative Adversarial Networks (GAN, \cite{goodfellow2014generative,salimans2016improved,eghbal2017probabilistic}), which take generative learning as an adversarial game. On the one hand, a discriminative system is trained to detect generated samples from those of the dataset. On the other hand, the generative network is trained so as to minimize the performance of the classifier. Optimization then alternates between both.
+% While VAE showed great potential in generative modeling, they are known to yield blurry samples and yet another important contribution came with Generative Adversarial Networks (GAN, \cite{goodfellow2014generative,salimans2016improved,eghbal2017probabilistic}), which take generative learning as an adversarial game. On the one hand, a discriminative system is trained to detect generated samples from those of the dataset. On the other hand, the generative network is trained so as to minimize the performance of the classifier. Optimization then alternates between both.
 
 % now only talk about OT
 
-While GAN were both found effective, although delicate to train, theoretical foundations for them were highlighted only recently \cite{bousquet2017optimal} as minimizing the so-called Wasserstein distance between the output distribution and the target $\nu$. More specifically, GAN and VAE were shown to tackle the same problem in a dual way \cite{bousquet2017optimal,genevay2017gan}. The common ground of such approaches was hence recently understood to be the theory of Optimal Transport (OT), in which such distances between distributions arise naturally.
+% While GAN were both found effective, although delicate to train, 
+
+Learning generative networks has witnessed several groundbreaking contributions in the recent years. Motivated by this fact, there has been an interest in illuminating the theoretical foundations of VAEs and GANs \cite{bousquet2017optimal,liu2017approximation}. 
+%
+It has been shown that these implicit models have close connections to the theory of Optimal Transport (OT) \cite{villani2008optimal}, which  
+
+
+in which such distances between distributions arise naturally.
+
+ as minimizing the so-called Wasserstein distance between the output distribution and the target $\nu$. More specifically, GAN and VAE were shown to tackle the same problem in a dual way \cite{bousquet2017optimal,genevay2017gan}. 
 
 As it turns out, the field of optimal transport brings new light on the generative modeling problem. In short, OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.
 %
