@@ -21,8 +21,8 @@
 % implicit modeling
 
 Implicit generative modeling (IGM) \cite{diggle1984monte, mohamed2016learning} has become very popular recently and has proven
-successful in various fields. While the Variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being the two well-known examples, the goal in these approaches can be briefly described as learning the
-underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mcf)$, $\Omega \subset \rset^d$ is a (usually compact) domain of $\rset^d$ and $\mcf$ is the associated Borel $\sigma$-field. 
+successful in various fields. While variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being the two well-known examples, the goal in these approaches can be briefly described as learning the
+underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mcf)$, $\Omega \subset \rset^d$ is a domain of $\rset^d$ and $\mcf$ is the associated Borel $\sigma$-field. 
 
 Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models the data points as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$. 
 
@@ -42,13 +42,13 @@ Learning generative networks has witnessed several groundbreaking contributions 
 %
 It has been shown that these implicit models have close connections to the theory of Optimal Transport (OT) \cite{villani2008optimal}, 
 %
-As it turns out, OT brings new light on the generative modeling problem. There have been several extensions of VAEs \cite{tolstikhin2017wasserstein,kolouri2018sliced} and GANs \cite{arjovsky2017wasserstein,gulrajani2017improved,guo2017relaxed,lei2017geometric}, which exploit the links with OT and IGM. 
+As it turns out, OT brings new light on the generative modeling problem: there have been several extensions of VAEs \cite{tolstikhin2017wasserstein,kolouri2018sliced} and GANs \cite{arjovsky2017wasserstein,gulrajani2017improved,guo2017relaxed,lei2017geometric}, which exploit the links with OT and IGM. 
 % Besides, it has been shown that Wasserstein GANs \cite{arjovsky2017wasserstein} and Wasserstein VAEs \cite{tolstikhin2017wasserstein} tackle the same problem in a dual way \cite{bousquet2017optimal,genevay2017gan}. 
 
 % in which such distances between distributions arise naturally.
 
 OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.  
-This can be explained using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel set $A \subset \mcf$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided very mild conditions on these distributions are respected (notably that $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
+This can be explained by using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mcf$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided mild conditions on these distributions hold (notably $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
 
 One common point between VAE and GAN is to adopt an approximate strategy and consider transport maps that belong to a parametric family $T_{\phi}$ with $\phi \in \Phi$. Then, they aim at finding the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 % \begin{align}
