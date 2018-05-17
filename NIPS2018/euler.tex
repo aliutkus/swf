@@ -48,7 +48,7 @@ distributions of $(X_t)_{t \in [0,T]}$, $(Y_t)_{t \in [0,T]}$ and
 $(U_t)_{t \in \ccint{0,T}}$ as $\pi_{X}^T$, $\pi_{Y}^T$ and $\pi_{U}^T$
 respectively with $T = Kh$.
 %
-We will decompose the overall error into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $T = Kh$. 
+% We will decompose the overall error into two terms: $\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}$, where $T = Kh$. 
 
 
 \newcommand{\minvsp}{0}
@@ -56,18 +56,18 @@ We will decompose the overall error into two terms: $\| \mub_{Kh} - \nu_\lambda 
 We consider the following assumptions: \vspace{\minvsp pt}
 \begin{assumption}
 \label{asmp:sde_ergo}
-For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
+For all $\lambda >0$, the SDE  \eqref{eqn:sde} has a unique strong solution denoted by $(X_t)_{t\geq 0}$ for any starting point $x \in \R^d$. % It defines a non-homogenous Markov semi-group $(P_{s,t})_{t\geq s\geq 0}$ which admits a unique invariant measure denoted by $\nu_\lambda$. 
 \vspace{\minvsp pt}
 \end{assumption}
 %
-\begin{assumption}
-\label{asmp:sde_expconv}
-The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
-\begin{align}
-\|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
-\end{align}
-\vspace{\minvsp pt}
-\end{assumption}
+% \begin{assumption}
+% \label{asmp:sde_expconv}
+% The probability measure of the diffusion $(\mu_t)_{t\geq 0}$ converges exponentially to its invariant measure $\nu_\lambda$, i.e.\ there exists $C_0, C_1 >0$, such that
+% \begin{align}
+% \|\mu_t - \nu_\lambda \|_{\TV} \leq C_0 \exp(-C_1 t \lambda).
+% \end{align}
+% \vspace{\minvsp pt}
+% \end{assumption}
 %
 \begin{assumption}
 \label{asmp:lipschitz}
@@ -219,15 +219,18 @@ By applying the data processing and Pinsker inequalities, we obtain the desired 
 % \end{align}
 \end{proof}
 
+\subsection{Proof of Theorem~\ref{thm:euler}}
 
-\begin{lemma}
+Here, we precise the statement of Theorem~\ref{thm:euler}.
+
+\begin{thm}
 \label{lem:euler3}
 Assume that the assumptions in Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2} hold. Then for $\lambda > \frac{KL^2h}{8}$, the following bound holds:
 \begin{align}
 \|\mub_{Kh} - \mu_{T} \|_{\TV}^2 &\leq \delta_\lambda \Biggl\{ \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2 \delta K h}{4\lambda} \Biggr\},
 \end{align}
 where $\delta_\lambda = (1 -\frac{KL^2h}{8\lambda})^{-1} $.
-\end{lemma}
+\end{thm}
 %
 \begin{proof}
 We have the following decomposition: (with $T= Kh$)
@@ -239,72 +242,72 @@ We have the following decomposition: (with $T= Kh$)
 The second line follows from Lemma~\ref{lem:euler} and Lemma~\ref{lem:euler2}. Last line follows from the assumption that $\lambda$ is large enough. This completes the proof.
 \end{proof}
 
-\subsection{Proof of Theorem~\ref{thm:euler}}
-%
-\begin{proof}
-By using the triangle inequality, we can decompose the error $\| \mub_{Kh} - \nu_\lambda \|_{\TV}$ as follows:
-\begin{align}
-\| \mub_{Kh} - \nu_\lambda \|_{\TV}\leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}.
-\end{align}
-Then the result follows from Lemma~\ref{lem:euler3} and \Cref{asmp:sde_expconv}.
+% \subsection{Proof of Theorem~\ref{thm:euler}}
+% %
+% \begin{proof}
+% By using the triangle inequality, we can decompose the error $\| \mub_{Kh} - \nu_\lambda \|_{\TV}$ as follows:
+% \begin{align}
+% \| \mub_{Kh} - \nu_\lambda \|_{\TV}\leq \| \mub_{Kh} - \mu_{T} \|_{\TV} + \| \mu_{T} - \nu_\lambda \|_{\TV}.
+% \end{align}
+% Then the result follows from Lemma~\ref{lem:euler3} and \Cref{asmp:sde_expconv}.
 
-\end{proof}
+% \end{proof}
 
 \section{Proof of Corollary~\ref{coro:precision}}
 \begin{proof}
-Considering the bound given in Lemma~\ref{lem:euler}, the choices of $T$ and $h$ imply that
+Considering the bound given in Theorem~\ref{thm:euler}, the choice $h$ implies that
 \begin{align}
-\frac{\delta_\lambda L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) \leq \frac{\varepsilon^2}{4}, \quad \text{and} \quad C_3 \exp(-C_4 Kh \lambda) \leq \frac{\varepsilon}{2}. \label{eqn:cor_Th}
+\frac{\delta_\lambda L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) \leq \varepsilon^2. \label{eqn:cor_Th}
 \end{align}
 By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain 
 \begin{align}
-\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} .
+\| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} .
 \end{align}
-By the assumption, we know that $\lambda > \frac{KL^2h}{8}$, we finally have
-\begin{align}
-\| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{2 C_2 \delta_\lambda \delta}{L^2}\right)^{1/2} .
-\end{align}
+% By the assumption, we know that $\lambda > \frac{KL^2h}{8}$, we finally have
+% \begin{align}
+% \| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{2 C_2 \delta_\lambda \delta}{L^2}\right)^{1/2} .
+% \end{align}
 This finalizes the proof. 
 \end{proof}
 
-\section{Relation to the Unregularized Gradient Flow}
+% \section{Relation to the Unregularized Gradient Flow}
 
-We now provide the following bound in order to have a better understanding between the entropy regularized problem that we propose and the case where there is no regularization.
+% We now provide the following bound in order to have a better understanding between the entropy regularized problem that we propose and the case where there is no regularization.
 
-\begin{prop}
-\label{prop:dist_statmeas}
-Assume that the SDE \eqref{eqn:sde} satisfies \Cref{asmp:sde_ergo}. Denote the probability distribution of $X_t$ at time $t$ by $\mu_t(dx) = \rho_t (x) dx$. Furthermore, consider the following SDE
-\begin{align}
-d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
-\end{align}
-Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t$ at time $t$ by $\mu^\epsilon_t$ which admits a density $\rho^\epsilon_t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$ that depends on $t$, such that
-\begin{align}
-\int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
-\end{align}
-Then the following bound holds:
-\begin{align}
-\lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda.
-\end{align}
-\end{prop}
+% \begin{prop}
+% \label{prop:dist_statmeas}
+% Assume that the SDE \eqref{eqn:sde} satisfies \Cref{asmp:sde_ergo}. Denote the probability distribution of $X_t$ at time $t$ by $\mu_t(dx) = \rho_t (x) dx$. Furthermore, consider the following SDE
+% \begin{align}
+% d Y_t = - v_t(Y_t) dt + \sqrt{2 \epsilon } d W_t. \label{eqn:sde_eps}
+% \end{align}
+% Assume that it satisfies \Cref{asmp:sde_ergo} and denote the probability of $Y_t$ at time $t$ by $\mu^\epsilon_t$ which admits a density $\rho^\epsilon_t$. Further assume that for all $\epsilon,t>0$, there exists $C >0$ that depends on $t$, such that
+% \begin{align}
+% \int_{0}^t \int_{\R^d} \frac{\|\nabla \rho^\epsilon_s(x) \|^2}{\rho^\epsilon_s(x)} dx ds <C, \qquad \text{and} \qquad \int_{0}^t \int_{\R^d}  \frac{\|\nabla \rho^\epsilon_s(x)\|}{1+\|x\|} dx ds <\infty.
+% \end{align}
+% Then the following bound holds:
+% \begin{align}
+% \lim_{\epsilon \rightarrow 0} \| \mu_t - \mu^\epsilon_t \|_{\TV}^2 \leq 2 C \lambda.
+% \end{align}
+% \end{prop}
+% %
+% \begin{proof}
+% By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
+% \begin{align}
+% \| \mu_t - \mu_t^\epsilon \|_{\TV}^2 &\leq \int_0^\infty \int_{\R^d} \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \frac{\|\nabla \rho^\epsilon_s(x)\|^2}{\rho^\epsilon_s(x)}  dx ds \\
+% &\leq  C \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \label{eqn:prop_interm} \\
+% &= \frac{2C}{\lambda} (\lambda - \epsilon)^2,
+% \end{align}
+% where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result is obtained by taking the taking the limit of both sides. 
+% \end{proof}
 %
-\begin{proof}
-By Corollary 1.2 of \cite{bogachev2016distances}, for any $\epsilon > 0$ we have 
-\begin{align}
-\| \mu_t - \mu_t^\epsilon \|_{\TV}^2 &\leq \int_0^\infty \int_{\R^d} \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \frac{\|\nabla \rho^\epsilon_s(x)\|^2}{\rho^\epsilon_s(x)}  dx ds \\
-&\leq  C \Bigl| \Bigl(\frac{\sqrt{\lambda}}{\sqrt{\epsilon}}- \frac{\sqrt{\epsilon}}{\sqrt{\lambda}} \Bigr) \sqrt{2\epsilon}  \Bigr|^2 \label{eqn:prop_interm} \\
-&= \frac{2C}{\lambda} (\lambda - \epsilon)^2,
-\end{align}
-where \eqref{eqn:prop_interm} is obtained by the assumption. The desired result is obtained by taking the taking the limit of both sides. 
-\end{proof}
-%
 
-\begin{remark}
-By following a similar approach that we used in Theorem~\ref{thm:euler}, for any $\epsilon > 0$, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, and Assumption \Cref{asmp:sde_ergo}. %and letting $\epsilon$ go to zero. 
-\end{remark} 
+% \begin{remark}
+% By following a similar approach that we used in Theorem~\ref{thm:euler}, for any $\epsilon > 0$, we can also bound the distance $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV}$ by decomposing the term as $\|\hat{\mu}_{Kh} - \nu^\epsilon\|_{\TV} \leq \|\hat{\mu}_{Kh} - \mu_T\|_{\TV} + \| \mu_T - \mu_T^\epsilon\|_{\TV} + \|\mu_T^\epsilon - \nu^\epsilon \|_{\TV}$, where $\mu_T^\epsilon$ is defined in Proposition~\ref{prop:dist_statmeas} and $\nu^\epsilon$ denotes the stationary measure of the SDE \eqref{eqn:sde_eps}. The proof for bounding these terms would then require Lemma~\ref{lem:euler}, Proposition~\ref{prop:dist_statmeas}, and Assumption \Cref{asmp:sde_ergo}. %and letting $\epsilon$ go to zero. 
+% \end{remark} 
 
 
 
-\section{Discussion on the assumptions}
+% \section{Discussion on the assumptions}
 
 % \umut{This section will be rewritten.}
 
@@ -346,9 +349,9 @@ By following a similar approach that we used in Theorem~\ref{thm:euler}, for any
 % Assume that \Cref{asmp:flowunq_1,asmp:flowunq_2,asmp:flowunq_3,asmp:flowunq_4} hold. Then, there exists a unique family $\{\mu_t, t\in(0,T]\}$ of probability measures on $\R^d$ solving \eqref{eqn:gradflow_reg}.
 % \end{thm}
 
-\subsection{The assumptions of Proposition~\ref{prop:dist_statmeas}}
+% \subsection{The assumptions of Proposition~\ref{prop:dist_statmeas}}
 
-The assumptions of Proposition~\ref{prop:dist_statmeas} can be satisfied if we further assume certain regularity assumptions on $v_t$. For more information and a discussion about these assumptions, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
+% The assumptions of Proposition~\ref{prop:dist_statmeas} can be satisfied if we further assume certain regularity assumptions on $v_t$. For more information and a discussion about these assumptions, we refer the reader to Remark 1.4 in \cite{bogachev2016distances} and \cite{bogachev2006global,bogachev2008estimates}.
 
 
 

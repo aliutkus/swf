@@ -4,7 +4,7 @@
 
 We let $\mathcal{F}_{\lambda}(\mu) = \frac{1}{2} SW_2^2(\mu, \nu) + \lambda H(\mu)$ for a chosen reference measure $\nu$.
 
-\begin{thm}
+\begin{thm} \label{thm:implicit_step}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a time step $h > 0$, regularization constant $\lambda > 0$ and a radius $r > \sqrt{d}$. For a probability measure $\mu_0$ on $B(0, r)$ with density $\rho_0 \in L^{\infty}$, there is a probability measure $\mu$ on $\overline{B}(0,r)$ minimizing:
 \[
 \mathcal{G}(\mu) = \mathcal{F}_{\lambda} (\mu) + \frac{1}{2h} W_2^2(\mu, \mu_0) 
@@ -45,19 +45,93 @@ To finish, we just need to prove that $\hat{\mu}$ is a minimum of $G$. We remind
 where the second inequality comes from the fact, that $\hat{\mu}_{t_k}$ minimizes $\mathcal{F}_{\lambda}(\cdot) + \frac{1}{2h}W_2^2(\cdot, \mu_{t_k})$. From the above inequality and previously established facts, it follows that $\hat{\mu}$ is a minimum of $G$ with density satisfying \ref{ineq:inf_norm_bound}.
 \end{proof}
 
+\begin{definition} \textbf{Minimizing movement scheme}
+Let $X$ be a metric space and $F : \mathbb{R_+} \times \mathbb{N} \times X \times X \rightarrow X$ be a functional. Let $x_0 \in X$ be a starting point. For $h> 0$ a piecewise constant trajectory $x^h : [0, \infty) \rightarrow X$ for $F$ starting at $x_0$ is a function such that:
+\begin{itemize}
+\item $x^h(0) = x_0$.
+\item $x^h$ is constant on each interval $[nh, (n+1)h)$, so $x^h(t) = x(nh)$ with $n = \lfloor t/h \rfloor$.
+\item $x^h(t +h )$ minimizes function $ y \mapsto F(h, \lfloor t/h \rfloor, y ,x(t))$.
+\end{itemize}
+We say $\hat{x}$ is a minimizing movement scheme for $F$ starting at $x_0$, if $\hat{x}$ is a pointwise limit of $x^h$ as $h$ goes to $0$. We say that $\tilde{x}$ is a generalized minimizing movement for functional $F$ starting at $x_0$, if there exists a sequence $h_n$ converging to $0$, such that $x^{h_n}$ converges pointwise to $\tilde{x}$.
+\end{definition}
+
 Existance of gradient flow (generalized minimizing movement scheme)
 \begin{thm} \label{thm:existance_gmm_scheme}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^p$, there is a generalized minimizing movement scheme $(\mu_t)_{t\geq 0}$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
-\[
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in L^{\infty}$, there is a generalized minimizing movement scheme $\mu$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional:
+\begin{equation} \label{gmm:sw_ent_functional}
 \mathcal{F}(h, n , \mu_+, \mu_-) = \mathcal{F}_{\lambda}(\mu_+) + \frac{1}{2h}W_2^2(\mu_+, \mu_-)
-\]
-Morover for time $t > 0$ measure $\mu_t$ has density $\rho_t$ and:
+\end{equation}
+Moreover for time $t > 0$ measure $\mu_t = \mu(t)$ has density $\rho_t$ and:
 \[
-||\rho_t||_{L^p} \leq e^{t\sqrt{d}}/q ||\rho_0||_{L^p}
+||\rho_t||_{L^{\infty}} \leq e^{d t\sqrt{d}} ||\rho_0||_{L^{\infty}}
 \]
 \end{thm}
 \begin{proof}
-The proof is (almost) exactly the same as the proof of Theorem 5.5.3 in [[Bonnotte]]. 
+We start by noting, that by \ref{thm:implicit_step} for any $h > 0$ there exists a piecewise constant trajectory $\mu^h$ for \ref{gmm:sw_ent_functional} starting at $\mu_0$. Furthermore for $t \geq 0$ measure $\mu_t^h = \mu^h(t)$ has density $\rho_t^h$, and:
+\begin{equation} \label{ineq:dens_bound}
+||\rho_t^h||_{L^{\infty}} \leq e^{d \sqrt{d} (t+ h)} ||\rho_0||_{L^{\infty}}
+\end{equation}
+Let us choose $T > 0$. We denote $\rho^h(t,x) = \rho_t^h(x)$. 
+%Also, for $h > 0$ we define a measure $\rho^h$ on $[0, T] \times \cB(0,r)$ by:
+%\[
+%\int \xi(t,x) d\rho^h(t,x) dx dt = \frac{1}{T} \int_0^T \int \xi(t,x) d\rho_t^h(x dx) dt 
+%\]
+%for all continuous and bounded functions $\xi$. 
+For $ h \leq 1$, the functions $\rho^h$ lie in a ball in $L^{\infty}([0,T] \times \cB(0,r))$, so from Banach-Alaoglu theorem there is a sequence $h_n$ converging to $0$, such that $\rho^{h_n}$ converges in weak-star topology in $L^{\infty}([0,T] \times \cB(0,r))$ to a certain limit $\rho$. Since $\rho$ has to be nonnegative except for a set of measure zero, we assume $\rho$ is nonnegative. We denote $\rho_t(x) = \rho(t,x)$. We will prove that for almost all $t$, $\rho_t$ is a probability density and $\mu_{t}^{h_n}$ converge in $W_2$ to a measure $\mu_t$ with density $\rho_t$.
+
+First of all, for almost all $t \in [0,T]$ functions $\rho_t$ are probability densities, since for any Borel set $A \subseteq [0,T]$ the indicator of set $A \times \cB(0,r)$ is integrable, and hence:
+\[
+\int_A \int \rho_t(x) dx dt = \lim_{n \rightarrow \infty} \int_A \int \rho_t^{h_n}(x) dx dt
+\]
+and so we have to have $\int \rho_t(x) dx = 1$ for almost all $t \in [0,T]$. Nonnegativity of $\rho_t$ follows from nonnegativity of $\rho$. 
+
+We will now prove, that for almost all $t \in [0,T]$  measures $\mu_t^{h_n}$ converge to a measure with density $\rho_t$. Let $t \in (0,T)$, take $\delta < \min(T-t, t)$ and $\zeta \in C^1(\cB(0,r))$. We have:
+\begin{multline} \label{ineq:mu_t_conv_bound}
+\left| \int \zeta d\mu_t^{h_n} - \int \zeta d\mu_t^{h_m} \right| \leq \\ \left| \int \zeta d\mu_t^{h_n} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int \zeta d\mu_s^{h_n} ds \right| + 
+\left| \int \zeta d\mu_t^{h_m} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int \zeta d\mu_s^{h_m} ds \right| +  \\
+\left| \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int \zeta d\mu_s^{h_m} ds - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int \zeta d\mu_s^{h_n} ds \right|
+\end{multline}
+
+Because $\mu_t^{h_n}$ have densities $\rho_t^{h_n}$ and both $\rho^{h_n}$, $\rho^{h_m}$ converge to $\rho$ in weak-star topology, the last element of the sum on the right hand side converges to zero, as $n,m \rightarrow \infty$.
+
+On the other hand, if we denote by $\gamma$ the optimal transport plan between $\mu_t^{h_n}$ and $\mu_s^{h_n}$, we have:
+\begin{equation} \label{ineq:expectation_W2_bound}
+\left| \int \zeta d\mu_t^{h_n} - \int \zeta d\mu_s^{h_n} \right|^2 \leq \int \left| \zeta(x) - \zeta(y) \right|^2 d\gamma(x,y) \leq ||\nabla \zeta||_{\infty}^2 W_2^2(\mu_t^{h_n}, \mu_s^{h_n})
+\end{equation}
+For $n_t = \lfloor t/h_n \rfloor$ and $n_s = \lfloor s/h_n \rfloor$ we have $\mu_t^{h_n} = \mu_{n_t h_n}^{h_n}$ and $\mu_s^{h_n} = \mu_{n_s h_n}^{h_n}$. For all $k \geq 0$ we have:
+\[
+W_2^2(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \leq 2h_n(\mathcal{F}_{\lambda}(\mu_{kh_n}^{h_n}) - \mathcal{F}_{\lambda}(\mu_{(k+1)h_n}^{h_n}) 
+\]
+We remind our reader, that $\mathcal{F}_{\lambda}$ is lower semicontinuous, and so has a minimum $\pi_{min}$ on $\mathcal{P}(\cB(0,r))$. We denote $C = \mathcal{F}_{\lambda}(\mu_0) - \mathcal{F}_{\lambda}(\pi_{min})$. Assuming without loss of generality $n_t \leq n_s$, from the Cauchy-Schwartz inequality we get:
+\[
+\begin{aligned}
+W_2^2(\mu_{t}^{h_n}, \mu_s^{h_n}) & s\leq \left( \sum_{k= n_t}^{n_s-1} W_2(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \right)^2 \\
+& \leq |n_t - n_s|\sum_{k=n_t}^{n_s 1} W_2^2(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \\
+& \leq 2h_n|n_t - n_s|(\mathcal{F}_{\lambda}(\mu_{n_t h_n}^{h_n}) - \mathcal{F}_{\lambda}(\mu_{n_s h_n}^{h_n})) \\
+& \leq 2C(|t-s| + h_n)
+\end{aligned}
+\]
+Finally, using Jensen's inequality, the above bound and \ref{ineq:expectation_W2_bound} we get:
+\[
+\begin{aligned}
+\left| \int \zeta d\mu_t^{h_n} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int \zeta d\mu_s^{h_n} ds \right|^2 & \leq \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \left| \int \zeta d\mu_{t}^{h_n} - \int \zeta d\mu_s^{h_n} \right|^2 ds \\
+& \leq \frac{C ||\nabla \zeta||_{\infty}^2}{\delta} \int_{t-\delta}^{t+\delta} (|t-s| +h_n) ds \\
+& \leq 2C ||\nabla \zeta||_{\infty}^2 (h_n + \delta)
+\end{aligned}
+\]
+This, together with \ref{ineq:mu_t_conv_bound} means that $\int \zeta d\mu_t^{h_n}$ is a Cauchy sequence for all $t \in (0, T)$. On the other hand, since $\rho^{h_n}$ converges to $\rho$ in weak-star topology on $L^{\infty}$, the limit of $\int \zeta d\mu_t^{h_n}$ has to be $\int \zeta(x) \rho_t(x) dx$ for almost all $t \in (0,T)$. This means that for almost all $t \in [0,T]$ sequence $\mu_{t}^{h_n}$ converges to a measure $\mu_t$ with density $\rho_t$.
+
+Let $ S \in [0,T]$ be the set of times such that for $t \in S$ sequence $\mu_{t}^{h_n}$ converges to $\mu_t$. As we established almost all points from $[0,T]$ belong to $S$. Let $ t \in [0,T] \setminus S$. Then there exists a sequence of times $t_k \in S$ converging to $t$, such that $\mu_{t_k}$ converge to some limit $\mu_t$. We have:
+\[
+W_2(\mu_t^{h_n}, \mu_t) \leq W_2(\mu_{t}^{h_n}, \mu_{t_k}^{h_n}) + W_2(\mu_{t_k}^{h_n}, \mu_{t_k}) + W_2(\mu_{t_k}, \mu_t)
+\]
+From which we have for all $k \geq 1$:
+\[
+\limsup_{n \rightarrow \infty} W_2(\mu_{t}^{h_n}, \mu_t) \leq W_2(\mu_{t_k}, \mu_t) + \limsup_{n\rightarrow \infty} W_2(\mu_t^{h_n}, \mu_{t_k}^{h_n})
+\]
+and using [[ref]] we get $\mu_{t}^{h_n} \rightarrow \mu_t$. Furthermore, the measure $\mu_t$ has to have density, since $\rho_{t}^{h_n}$ lie in a ball in $L^{\infty}(\cB(0,r))$, so we can choose a subsequence of $\rho_t^{h_n}$ converging in weak-star topology to a certain limit $\hat{\rho}_t$. It is trivial to check that $\hat{\rho}_t$ is the density of $\mu_t$. Finally we note, that the bound for the $L^{\infty}$ norm for densities of all $\mu_t$ follows trivially from \ref{ineq:dens_bound}.
+
+Finally, we use the diagonal argument to get convergence for all $t >0$. Let $(T_k)_{k=1}^{\infty}$ be a sequence of times increasing to infinity. Let $h_{n}^1$ be a sequence converging to $0$, such that $\mu_t^{h_n^1}$ converge to $\mu_t$ for all $t \in [0, T_1]$. Using the same arguments as above, we can choose a subsequence $h_n^2$ of $h_n^1$, such that $\mu_{t}^{h_n^2}$ converges to a limit $\mu_t$ for all $t \in [0, T_2]$. Inductively, we construct subsequences $h_{n}^k$, and in the end take $h_n = h_n^n$. For this subsequence we have that $\mu_t^{h_n}$ converges to $\mu_t$ for all $t > 0$, and $\mu_t$ has a density satisfying the bound from the statement of the theorem.
 \end{proof}
 
 \begin{thm}
@@ -90,7 +164,7 @@ Our proof is based on the proof of Theorem 5.6.1 from [[Bonnotte]]. We proceed i
 \[
 \left| \sum_{k=1}^{\infty} h_n \int \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx - \int \int \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt \right| \leq CTh_n 
 \]
-On the other hand,  we know, that $\rho^{h_n}$ converges to $\rho$ in $L^1([0,T] \times \cB(0,r))$, and $\Delta \xi$ is bounded, so:
+On the other hand,  we know, that $\rho^{h_n}$ converges to $\rho$ in weak star topology on $L^{\infty}([0,T] \times \cB(0,r))$, and $\Delta \xi$ is bounded, so:
 \[
 \left| \int \int \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt - \int \int \Delta \xi (t,x) \rho_t(x) dx dt \right| \rightarrow_{n \rightarrow \infty} 0
 \]
