@@ -44,22 +44,18 @@
 
 \vspace{-5pt}
 
-\textbf{Construction of the gradient flow: }
+\textbf{Construction of the flow: }
 %
-In this section, we will construct a gradient flow in $(\PS_2(\Omega),\W)$, which will form the basis of the proposed nonparametric generative model. We begin by stating the functional optimization problem on which the gradient flow will be constructed:
-\begin{align}
-\min_\mu \Bigl\{ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\}, \label{eqn:sw_optim}
-\end{align}
-where $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int_{\Omega} \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. The main idea in this problem is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
-
+We propose in this paper to consider the minimization of the functional $\F^{\nu}_{\lambda}$ on $\PS_2(\Omega)$ defined by
+\begin{equation}
+ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr, \label{eqn:sw_optim}
+\end{equation}
+where $\lambda >0$ is a regularization parameter and $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int_{\Omega} \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise.. Note that the case $\lambda =0$ has been already proposed in ... and studied in \cite{bonnotte2013unidimensional}. Here, in order to avoid overfitting and introduce necessary noise inherent to generative model, we suggest to penalize the slice-Wasserstein distance using $\He$. In other words, the main idea is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
 The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
 
-\alain{write again this part}
-
-
-In the light of the optimization problem \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F^{\nu}_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
+In the light of the problem of minimizing \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F^{\nu}_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
 We now state our first main theoretical result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities.
 \begin{thm}
