@@ -9,7 +9,7 @@ In this section we will analyze the behavior of the proposed algorithm in the as
 \end{align}
 where $\mub_{kh}$ denotes the law of $\bar{X}_k$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it captures the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
 
-We are interested in analyzing the distance $\| \mub_{Kh} - \mu_{T} \|_{\TV}$, where $\mu_T$ denotes the law of $X_T$ such that $T=Kh$ and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. 
+In practice, we would like to approximate the measure sequence $(\mu_t)_t$ as accurate as possible, where $\mu_t$ denotes the law of $X_t$. Therefore, we are interested in analyzing the distance $\| \mub_{Kh} - \mu_{T} \|_{\TV}$, where $T=Kh$ and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. 
 %
 
 In order to analyze this distance, we exploit the connections between \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}, which is a Bayesian posterior sampling method, and is obtained as a discretization of an SDE whose drift has a much simpler form. We then bound the distance by extending the recent results on SGLD \cite{raginsky17a} to time- and measure-dependent drifts, that are of our interest in the paper.

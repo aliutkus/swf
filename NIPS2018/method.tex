@@ -144,7 +144,7 @@ Our approach is based on defining a \emph{particle system} that serves as an app
 \begin{align}
 d X_t^i = v(X_t^i, \mu_t^{N}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N = (1/N) \sum_{i=1}^N \delta_{X_t^i}$ denotes the empirical distribution of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for all $t$ \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and it is out of the scope of this study. %We will support this claim with experimental results.
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N = (1/N) \sum_{j=1}^N \delta_{X_t^j}$ denotes the empirical distribution of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for all $t$ \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and it is out of the scope of this study. %We will support this claim with experimental results.
 
 % \subsection{Approximate Euler-Maruyama discretization}
 \textbf{Approximate Euler-Maruyama discretization:}
@@ -155,7 +155,7 @@ The algorithm iteratively applies the following update equation:
 \begin{align}
 \bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}_k(\bar{X}^i_k) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\} \label{eqn:euler_particle}
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{i=1}^N \delta_{\bar{X}_k^i}$ being the empirical distribution of $\{\bar{X}_k^i\}_{i=1}^N$. A question of fundamental practical importance is how to compute this function $\hat{v}$.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{j=1}^N \delta_{\bar{X}_k^j}$ being the empirical distribution of $\{\bar{X}_k^j\}_{j=1}^N$. A question of fundamental practical importance is how to compute this function $\hat{v}$.
 
 We propose to approximate the integral in \eqref{eqn:gradflow_reg} via a simple Monte Carlo estimate.
 % a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$.
@@ -201,7 +201,7 @@ where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich
         $\hfill i = 1,\dots,N$
 
 		 }
-		 \caption{Sliced-Wasserstein Flow}
+		 \caption{Sliced-Wasserstein Flow (SWF)}
 		 \label{algo:flow}
 	 \end{algorithm2e}
 \end{minipage}
@@ -209,12 +209,12 @@ where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich
 \end{wrapfigure}
 
 % \newcommand{\shr}{{\lserif\#}}
-For any particular $\theta\in\Sp^{d-1}$, the CDF $F_{\theta^*_\#\nu}$ for the projection of the target distribution $\nu$ on $\theta$ can be straightforwardly computed from the data. This is done by first computing the projections $\langle \theta, y_i\rangle$ for all data points $y_i$, and then computing the empirical CDF for this set of $P$ scalars.
+For any particular $\theta\in\Sp^{d-1}$, the CDF $F_{\theta^*_\#\nu}$ for the projection of the target distribution $\nu$ on $\theta$ can be easily computed from the data. This is done by first computing the projections $\langle \theta, y_i\rangle$ for all data points $y_i$, and then computing the empirical CDF for this set of $P$ scalars.
 %
 Similarly, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the QF of the particles at iteration $k$, is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical quantile function of this set of $N$ scalar values.
 
 In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles.
-Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target.
+Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target.
 
 Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all these one-dimensional computations can be done very accurately and (ii) quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.
 
@@ -227,7 +227,7 @@ The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarka
 % \umut{We don't have any experiments for this at the moment}
 % We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.
 
-Besides, we can obtain further reductions in the computing time when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
+Besides, we can obtain further reductions in the computing time if the CDF $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
 
 
 
