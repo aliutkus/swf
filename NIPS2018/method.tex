@@ -174,7 +174,7 @@ where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-\vspace{-14pt}
+% \vspace{-14pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
@@ -215,7 +215,7 @@ For any particular $\theta\in\Sp^{d-1}$, the CDF $F_{\theta^*_\#\nu}$ for the pr
 %
 Similarly, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the QF of the particles at iteration $k$, is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical quantile function of this set of $N$ scalar values.
 
-In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}$ empirical quantiles\footnote{In practice, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully. Concerning the number of particles, we observed $N=3000$ to be sufficient for most purposes in our experiments.}. 
+In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles. 
 Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target. 
 
 Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all these one-dimensional computations can be done very accurately and (ii) quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.

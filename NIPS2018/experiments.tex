@@ -11,15 +11,23 @@
 \includegraphics[width=0.255\columnwidth]{figures/gmm_reg.pdf}
 \label{fig:lambda_supp}
  }
-\caption{a) Toy example. training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$. b) Influence of the regularization parameter $\lambda$. The higher $\lambda$, the more entropic the output distribution.}
+ \vspace{-\baselineskip}
+\caption{a) \textbf{Left:} the distribution of particles (contour plots) during the estimation-stage (top) and prediction-stage (bottom). \textbf{Right:} (top) close-up of some generated particles in red superimposed with data points in black, (bottom) target distribution. b) Influence of the regularization parameter $\lambda$. }
 \end{figure}
 
-In this section, we evaluate the SWF algorithm on different datasets. In all cases, the $N$ initial particles $\bar{X}^i_0\in\mathbb{R}^d$ are obtained by first drawing i.i.d. $\bar{Z}^i\in\mathbb{R}^r$ with $r\leq d$, each one with i.i.d standard Gaussian entries. Then we take $\bar{X}^i_0=A\bar{Z}^i$ with $A$ being a random $d\times r$ matrix. This results in a proposal distribution $\mu=\mathcal{N}(0,AA^\star)$. This procedure allows to have an arbitrary input dimension and yet use SWF.
+%I think the real procedure is not helping anything computationally and making the presentation a bit confusing. 
+In this section, we evaluate the SWF algorithm on both synthetic and real data settings. In all cases, the initial distribution $\mu_0$ is selected as the standard Gaussian distribution on $\R^d$, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully, and we have observed that $N=3000$ particles are sufficient. 
+
+% \footnote{}
+
+
+% In this section, we evaluate the SWF algorithm on both synthetic and real data settings. In all cases, the $N$ initial particles $\bar{X}^i_0\in\mathbb{R}^d$ are obtained by first drawing i.i.d.\ standard Gaussian $\bar{Z}^i\in\mathbb{R}^m$ with $m\ll d$. Then we generate random matrix $A$ of size $d\times m$, and finally set $\bar{X}^i_0=A\bar{Z}^i$. This results in $\mu_0=\mathcal{N}(0,AA^\top)$. %This procedure allows us to use the with an arbitrary input dimension.
 
 % \subsection{Toy example: multivariate Gaussian Mixture Model}
 % \label{sub:toy_example}
 
 \begin{wrapfigure}{R}{0.40\textwidth}
+\vspace{-10pt}
 \begin{centering}
 \includegraphics[width=0.40\columnwidth]{figures/SW2_cost-crop.pdf}
 \par\end{centering}
@@ -27,16 +35,32 @@ In this section, we evaluate the SWF algorithm on different datasets. In all cas
 \label{fig:toy_sw}}
 \vspace{-10pt}
 \end{wrapfigure}
-We first illustrate SWF on a toy example. We randomly drew the parameters for a GMM with $20$ components and various dimensions $d$. The weights of the components were drawn randomly, as well as their covariance matrices and centroids. In all draws, the first centroid was sent far from the other ones (multiplied by $3$) so as to test the model for mode collapse.
+\textbf{Gaussian Mixture Model: }
+We perform the first set of experiments on synthetic data where we consider a standard Gaussian mixture model (GMM).
+%
+We set the number of the mixture components to $20$ and for each component we randomly draw the weight, covariance matrices and centroids. We make sure that the centroids are sufficiently distant from each other in order to make the problem more challenging. Given the model parameters, we generate $P=50000$ data samples in each experiment.
+
+
+In our first experiment, we set $d=2$ for visualization purposes and illustrate the general behavior of the algorithm. Figure~\ref{fig:toy_example} shows the evolution of the particles through the iterations. Here, we set $N_\theta=30$, $h=1$, and $\lambda=10^{-4}$.
+%
+We observe that the empirical distribution of the particles converges rapidly to the target distribution. Furthermore, we can see that the QF, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ that is computed with one set of particles (so-called the \textit{estimation} stage) can be perfectly re-used for new unseen particles in a subsequent \textit{prediction} stage. In both cases, we observe two remarkable outcomes: (i) Even when some modes are isolated from the others, SWF is able to capture them successfully and we never observe a mode collapse. This is due to the OT nature of the procedure. (ii) The generated particles do not collapse on the data, thanks to the entropy regularization.
+
+In our second experiment, we investigate the effect of the level of the regularization. We use the same setting as the previous experiment, whereas we differ the value of $\lambda$ and run the algorithm for sufficiently many iterations. As we can observe from Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
+
+% There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. 
+
+
+In our next experiment, we investigate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior. 
+%
+Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This advocates the use of larger $\lambda$ as the dimensionality increases. 
 
 
 
 
+% Our next experiment aims to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{N}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance. 
 
-\textbf{Toy example: multivariate Gaussian Mixture Model: }
-Our first experiment is to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{N}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance. In Figure~\ref{fig:toy_sw}, we see a steady decrease of the cost for all runs, as predicted by the theory presented above.
 
-Then, we illustrate the generating power of the model with one particular such example, depicted on Figure~\ref{fig:toy_example}. There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. As can be seen, the output converges rapidly to the target. Furthermore, we can see that the QF $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ computed with one set of particles (so-called \textit{training} stage) can perfectly be reused for new unseen particles in a subsequent \textit{test} stage. In any case, two remarkable things may be seen on this figure. First, even when some modes lie far away from the others, SWF is able to generate them successfully and we never observed mode collapse. This is due to the OT nature of the procedure. Second, the genenerated samples do not reproduce the learning data, which is in particular enforced by the regularization term $\lambda$.
+
 
 
 
