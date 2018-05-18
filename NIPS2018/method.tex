@@ -55,19 +55,19 @@ where $\lambda >0$ is a regularization parameter and $\He$ denotes the negative 
 The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.
 
 %Informally, the regularization corresponds to assuming a Gaussian prior on $\mu$: when $\lambda$ goes to infinity, $\mu^\star$ will converge to a Gaussian distribution since the Gaussian densities have the maximum entropy. \umut{discuss the difference between Sinkhorn.}
-In the next result, we show that there exists a flow $(\mu_t)_{t\geq0}$ in $(\PS(\cB(0,r)),\W)$ which decreases along $\F_\lambda^\nu$, where $\cB(0,a)$ denotes the closed unit ball centered at $0$ and radius $a$. This flow will be referred to as a generalized minimizing movement scheme; see Definition~$1$ in the supplementary document.  In addition, this flow $(\mu_t)_{t \geq 0}$ satisfies for all $t>0$, $\mu_t$ admits a density $\rho_t$ with respect to the Lebesgue measure and $(\rho_t)_{t \geq 0}$ is solution of a non-linear PDE (in the weak sense). %   Also construct a sequence of measures $(\mu_n)_n$ which minimizes $\F^\nu_\lambda$ is in general not possible directly and In the next result, we show A first step in minimizing $\F^{\nu}_\lambda$ is to construct for all $h >0$, a minimizer of $\F_\lambda + (1/2h) \W(
+In the next result, we show that there exists a flow $(\mu_t)_{t\geq0}$ in $(\PS(\cB(0,r)),\W)$ which decreases along $\F_\lambda^\nu$, where $\cB(0,a)$ denotes the closed unit ball centered at $0$ and radius $a$. This flow will be referred to as a generalized minimizing movement scheme; see Definition~$1$ in the supplementary document.  In addition, this flow $(\mu_t)_{t \geq 0}$ admits a density $\rho_t$ with respect to the Lebesgue measure for all $t>0$ and $(\rho_t)_{t \geq 0}$ is solution of a non-linear PDE (in the weak sense). %   Also construct a sequence of measures $(\mu_n)_n$ which minimizes $\F^\nu_\lambda$ is in general not possible directly and In the next result, we show A first step in minimizing $\F^{\nu}_\lambda$ is to construct for all $h >0$, a minimizer of $\F_\lambda + (1/2h) \W(
 % In the light of the problem of minimizing \eqref{eqn:sw_optim}, we will construct the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F^{\nu}_\lambda(\mu_t)$. This gradient flow will be aptly called \emph{sliced-Wasserstein flows}. The main interest in such a gradient flow is that, for a curve $(\mu_t)_t$ satisfying the gradient flow, we would like to identify the PDE that is solved by $(\rho_t)_t$, where $\rho_t$ denotes the density of $\mu_t$.
 
 % We now state our first main theoretical result, that establishes the connection between the gradient flow and PDE that describes the evolution of the densities.
 \begin{thm}
 \label{thm:continuity}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with respect to the Lebesgue measure with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$. There exists a generalized minimizing movement scheme  $(\mu_t)_{t \geq 0}$ given by Theorem~$2$ in the supplementary document and denote by $\rho_t$ the density of $\mu_t$ for all $t \geq 0$. Then $(\rho_t)_t$ satisfies the following continuity equation:
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with respect to the Lebesgue measure with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$. There exists a generalized minimizing movement scheme  $(\mu_t)_{t \geq 0}$ given by Theorem~$2$ in the supplementary document and if $\rho_t$ stands for the density of $\mu_t$ for all $t \geq 0$, then $(\rho_t)_t$ satisfies the following continuity equation:
 \begin{align}
 \frac{\partial \rho_t}{\partial t}   = -\divop (v_t \rho_t) + \lambda \Delta \rho_t,  \quad \quad \quad v_t(x) \triangleq v(x,\mu_t) = - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
 in a weak sense. Here, $\Delta$ denotes the Laplacian operator, $\divop$ the divergence operator and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$.
 \end{thm}
-The precise statement of this Theorem, related results and its proof are postponed to the the supplementary document. For its proof, we use the technique introduced in \cite{jordan1998variational}: we first prove the existence of a generalized minimizing movement scheme by showing that the solution curve $(\mu_t)_t$ is a limit of the solution of a time-discretized problem. Then we prove that the curve $(\rho_t)_t$ solves the PDE given in \eqref{eqn:gradflow_reg}. 
+The precise statement of this Theorem, related results and its proof are postponed to the the supplementary document. For its proof, we use the technique introduced in \cite{jordan1998variational}: we first prove the existence of a generalized minimizing movement scheme by showing that the solution curve $(\mu_t)_t$ is a limit of the solution of a time-discretized problem. Then we prove that the curve $(\rho_t)_t$ solves the PDE given in \eqref{eqn:gradflow_reg}.
 
 
 % We can now construct the modified gradient flow as follows:
@@ -121,7 +121,7 @@ The precise statement of this Theorem, related results and its proof are postpon
 
 \textbf{Connection with stochastic differential equations: }
 %
-Let us consider the PDE given in \eqref{eqn:gradflow_reg} on $\rset^d$. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution following SDE:
+Let us consider the PDE given in \eqref{eqn:gradflow_reg} on $\rset^d$. We observe that this equation is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart that can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution of the following SDE:
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
 \end{align}
@@ -148,7 +148,7 @@ where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total num
 % \subsection{Approximate Euler-Maruyama discretization}
 \textbf{Approximate Euler-Maruyama discretization:}
 %
-In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in practice, we propose an approximate Euler-Maruyama discretization for each particle SDE. 
+In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in practice, we propose an approximate Euler-Maruyama discretization for each particle SDE.
 The algorithm iteratively applies the following update equation:
 % First, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion. Then, they are updated at each step $k$ following:
 \begin{align}
@@ -157,14 +157,14 @@ The algorithm iteratively applies the following update equation:
 where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{i=1}^N \delta_{\bar{X}_k^i}$ being the empirical distribution of $\{\bar{X}_k^i\}_{i=1}^N$. A question of fundamental practical importance is how to compute this function $\hat{v}$.
 
 We propose to approximate the integral in \eqref{eqn:gradflow_reg} via a simple Monte Carlo estimate.
-% a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. 
+% a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$.
 At each iteration $k$, this is done by drawing $N_\theta$ uniform i.i.d.\ samples from the sphere $\Sp^{d-1}$, $\{\theta_{k,n}\}_{n=1}^{N_\theta}$, and computing:
 %
 \begin{align}
 \hat{v}_k(x) \triangleq - (1/{N_\theta}) \sum\nolimits_{n=1}^{N_\theta} \psi_{k, \theta_{k,n}}'(\langle\theta_{k,n},x\rangle ) \theta_{k,n}, \label{eqn:approxdrift}
 \end{align}
 %
-where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich potential (cf.\ Section~\ref{sec:techbg}) that is applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$: i.e.\, 
+where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich potential (cf.\ Section~\ref{sec:techbg}) that is applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$: i.e.\,
 % \begin{align}
    $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
  % \end{align}
@@ -212,8 +212,8 @@ For any particular $\theta\in\Sp^{d-1}$, the CDF $F_{\theta^*_\#\nu}$ for the pr
 %
 Similarly, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the QF of the particles at iteration $k$, is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical quantile function of this set of $N$ scalar values.
 
-In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles. 
-Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target. 
+In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles.
+Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target.
 
 Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all these one-dimensional computations can be done very accurately and (ii) quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.
 
@@ -221,7 +221,7 @@ Even though the error induced by these approximation schemes can be incorporated
 
 
 %Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta^*_{n\#}\bar{\mu}}^{-1} \circ F_{\theta^*_{n\#}\nu}) $ by using standard techniques that are based on linear interpolation \umut{cite}, whose details are given in the supplementary document.
-The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a massively distributed manner that is independent of the sliced Wasserstein flow. 
+The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a massively distributed manner that is independent of the sliced Wasserstein flow. This aspect is reminiscent of the \textit{compressive learning} methodology \cite{gribonval2017compressive}, except we exploit quantiles of random projections here, instead of random moments as done there.
 
 % \umut{We don't have any experiments for this at the moment}
 % We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.

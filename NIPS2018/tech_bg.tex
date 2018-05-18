@@ -28,7 +28,7 @@ where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and d
 % More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
 
 
-In the case where $\Omega$ is finite, computing the Wasserstein distance between two probability measures turn to be  a linear program with linear constraints, and has therefore a dual formulation. Since $\Omega$ is a Polish space (i.e.\ a complete and separable metric space), this dual formulation can be generalized as follows \cite[Theorem 5.10]{villani2008optimal}:
+In the case where $\Omega$ is finite, computing the Wasserstein distance between two probability measures turns out to be  a linear program with linear constraints, and has therefore a dual formulation. Since $\Omega$ is a Polish space (i.e.\ a complete and separable metric space), this dual formulation can be generalized as follows \cite[Theorem 5.10]{villani2008optimal}:
 \begin{align}
 \W(\mu,\nu) = \sup_{\psi \in \mathrm{L}^1(\mu)} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2}, \label{eqn:w2dual}
 \end{align}
@@ -59,7 +59,7 @@ $\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
 % \end{align}
 where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS_2(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
-% In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. 
+% In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis.
 % We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
 %
 % this sentence is grammatically Correct :)

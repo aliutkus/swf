@@ -7,16 +7,16 @@
 	\includegraphics[width=0.65\columnwidth]{figures/gmm_iter.pdf}
 	\label{fig:toy_example}
 } \hfill
-\subfigure[]{ 
+\subfigure[]{
 \includegraphics[width=0.255\columnwidth]{figures/gmm_reg.pdf}
 \label{fig:lambda_supp}
  }
  \vspace{-\baselineskip}
-\caption{a) \textbf{Left:} the distribution of particles (contour plots) during the estimation-stage (top) and prediction-stage (bottom). \textbf{Right:} (top) close-up of some generated particles in red superimposed with data points in black, (bottom) target distribution. b) Influence of the regularization parameter $\lambda$. }
+\caption{a) \textbf{Left:} Distribution of particles (contour plots) during the estimation (top) and prediction (bottom) stages. \textbf{Right:} (top) Close-up of some generated particles in red superimposed with data points in black. (bottom) Target distribution. b) Influence of the regularization parameter~$\lambda$. }
 \end{figure}
 
-%I think the real procedure is not helping anything computationally and making the presentation a bit confusing. 
-In this section, we evaluate the SWF algorithm on both synthetic and real data settings. In all cases, the initial distribution $\mu_0$ is selected as the standard Gaussian distribution on $\R^d$, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully, and we have observed that $N=3000$ particles are sufficient. 
+%I think the real procedure is not helping anything computationally and making the presentation a bit confusing.
+In this section, we evaluate the SWF algorithm on both synthetic and real data settings. In all cases, the initial distribution $\mu_0$ is selected as the standard Gaussian distribution on $\R^d$, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully, and we have observed that $N=3000$ particles are sufficient.
 
 % \footnote{}
 
@@ -47,19 +47,19 @@ We observe that the empirical distribution of the particles converges rapidly to
 
 In our second experiment, we investigate the effect of the level of the regularization. We use the same setting as the previous experiment, whereas we differ the value of $\lambda$ and run the algorithm for sufficiently many iterations. As we can observe from Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
 
-% There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. 
+% There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations.
 
 
-We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior. 
+We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior.
 %
 Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. %We also observe that the magnitude of $\SW$ decreases as $d$ increases. This outcome can be explained by the fact that $\SW \leq \W^{1/d}$
 %
-Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases. 
+Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases.
 
 
 
 
-% Our next experiment aims to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{N}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance. 
+% Our next experiment aims to assess whether SWF achieves its objective of decreasing the sliced Wasserstein distance between the output $\bar{\mu}_{k}^{N}$ and the target $\nu$. For each run, this is done by computing \label{eqn:sw} using an empirical average over random directions $\theta\in\Sp^{d-1}$ and the analytical expression \eqref{eq:W1D} for the scalar Wasserstein distance.
 
 
 
@@ -72,9 +72,9 @@ Since we used the same $\lambda$ for all $d$, the entropy term becomes relativel
 
 \textbf{Experiments on real data: }
 %
-In a second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits (of size $28 \times 28$, i.e.\ $d = 784$). (ii) The recently proposed FashionMNIST dataset \cite{xiao2017fashion}, that contains $50000$ gray-scale images. All images were interpolated as $64\times 64$, yielding $d=4096$. This dataset is advocated as more challenging than MNIST. 
+In a second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits (of size $28 \times 28$, i.e.\ $d = 784$). (ii) The recently proposed FashionMNIST dataset \cite{xiao2017fashion}, that contains $50000$ gray-scale images. All images were interpolated as $64\times 64$, yielding $d=4096$. This dataset is advocated as more challenging than MNIST.
 
-Our goal in these experiments is to capture the structure of the data distribution such that the particles that are generated by the algorithm will be samples from this unknown data distribution. In these experiments, we set $\lambda=10^{-6}$ and $N_\theta=200$. We will present visual results for qualitative inspection. More results with higher resolution are given in the supplementary document. 
+Our goal in these experiments is to capture the structure of the data distribution such that the particles that are generated by the algorithm will be samples from this unknown data distribution. In these experiments, we set $\lambda=10^{-6}$ and $N_\theta=200$. We will present visual results for qualitative inspection. More results with higher resolution are given in the supplementary document.
 
 Figures~\ref{fig:mnist} and \ref{fig:fashionmnist}, show that SWF is able to generate samples from the dataset in a few thousand iterations. We can observe that, the generated samples for the MNIST dataset are considerably accurate. For the FashionMNIST dataset, the samples capture the prominent features of the training samples; however, some of the fine-grained textures are not captured by the method. By considering that SWF only requires the projections of the data points, in a way, all these samples are generated without seeing the actual dataset.
 
@@ -92,11 +92,11 @@ Another important advantage of SWF is its low computational requirements. The wh
 \centering
 \subfigure[MNIST]{
 \includegraphics[width=0.41\columnwidth]{figures/mnist.pdf}
-\label{fig:mnist}	
+\label{fig:mnist}
 }\hfill
 \subfigure[Fashion MNIST]{
 \includegraphics[width=0.55\columnwidth]{figures/fmnist2.pdf}
-\label{fig:fashionmnist}	
+\label{fig:fashionmnist}
 }
 \vspace{-9pt}
 \caption{The evolution of the particles through $15000$ iterations on different datasets.}
