@@ -52,9 +52,13 @@ In our second experiment, we investigate the effect of the level of the regulari
 
 We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior.
 %
-Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. %We also observe that the magnitude of $\SW$ decreases as $d$ increases. This outcome can be explained by the fact that $\SW \leq \W^{1/d}$
+Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. We also observe that the magnitude of $\SW$ decreases as $d$ increases. This outcome can be explained by the fact that $\SW \leq \W \leq \SW^{{\cal O}(1/d)}$ (cf.\ \cite{bonnotte2013unidimensional,santambrogio2015optimal}).
 %
+<<<<<<< HEAD
 Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases.
+=======
+% Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases.
+>>>>>>> 102e2b1c63d268694a3af2161774bc41d9f238ca
 
 
 
@@ -100,7 +104,7 @@ Another important advantage of SWF is its low computational requirements. The wh
 }
 \vspace{-9pt}
 \caption{The evolution of the particles through $15000$ iterations on different datasets.}
-\vspace{-10pt}
+% \vspace{-10pt}
 \end{figure}
 
 % \begin{figure}
