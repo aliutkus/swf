@@ -92,8 +92,10 @@
   %% Address \\
   %% \texttt{email} \\
 }
-
 \input{defs}
+
+\usepackage{xr}
+\externaldocument{nips_2018_sketchmcmc}
 
 \setcounter{equation}{0}
 \setcounter{figure}{0}
@@ -103,12 +105,10 @@
  \renewcommand{\theequation}{S\arabic{equation}}
  \renewcommand{\thefigure}{S\arabic{figure}}
  \renewcommand{\thelemma}{S\arabic{lemma}}
- \renewcommand{\theassumption}{S\arabic{assumption}}
+\renewcommand{\theassumption}{S\arabic{assumption}}
  \renewcommand{\thethm}{S\arabic{thm}}
  \renewcommand{\theprop}{S\arabic{prop}}
 
-\usepackage{xr}
-\externaldocument{nips_2018_sketchmcmc}
 \usepackage[shortlabels]{enumitem}
 
 

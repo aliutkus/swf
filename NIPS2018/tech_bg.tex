@@ -49,7 +49,7 @@ This result implies that there exists a solution for transporting samples from $
 \textbf{Wasserstein spaces and gradient flows: }
 %
 By \cite[Proposition 7.1.5]{ambrosio2008gradient}, $\W$ is a distance over $\PS(\Omega)$.
-And in addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$ is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
+And in addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$\footnote{Note that in that case, $\PS_2(\Omega)=\PS(\Omega)$} is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
 
 In this study, we are interested in functional optimization problems in $(\PS_2(\Omega),\W)$, such as $\min_{\mu\in\PS_2(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
 

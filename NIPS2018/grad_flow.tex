@@ -50,6 +50,7 @@ where the second inequality comes from the fact, that $\hat{\mu}_{t_k}$ minimize
 \end{proof}
 
 \begin{definition} \textbf{Minimizing movement scheme}
+  \label{def:mini_move}
 Let $r >0$ and  $\mcf : \mathbb{R_+} \times \PS(\cB(0,r)) \times \PS(\cB(0,r))\rightarrow \rset$ be a functional. Let $\mu_0 \in \PS(\cB(0,r))$ be a starting point. For $h> 0$ a piecewise constant trajectory $\mu^h : [0, \infty) \rightarrow \PS(\cB(0,r))$ for $\mcf$ starting at $\mu_0$ is a function such that:
 \begin{itemize}
 \item $\mu^h(0) = \mu_0$.
@@ -61,7 +62,7 @@ We say $\hat{\mu}$ is a minimizing movement scheme for $\mcf$ starting at $\mu_0
 
 
 \begin{thm} \label{thm:existance_gmm_scheme}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in \mrl^{\infty}$, there is a generalized minimizing movement scheme $\mu$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional defined by 
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$, there is a generalized minimizing movement scheme $(\mu_t)_t$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional defined by 
 \begin{equation} \label{gmm:sw_ent_functional}
 \mcf^{\nu}(h, \mu_+, \mu_-) = \mcf^{\nu}_{\lambda}(\mu_+) + \frac{1}{2h}\W^2(\mu_+, \mu_-).
 \end{equation}
@@ -145,9 +146,9 @@ Finally, note that \eqref{thm:existance_gmm_scheme} follows from \eqref{ineq:den
 \end{proof}
 
 \begin{thm}
-Let $\mu_t$ be a generalized minimizing movement scheme given by Theorem~\ref{thm:existance_gmm_scheme}. We denote by $\rho_t$ the denisty of $\mu_t$. Then $\rho_t$ satisfies the continuity equation:
+Let $(\mu_t)_{t \geq 0}$ be a generalized minimizing movement scheme given by Theorem~\ref{thm:existance_gmm_scheme} with initial distribution $\mu_0$ with density $\rho_0 \in \mrl(\cB(0,r))$. We denote by $\rho_t$ the denisty of $\mu_t$ for all $t \geq 0$. Then $\rho_t$ satisfies the continuity equation:
 \[
-\frac{\partial \rho_t}{\partial t} + \text{div}(v_t \rho_t) + \lambda \Delta \rho_t = 0 \,, \quad \quad \quad v_t(x) = - \int_{S^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta ,
+\frac{\partial \rho_t}{\partial t} + \divop(v_t \rho_t) + \lambda \Delta \rho_t = 0 \,, \quad \quad \quad v_t(x) = - \int_{\mathbb{S}^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta ,
 \]
 in a weak sense, that is for all $\xi \in \rmc_c^{\infty} ([0, \infty)\times \cB(0,r))$ we have:
 \[
@@ -158,7 +159,7 @@ in a weak sense, that is for all $\xi \in \rmc_c^{\infty} ([0, \infty)\times \cB
 Our proof is based on the proof of \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. We proceed in five steps.
 
 \begin{enumerate}[wide, labelwidth=!, labelindent=0pt,label=(\arabic*)]
-\item Let $h_n \rightarrow 0$ be a sequence given by \ref{thm:existance_gmm_scheme}, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$, for $r \geq 1$, and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \rmc_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
+\item Let $h_n \rightarrow 0$ be a sequence given by Theorem~\ref{thm:existance_gmm_scheme}, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$, for $r \geq 1$, and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \rmc_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
 \begin{multline} \label{thm:cont_proof_part1}
 \int_{\cB(0,r)} \xi(0, x) \rho_0(x) dx + \int_0^{\infty} \int_{\cB(0,r)} \frac{\partial \xi}{\partial t}(t,x) \rho_t(x) dx dt \\
 = \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx.
@@ -200,7 +201,7 @@ Since $\xi$ is $\rmc_c^{\infty}$, it has Lipschitz gradient. Let $C$ be twice th
 \begin{equation} \label{thm:cont_proof_eq3}
 \int_{\cB(0,r)} |\xi_k^n(y) - \xi_k^n(x) - \langle \nabla \xi_k^n(x), y-x \rangle | d \gamma(x,y) \leq C\W^2( \mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}).
 \end{equation}
-Combining \ref{thm:cont_proof_eq1}, \ref{thm:cont_proof_eq2} and \ref{thm:cont_proof_eq3}, we get:
+Combining \eqref{thm:cont_proof_eq1}, \eqref{thm:cont_proof_eq2} and \eqref{thm:cont_proof_eq3}, we get:
 \begin{multline} \label{thm:cont_proof_eq4}
 \left|\sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx  + 
 \sum_{k=1}^{\infty} h_n\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n} , \nabla \xi_k^n \rangle d\mu_{kh_n}^{h_n} \right| \\
@@ -215,12 +216,12 @@ As  some $\mcf^{\nu}_{\lambda}$ have a finite minimum on $\mathcal{P}(\cB(0,r))$
 \end{equation}
 and so the sum on the right hand side of the equation goes to zero as $n$ goes to infinity.
 
-From \ref{thm:cont_proof_eq4}, \ref{thm:cont_proof_eq5} and \ref{thm:cont_proof_eq0} we conclude:
+From \eqref{thm:cont_proof_eq4}, \eqref{thm:cont_proof_eq5} and \eqref{thm:cont_proof_eq0} we conclude:
 \begin{multline} \label{thm:cont_proof_part4}
 \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \xi_k^n(x)\frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx = \\
 \lim_{n \rightarrow \infty} \left( h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n} + h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx  \right),
 \end{multline}
-where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \ref{thm:cont_proof_part1}.
+where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \eqref{thm:cont_proof_part1}.
 \item  Combining \eqref{thm:cont_proof_part1}, \eqref{thm:cont_proof_part2}, \eqref{thm:cont_proof_part3} and \eqref{thm:cont_proof_part4} we get the result.   
 \end{enumerate}
 %
