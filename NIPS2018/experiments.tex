@@ -50,9 +50,13 @@ In our second experiment, we investigate the effect of the level of the regulari
 % There, the target distribution is displayed on the rightmost panel, as obtained through a contour plot of the data samples. On the left panel, we see the output distribution of the SWF at different iterations. 
 
 
-In our next experiment, we investigate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior. 
+We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior. 
 %
-Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases. 
+Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. 
+
+\alain{change comment}
+
+Since we used the same $\lambda$ for all $d$, the entropy term becomes relatively stronger in the case of smaller $d$, which results in larger $\SW$. This result suggests that, in order to achieve the same level of regularization, we should use larger $\lambda$ as the dimensionality increases. 
 
 
 
