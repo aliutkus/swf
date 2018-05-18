@@ -47,9 +47,9 @@
 
 \textbf{Construction of the flow: }
 %
-We propose in this paper to consider the minimization of the functional $\F^{\nu}_{\lambda}$ on $\PS_2(\Omega)$ defined by
+We propose in this paper to consider the minimization of the functional $\F^{\nu}_{\lambda}$ on $\PS_2(\Omega)$, that is defined as follows:
 \begin{equation}
- \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu)  \label{eqn:sw_optim}
+ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu),  \label{eqn:sw_optim}
 \end{equation}
 where $\lambda >0$ is a regularization parameter and $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int_{\Omega} \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. Note that the case $\lambda =0$ has been already proposed and studied in \cite{bonnotte2013unidimensional} in a more general OT context. Here, in order to introduce the necessary noise inherent to generative model, we suggest to penalize the slice-Wasserstein distance using $\He$. In other words, the main idea is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
 The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the entropy regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution.

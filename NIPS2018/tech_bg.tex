@@ -20,11 +20,11 @@
 
 \textbf{Wasserstein distance, optimal transport maps and Kantorovich potentials: }
 %
-For two probability measures $\mu,\nu \in \PS_2(\Omega)$, $\PS_2(\Omega) = \{ \mu \in \PS(\Omega) \, :\, \int_{\Omega} \norm[2]{x} \rmd \mu(x) < \plusinfty\}$, the 2-Wasserstein distance is defined as follows:
+For two probability measures $\mu,\nu \in \PS_2(\Omega)$, $\PS_2(\Omega) = \{ \mu \in \PS(\Omega) \, :\, \int_{\Omega} \norm[2]{x} \mu(\rmd x) < \plusinfty\}$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
 \W(\mu,\nu) \triangleq \Bigl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Bigr\}^{1/2}, \label{eqn:w2}
 \end{align}
-where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and defined as the set of probability $\gamma$ on $\Omega \times \Omega$ satisfying for all $A \in \mcf$, $\gamma(A \times \Omega) = \mu(A)$ and $\gamma(\Omega \times A)=\nu(A)$, i.e. the  marginals of $\gamma$  coincide with $\mu$ and $\nu$. From now on, we will assume that $\Omega$ is a compact subset of $\R^d$.
+where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and defined as the set of probability measures $\gamma$ on $\Omega \times \Omega$ satisfying for all $A \in {\cal A}$, $\gamma(A \times \Omega) = \mu(A)$ and $\gamma(\Omega \times A)=\nu(A)$, i.e. the  marginals of $\gamma$  coincide with $\mu$ and $\nu$. From now on, we will assume that $\Omega$ is a compact subset of $\R^d$.
 % More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
 
 
@@ -49,15 +49,15 @@ This result implies that there exists a solution for transporting samples from $
 \textbf{Wasserstein spaces and gradient flows: }
 %
 By \cite[Proposition 7.1.5]{ambrosio2008gradient}, $\W$ is a distance over $\PS(\Omega)$.
-And in addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$\footnote{Note that in that case, $\PS_2(\Omega)=\PS(\Omega)$} is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
+In addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$\footnote{Note that in that case, $\PS_2(\Omega)=\PS(\Omega)$} is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
 
 In this study, we are interested in functional optimization problems in $(\PS_2(\Omega),\W)$, such as $\min_{\mu\in\PS_2(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in $(\PS_2(\Omega),\W)$. If such a flow can be constructed, then one can utilize it both for practical algorithms and theoretical analysis.
 
 Gradient flows $\partial_t \mu_t = \nabla_{\W} \mathcal{F}(\mu_t)$ with respect to a functional $\mathcal{F}$ in $(\PS_2(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Indeed, it is shown than under appropriate conditions on $\mathcal{F}$ (see \eg \cite{ambrosio2008gradient}), $(\mu_t)_t$ is a solution of the gradient flow if and only if it admits a density $\rho_t$ with respect to the Lebesgue measure for all $t \geq 0$, and solves the continuity equation given by:
 % \begin{align}
-$\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
+$\partial_t \rho_t + \divop (v \rho_t) = 0$, %  \label{eqn:pde}
 % \end{align}
-where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS_2(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
+where $v$ denotes a vector field and $\divop$ denotes the divergence operator. Then, for a given gradient flow in $(\PS_2(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
 % In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis.
 % We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
