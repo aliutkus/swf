@@ -157,64 +157,60 @@ in a weak sense, that is for all $\xi \in \rmc_c^{\infty} ([0, \infty)\times \cB
 \begin{proof}
 Our proof is based on the proof of \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. We proceed in five steps.
 
-1. Let $h_n \rightarrow 0$ be a sequence given by \ref{thm:existance_gmm_scheme}, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$, for $r \geq 1$, and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \rmc_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt,label=(\arabic*)]
+\item Let $h_n \rightarrow 0$ be a sequence given by \ref{thm:existance_gmm_scheme}, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$, for $r \geq 1$, and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \rmc_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
 \begin{multline} \label{thm:cont_proof_part1}
 \int_{\cB(0,r)} \xi(0, x) \rho_0(x) dx + \int_0^{\infty} \int_{\cB(0,r)} \frac{\partial \xi}{\partial t}(t,x) \rho_t(x) dx dt \\
-= \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx
+= \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx.
 \end{multline}
-
-2. Again, this part is the same as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we get:
+\item Again, this part is the same as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we get:
 
 \begin{multline} \label{thm:cont_proof_part2}
 \int_0^{\infty} \int_{\cB(0,r)} \fint (\psi_{t, \theta})' (\langle \theta, x \rangle ) \langle \theta , \nabla \xi (x, t) \rangle d\theta d\mu_t(x) dt \\
-= \lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n}
+= \lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n}.
 \end{multline}
-
-3. Since $\xi$ is compactly supported and smooth, $\Delta \xi$ is Lipschitz, and so for any $ t \geq 0$ if we take $k = \lfloor t/h_n \rfloor$ we get $| \Delta \xi_k^n(x) - \Delta \xi(t,x) | \leq C h_n$ for some constant $C$. Let $T > 0$ be such that $\xi(t,x) = 0 $ for $t > T$. We have:
+\item  Since $\xi$ is compactly supported and smooth, $\Delta \xi$ is Lipschitz, and so for any $ t \geq 0$ if we take $k = \lfloor t/h_n \rfloor$ we get $| \Delta \xi_k^n(x) - \Delta \xi(t,x) | \leq C h_n$ for some constant $C$. Let $T > 0$ be such that $\xi(t,x) = 0 $ for $t > T$. We have:
 \[
-\left| \sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx - \int_{\cB(0,r)} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt \right| \leq CTh_n 
+\left| \sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx - \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt \right| \leq CTh_n .
 \]
 On the other hand,  we know, that $\rho^{h_n}$ converges to $\rho$ in weak star topology on $\mrl^{\infty}([0,T] \times \cB(0,r))$, and $\Delta \xi$ is bounded, so:
 \[
-\left| \int_{\cB(0,r)} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt - \int_{\cB(0,r)} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt \right| \rightarrow_{n \rightarrow \infty} 0
+\lim_{n \to \plusinfty}\left| \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt - \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt \right|= 0.
 \]
-Combined those two results give:
+Combining those two results give:
 \begin{equation} \label{thm:cont_proof_part3}
-\lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx = \int_{\cB(0,r)} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt
+\lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx = \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt.
 \end{equation}
 
-
-
-4. 
-
-Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using  \cite[Propositions 1.5.7 and 5.1.7]{bonnotte2013unidimensional}, as well as [[JKO]] equation (38) (maybe a better reference?) and optimality of $\mu_{kh_n}^{h_n}$, we get:
+\item 
+  Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using  \cite[Propositions 1.5.7 and 5.1.7]{bonnotte2013unidimensional}, as well as \cite[Equation (38)]{jordan1998variational} with $\Psi = 0$, and optimality of $\mu_{kh_n}^{h_n}$, we get:
 \begin{multline} \label{thm:cont_proof_eq0}
-\frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \phi_k^{h_n} , \nabla \xi_{k}^n \rangle d\mu_{kh_n}^{h_n} =  - \int_{\cB(0,r)} \fint (\psi_{kh_n}^{h_n})'(\theta^{*}) \langle \theta, \nabla \xi_k^n \rangle d\theta d\mu_{kh_n}^{h_n} - \lambda \int_{\cB(0,r)}  \rho_{kh_n}^{h_n}(x) \Delta \xi_k^n(x)  dx 
+\frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_{k}^n(x) \rangle d\mu_{kh_n}^{h_n}(x)   - \int_{\cB(0,r)} \fint (\psi_{kh_n}^{h_n})'(\theta^{*}) \langle \theta, \nabla \xi_k^n(x) \rangle d\theta d\mu_{kh_n}^{h_n}(x)\\ - \lambda \int_{\cB(0,r)}   \Delta \xi_k^n(x) d\mu_{kh_n}^{h_n}(x) ,
 \end{multline}
-that is the derivative of $\mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h_n}\W^2(\cdot, \mu_{(k-1)h_n})$ in the direction given by vector field $\nabla \xi_k^n$ is zero.
+which is the derivative of $\mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h_n}\W^2(\cdot, \mu_{(k-1)h_n})$ in the direction given by vector field $\nabla \xi_k^n$ is zero.
 
 Let $\gamma$ be optimal transport between $\mu_{kh_n}^{h_n}$ and $\mu_{(k-1)h_n}^{h_n}$. Then:
 \begin{equation} \label{thm:cont_proof_eq1}
-\int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x)}{h_n} dx = \frac{1}{h_n} \int_{\cB(0,r)} (\xi_k^n(y) - \xi_k^n(x)) d\gamma(x,y)
+\int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x)}{h_n} dx = \frac{1}{h_n} \int_{\cB(0,r)} (\xi_k^n(y) - \xi_k^n(x)) d\gamma(x,y).
 \end{equation}
 \begin{equation} \label{thm:cont_proof_eq2}
-\frac{1}{h_n}\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_k^n(x) \rangle dx = \frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \xi_k^n(x), y-x \rangle d\gamma(x,y) 
+\frac{1}{h_n}\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_k^n(x) \rangle d\mu_{kh_n}^{h_n}(x)  = \frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \xi_k^n(x), y-x \rangle d\gamma(x,y). 
 \end{equation}
 Since $\xi$ is $\rmc_c^{\infty}$, it has Lipschitz gradient. Let $C$ be twice the Lipschitz constant of $\nabla \xi$. Then we have $| \xi(y) - \xi(x) - \langle \nabla \xi(x), y-x \rangle | \leq C|x- y|^2$, and hence:
 \begin{equation} \label{thm:cont_proof_eq3}
-\int_{\cB(0,r)} |\xi_k^n(y) - \xi_k^n(x) - \langle \nabla \xi_k^n(x), y-x \rangle | d \gamma(x,y) \leq C\W^2( \mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n})
+\int_{\cB(0,r)} |\xi_k^n(y) - \xi_k^n(x) - \langle \nabla \xi_k^n(x), y-x \rangle | d \gamma(x,y) \leq C\W^2( \mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}).
 \end{equation}
 Combining \ref{thm:cont_proof_eq1}, \ref{thm:cont_proof_eq2} and \ref{thm:cont_proof_eq3}, we get:
 \begin{multline} \label{thm:cont_proof_eq4}
 \left|\sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx  + 
-\sum_{k=1}^{\infty} \int_{\cB(0,r)} \langle \nabla \phi_k^{h_n} , \nabla \xi_k^n \rangle d\mu_{kh_n}^{h_n} \right| \\
-\leq C\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n})
+\sum_{k=1}^{\infty} h_n\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n} , \nabla \xi_k^n \rangle d\mu_{kh_n}^{h_n} \right| \\
+\leq C\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}).
 \end{multline}
 
-As in the proof of \ref{thm:existance_gmm_scheme}, we let $\mu_{min}$ be some minimum of $\mcf^{\nu}_{\lambda}$ on $\mathcal{P}(\cB(0,r))$ and we have:
+As  some $\mcf^{\nu}_{\lambda}$ have a finite minimum on $\mathcal{P}(\cB(0,r))$, we have:
 \begin{equation} \label{thm:cont_proof_eq5}
 \begin{aligned}
-\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}) & \leq  2 h_n \sum_{k=1}^{\infty} \mcf^{\nu}_{\lambda}(\mu_{(k-1)h_n}^{h_n}) - \mcf^{\nu}_{\lambda}(\mu_{kh_n}^{h_n}) \\ & \leq 2h_n \left(\mcf^{\nu}_{\lambda}(\mu_0) - \mcf^{\nu}_{\lambda}(\mu_{min}) \right)
+\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}) & \leq  2 h_n \sum_{k=1}^{\infty} \mcf^{\nu}_{\lambda}(\mu_{(k-1)h_n}^{h_n}) - \mcf^{\nu}_{\lambda}(\mu_{kh_n}^{h_n}) \\ & \leq 2h_n \left(\mcf^{\nu}_{\lambda}(\mu_0) - \min_{\mathcal{P}(\cB(0,r))}\mcf^{\nu}_{\lambda} \right).
 \end{aligned}
 \end{equation}
 and so the sum on the right hand side of the equation goes to zero as $n$ goes to infinity.
@@ -222,11 +218,12 @@ and so the sum on the right hand side of the equation goes to zero as $n$ goes t
 From \ref{thm:cont_proof_eq4}, \ref{thm:cont_proof_eq5} and \ref{thm:cont_proof_eq0} we conclude:
 \begin{multline} \label{thm:cont_proof_part4}
 \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \xi_k^n(x)\frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx = \\
-\lim_{n \rightarrow \infty} \left( h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n} + h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx  \right)
+\lim_{n \rightarrow \infty} \left( h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n} + h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx  \right),
 \end{multline}
 where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \ref{thm:cont_proof_part1}.
+\item  Combining \eqref{thm:cont_proof_part1}, \eqref{thm:cont_proof_part2}, \eqref{thm:cont_proof_part3} and \eqref{thm:cont_proof_part4} we get the result.   
+\end{enumerate}
 
-5. Combining \ref{thm:cont_proof_part1}, \ref{thm:cont_proof_part2}, \ref{thm:cont_proof_part3} and \ref{thm:cont_proof_part4} we get the result.
 \end{proof}
 %%% Local Variables:
 %%% mode: latex
