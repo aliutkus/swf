@@ -15,7 +15,7 @@ Moreover the optimal $\mu$ has a density $\rho$ on $\cB(0,r)$ and:
 \end{equation}
 \end{thm}
 \begin{proof}
-The set of measures supported on $\cB(0,r)$ is compact in the topology given by $\W$ metric. Furthermore by \cite[Lemma 9.4.3]{ambrosio2008gradient}  that  $\He$ is lower semicontinuous on $(\PS(\cB(0,r)),\W)$. Since by \cite[Proposition 5.1.2, Proposition 5.1.3]{bonnotte2013unidimensional}, $\SW$ is a distance  on $\PS(\cB(0,r))$, dominated by $d^{-1/2} \W$, we have:
+The set of measures supported on $\cB(0,r)$ is compact in the topology given by $\W$ metric. Furthermore by \cite[Lemma 9.4.3]{ambrosio2008gradient} $\He$ is lower semicontinuous on $(\PS(\cB(0,r)),\W)$. Since by \cite[Proposition 5.1.2, Proposition 5.1.3]{bonnotte2013unidimensional}, $\SW$ is a distance  on $\PS(\cB(0,r))$, dominated by $d^{-1/2} \W$, we have:
 \[
 |\SW(\pi_0, \nu) - \SW(\pi_1, \nu)| \leq \SW(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}\W(\pi_0, \pi_1).
 \]
@@ -29,7 +29,7 @@ For $t \in (0, 1]$ let $\hat{\mu}_t$ be the minimum of $ \mcf^{\nu}_{\lambda}(\c
 \[
 ||\hat{\rho}_t ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
 \]
-so $\hat{\rho_{t}}$ lies in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$, $\lim_{k \to \plusinfty} t_k =0$, converge along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
+so $\hat{\rho_{t}}$ lies in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$, $\lim_{k \to \plusinfty} t_k =0$, that converges along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
 \[
 \int \hat{\rho} f dx = \lim_{k \rightarrow \infty} \int \rho_{t_k} f dx = \lim_{k \rightarrow \infty} \int f d\mu_{t_k} = \int f d\mu.
 \]
@@ -83,7 +83,7 @@ Let us choose $T > 0$. We denote $\rho^h(t,x) = \rho_t^h(x)$.
 %\int \xi(t,x) d\rho^h(t,x) dx dt = \frac{1}{T} \int_0^T \int \xi(t,x) d\rho_t^h(x dx) dt 
 %\]
 %for all continuous and bounded functions $\xi$. 
-For $ h \leq 1$, the functions $\rho^h$ lie in a ball in $\mrl^{\infty}([0,T] \times \cB(0,r))$, so from Banach-Alaoglu theorem there is a sequence $h_n$ converging to $0$, such that $\rho^{h_n}$ converges in weak-star topology in $\mrl^{\infty}([0,T] \times \cB(0,r))$ to a certain limit $\rho$. Since $\rho$ has to be nonnegative except for a set of measure zero, we assume $\rho$ is nonnegative. We denote $\rho_t(x) = \rho(t,x)$. We will prove that for almost all $t$, $\rho_t$ is a probability density and $\mu_{t}^{h_n}$ converge in $\W$ to a measure $\mu_t$ with density $\rho_t$.
+For $ h \leq 1$, the functions $\rho^h$ lie in a ball in $\mrl^{\infty}([0,T] \times \cB(0,r))$, so from Banach-Alaoglu theorem there is a sequence $h_n$ converging to $0$, such that $\rho^{h_n}$ converges in weak-star topology in $\mrl^{\infty}([0,T] \times \cB(0,r))$ to a certain limit $\rho$. Since $\rho$ has to be nonnegative except for a set of measure zero, we assume $\rho$ is nonnegative. We denote $\rho_t(x) = \rho(t,x)$. We will prove that for almost all $t$, $\rho_t$ is a probability density and $\mu_{t}^{h_n}$ converges in $\W$ to a measure $\mu_t$ with density $\rho_t$.
 
 First of all, for almost all $t \in [0,T]$, $\rho_t$ is a probability density, since for any Borel set $A \subseteq [0,T]$ the indicator of set $A \times \cB(0,r)$ is integrable, and hence by definition of the weak-star topology:
 \[
@@ -91,7 +91,7 @@ First of all, for almost all $t \in [0,T]$, $\rho_t$ is a probability density, s
 \]
 and so we have to have $\int \rho_t(x) dx = 1$ for almost all $t \in [0,T]$. Nonnegativity of $\rho_t$ follows from nonnegativity of $\rho$. 
 
-We will now prove, that for almost all $t \in [0,T]$  measures $\mu_t^{h_n}$ converge to a measure with density $\rho_t$. Let $t \in (0,T)$, take $\delta < \min(T-t, t)$ and $\zeta \in \rmc^1(\cB(0,r))$. We have:
+We will now prove, that for almost all $t \in [0,T]$ the measures $\mu_t^{h_n}$ converge to a measure with density $\rho_t$. Let $t \in (0,T)$, take $\delta < \min(T-t, t)$ and $\zeta \in \rmc^1(\cB(0,r))$. We have:
 \begin{multline} \label{ineq:mu_t_conv_bound}
 \left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \int_{\cB(0,r)} \zeta d\mu_t^{h_m} \right| \leq \\ \left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_n} ds \right| + 
 \left| \int_{\cB(0,r)} \zeta d\mu_t^{h_m} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_m} ds \right| +  \\
@@ -128,9 +128,9 @@ Finally, using Jensen's inequality, the above bound and \ref{ineq:expectation_W2
 & \leq 2C ||\nabla \zeta||_{\infty}^2 (h_n + \delta).
 \end{aligned}
 \]
-This result taking $\delta = h_n$, together with \eqref{ineq:mu_t_conv_bound} means that $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ is a Cauchy sequence for all $t \in (0, T)$. On the other hand, since $\rho^{h_n}$ converges to $\rho$ in weak-star topology on $\mrl^{\infty}$, the limit of $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ has to be $\int_{\cB(0,r)} \zeta(x) \rho_t(x) dx$ for almost all $t \in (0,T)$. This means that for almost all $t \in [0,T]$ sequence $\mu_{t}^{h_n}$ converges to a measure $\mu_t$ with density $\rho_t$.
+Together with \eqref{ineq:mu_t_conv_bound}, when taking $\delta = h_n$, this result means that $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ is a Cauchy sequence for all $t \in (0, T)$. On the other hand, since $\rho^{h_n}$ converges to $\rho$ in weak-star topology on $\mrl^{\infty}$, the limit of $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ has to be $\int_{\cB(0,r)} \zeta(x) \rho_t(x) dx$ for almost all $t \in (0,T)$. This means that for almost all $t \in [0,T]$ sequence $\mu_{t}^{h_n}$ converges to a measure $\mu_t$ with density $\rho_t$.
 
-Let $ S \in [0,T]$ be the set of times such that for $t \in S$ sequence $\mu_{t}^{h_n}$ converges to $\mu_t$. As we established almost all points from $[0,T]$ belong to $S$. Let $ t \in [0,T] \setminus S$. Then there exists a sequence of times $t_k \in S$ converging to $t$, such that $\mu_{t_k}$ converge to some limit $\mu_t$. We have:
+Let $ S \in [0,T]$ be the set of times such that for $t \in S$ sequence $\mu_{t}^{h_n}$ converges to $\mu_t$. As we established almost all points from $[0,T]$ belong to $S$. Let $ t \in [0,T] \setminus S$. Then, there exists a sequence of times $t_k \in S$ converging to $t$, such that $\mu_{t_k}$ converge to some limit $\mu_t$. We have:
 \[
 \W(\mu_t^{h_n}, \mu_t) \leq \W(\mu_{t}^{h_n}, \mu_{t_k}^{h_n}) + \W(\mu_{t_k}^{h_n}, \mu_{t_k}) + \W(\mu_{t_k}, \mu_t).
 \]
@@ -146,7 +146,7 @@ Finally, note that \eqref{thm:existance_gmm_scheme} follows from \eqref{ineq:den
 \end{proof}
 
 \begin{thm}
-Let $(\mu_t)_{t \geq 0}$ be a generalized minimizing movement scheme given by Theorem~\ref{thm:existance_gmm_scheme} with initial distribution $\mu_0$ with density $\rho_0 \in \mrl(\cB(0,r))$. We denote by $\rho_t$ the denisty of $\mu_t$ for all $t \geq 0$. Then $\rho_t$ satisfies the continuity equation:
+Let $(\mu_t)_{t \geq 0}$ be a generalized minimizing movement scheme given by Theorem~\ref{thm:existance_gmm_scheme} with initial distribution $\mu_0$ with density $\rho_0 \in \mrl(\cB(0,r))$. We denote by $\rho_t$ the density of $\mu_t$ for all $t \geq 0$. Then $\rho_t$ satisfies the continuity equation:
 \[
 \frac{\partial \rho_t}{\partial t} + \divop(v_t \rho_t) + \lambda \Delta \rho_t = 0 \,, \quad \quad \quad v_t(x) = - \int_{\mathbb{S}^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta ,
 \]
@@ -190,7 +190,7 @@ Combining those two results give:
 \end{multline}
 which is the derivative of $\mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h_n}\W^2(\cdot, \mu_{(k-1)h_n})$ in the direction given by vector field $\nabla \xi_k^n$ is zero.
 
-Let $\gamma$ be optimal transport between $\mu_{kh_n}^{h_n}$ and $\mu_{(k-1)h_n}^{h_n}$. Then:
+Let $\gamma$ be the optimal transport between $\mu_{kh_n}^{h_n}$ and $\mu_{(k-1)h_n}^{h_n}$. Then:
 \begin{equation} \label{thm:cont_proof_eq1}
 \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x)}{h_n} dx = \frac{1}{h_n} \int_{\cB(0,r)} (\xi_k^n(y) - \xi_k^n(x)) d\gamma(x,y).
 \end{equation}

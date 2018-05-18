@@ -208,7 +208,7 @@ We use that same approach than in Lemma~\ref{lem:euler}. By Girsanov's theorem o
 \begin{align}
 \KL (\pi_{Y}^T || \pi_{U}^T) &= \frac1{4 \lambda} \sum_{k=0}^{K-1} \int_{kh}^{(k+1)h} \E[ \|\hat{v}(U_{kh}, \mu_{kh}) - \hat{v}(U_{kh},\mub_{kh}) \|^2 ] \> dt,
 \end{align}
-where $\pi_U^T$ denotes the distributions of $(U_t)_{t \in [0,T]}$ with $T = Kh$. By using \Cref{asmp:lipschitz}, we have
+where $\pi_U^T$ denotes the distributions of $(U_t)_{t \in [0,T]}$ with $T = Kh$. By using \Cref{asmp:lipschitz}, we have:
 \begin{align}
 \KL (\pi_{Y}^T || \pi_{U}^T) &\leq \frac{L^2 h}{4 \lambda} \sum_{k=0}^{K-1} \|\mu_{kh} - \mub_{kh} \|_{\TV}^2   \\
 &\leq \frac{L^2 K h}{4 \lambda}  \|\pi_{X}^T - \pi_{U}^T \|_{\TV}^2  .
