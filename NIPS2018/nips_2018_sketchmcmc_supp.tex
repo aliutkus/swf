@@ -20,7 +20,7 @@
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 % \usepackage[final]{nips_2017}
-
+%\usepackage{enumitem}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -28,25 +28,26 @@
 \usepackage{booktabs}       % professional-quality tables
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
-\usepackage{microtype}      % microtypography
-\usepackage{svg}
-
+%\usepackage{microtype}      % microtypography
+%\usepackage{svg}
 % \usepackage{subfigure}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{comment}
+%\usepackage{comment}
 \usepackage{graphicx}
-\usepackage{cancel}
+%\usepackage{cancel}
 \usepackage{amsthm}
 \usepackage{natbib}
 \usepackage{dsfont}
 \usepackage{xcolor}
-\usepackage{ stmaryrd }
+%\usepackage{ stmaryrd }
 
+\usepackage{cleveref}
 % \usepackage{dsfont}
 % \usepackage{txfonts}
 % \usepackage{stackengine}
 \newcommand{\fint}{\int_{\Sp^{d-1}}}
+
 
 
 \title{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and MCMC\\ {\large SUPPLEMENTARY DOCUMENT}}
@@ -91,8 +92,10 @@
   %% Address \\
   %% \texttt{email} \\
 }
-
 \input{defs}
+
+\usepackage{xr}
+\externaldocument{nips_2018_sketchmcmc}
 
 \setcounter{equation}{0}
 \setcounter{figure}{0}
@@ -102,12 +105,11 @@
  \renewcommand{\theequation}{S\arabic{equation}}
  \renewcommand{\thefigure}{S\arabic{figure}}
  \renewcommand{\thelemma}{S\arabic{lemma}}
- \renewcommand{\theassumption}{S\arabic{assumption}}
+\renewcommand{\theassumption}{S\arabic{assumption}}
  \renewcommand{\thethm}{S\arabic{thm}}
  \renewcommand{\theprop}{S\arabic{prop}}
 
-\usepackage{xr}
-\externaldocument{nips_2018_sketchmcmc}
+\usepackage[shortlabels]{enumitem}
 
 
 \begin{document}
@@ -115,10 +117,11 @@
 
 \maketitle
 
-\input{comp_details}
+% 
 % \input{grad_flow_umut}
 \input{grad_flow}
 \input{euler}
+\input{comp_details}
 
 \bibliography{./references.bib}
 \bibliographystyle{unsrt}

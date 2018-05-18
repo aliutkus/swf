@@ -1,0 +1,10 @@
+%!TEX root = ./nips_2018_sketchmcmc.tex
+
+\section{Conclusion and Future Directions}
+
+In this study, we proposed the Sliced-Wasserstein Flows, a theoretically grounded nonparametric algorithm for efficient implicit generative modeling. 
+% Our approach is based on formulating the generative modeling problem as a functional optimization problem in the Wasserstein spaces, where the aim is to find a probability measure that is close to the data  distribution as much as possible while maintaining the expressiveness at a certain level. 
+Our approach lies in the intersection of OT, Wasserstein gradient flows, and SDEs. This connection allowed us to convert the problem to a non-linear SDE simulation problem. We provided finite-time error bounds for the infinite-particle regime and established explicit links between the algorithm parameters and the overall error. We conducted experiments on both synthetic and real datasets, where we showed that the results support our theory: SWF is able to generate samples from challenging distributions with low computational requirements. 
+
+The SWF algorithm opens up interesting future directions: (i) extension of the algorithm to differentially private settings \cite{dwork2014algorithmic} by exploiting the fact that it only requires random projections of the data, (ii) showing the convergence scheme of the particle system \eqref{eqn:sde_particle} to the original SDE \eqref{eqn:sde}, (iii) providing error bounds directly for the particle scheme \eqref{eqn:euler_particle}, (iv) combining SWF with existing IGM approaches in order to be able to simulate the particles in a lower dimensional space.  
+ 

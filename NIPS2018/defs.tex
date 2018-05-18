@@ -1,3 +1,5 @@
+\usepackage{xargs}
+
 \newcommand{\x}{\mathbf{x}}
 \newcommand{\thb}{\mathbf{x}} 
 \newcommand{\Ths}{{\cal X}} 
@@ -61,6 +63,7 @@
 \newcommand{\tmpeqno}{{\color{red} (TEMPEQ) }}
 
 \newcommand{\umut}[1]{{\color{red} (#1)} }
+\newcommand{\alain}[1]{{\color{blue} (#1)} }
 
 \DeclareMathOperator{\sign}{sign}
 \newcommand{\sas}{{\cal S} \alpha {\cal S} }
@@ -77,7 +80,7 @@
 \newcommand{\ab}{{\cal A}^\x}
 \newcommand{\at}{{\cal A}^\y}
 
-\usepackage{cleveref}
+
 
 
 % \newtheoremstyle{exampstyle}
@@ -91,10 +94,6 @@
 %   {} % Theorem head spec (can be left empty, meaning `normal')
 
 % \theoremstyle{exampstyle} 
-
-\newtheorem{assumption}{\textbf{H}\hspace{-3pt}}
-\Crefname{assumption}{\textbf{H}\hspace{-3pt}}{\textbf{H}\hspace{-3pt}}
-\crefname{assumption}{\textbf{H}}{\textbf{H}}
 
 
 
@@ -132,6 +131,11 @@
 \end{figure*}
 }
 
+\newtheorem{assumption}{\textbf{H}\hspace{-3pt}}
+\Crefname{assumption}{\textbf{H}\hspace{-3pt}}{\textbf{H}\hspace{-3pt}}
+\crefname{assumption}{\textbf{H}}{\textbf{H}}
+
+
 \newcommand{\insertimageAsSubfig}[5]{ % scale, filename, caption, label,
 \begin{figure}[#5]
 \begin{center}
@@ -150,8 +154,6 @@
 
 \newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
 \newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
-\def\mcf{\mathcal{F}}
-\def\rset{\mathbb{R}}
 
 \newcommand{\ps}[2]{\left\langle#1,#2 \right\rangle}
 \newcommand{\coint}[1]{\left[#1\right)}
@@ -159,3 +161,94 @@
 \newcommand{\ooint}[1]{\left(#1\right)}
 \newcommand{\ccint}[1]{\left[#1\right]}
 \def\eg{e.g.}
+
+%%% mathsf
+\def\msi{\mathsf{I}}
+\def\msa{\mathsf{A}}
+\def\msd{\mathsf{D}}
+\def\msk{\mathsf{K}}
+\def\mss{\mathsf{S}}
+\def\msn{\mathsf{N}}
+\def\msat{\tilde{\mathsf{A}}}
+\def\msb{\mathsf{B}} 
+\def\msc{\mathsf{C}}
+\def\mse{\mathsf{E}}
+\def\msf{\mathsf{F}}
+\def\mso{\mathsf{o}}
+\def\msg{\mathsf{G}}
+\def\msh{\mathsf{H}}
+\def\msm{\mathsf{M}}
+\def\msu{\mathsf{U}}
+\def\msv{\mathsf{V}}
+\def\msr{\mathsf{R}}
+\newcommand{\msff}[2]{\mathsf{F}_{#1}^{#2}}
+\def\msp{\mathsf{P}}
+\def\msq{\mathsf{Q}}
+\def\msx{\mathsf{X}}
+\def\msy{\mathsf{Y}}
+
+
+
+%% mathcal
+\def\mca{\mathcal{A}}
+\def\mcat{\tilde{\mathcal{A}}}
+\def\mcab{\bar{\mathcal{A}}}
+\def\mcbb{\mathcal{B}}  %%% \mcb est déjà pris
+\newcommand{\mcb}[1]{\mathcal{B}(#1)}
+\def\mcc{\mathcal{C}}
+\def\mcy{\mathcal{Y}}
+\def\mcx{\mathcal{X}}
+\def\mce{\mathcal{E}}
+\def\mcf{\mathcal{F}}
+\def\mcg{\mathcal{G}}
+\def\mch{\mathcal{H}}
+\def\mcm{\mathcal{M}}
+\def\mcu{\mathcal{U}}
+\def\mcv{\mathcal{V}}
+\def\mcr{\mathcal{R}}
+\newcommand{\mcff}[2]{\mathcal{F}_{#1}^{#2}}
+\def\mcfb{\bar{\mathcal{F}}}
+\def\bmcf{\bar{\mathcal{F}}}
+\def\mcft{\tilde{\mathcal{F}}}
+\def\tmcf{\tilde{\mathcal{F}}}
+\def\mcp{\mathcal{P}}
+\def\mcq{\mathcal{Q}}
+
+%% mathbb
+
+\def\rset{\mathbb{R}}
+\def\rsets{\mathbb{R}^*}
+\def\cset{\mathbb{C}}
+\def\zset{\mathbb{Z}}
+\def\nset{\mathbb{N}}
+\def\nsets{\mathbb{N}^*}
+\def\qset{\mathbb{Q}}
+\def\Rset{\mathbb{R}}
+\def\Cset{\mathbb{C}}
+\def\Zset{\mathbb{Z}}
+\def\Nset{\mathbb{N}}
+\def\Tset{\mathbb{T}}
+
+
+%%%% mathrm 
+
+\def\rmd{\mathrm{d}}
+\def\mrd{\mathrm{d}}
+\def\mrl{\mathrm{L}}
+\def\mre{\mathrm{e}}
+\def\rme{\mathrm{e}}
+\def\rmn{\mathrm{n}}
+\def\mrn{\mathrm{n}}
+\def\mrc{\mathrm{C}}
+\def\mrcc{\mathrm{c}}
+\def\rmc{\mathrm{C}}
+\def\rma{\mathrm{a}}
+\def\mra{\mathrm{a}}
+
+\newcommandx{\norm}[2][1=]{\ifthenelse{\equal{#1}{}}{\left\Vert #2 \right\Vert}{\left\Vert #2 \right\Vert^{#1}}}
+\newcommandx{\normLigne}[2][1=]{\ifthenelse{\equal{#1}{}}{\Vert #2 \Vert}{\Vert #2\Vert^{#1}}}
+
+\def\plusinfty{+\infty}
+\def\ie{\textit{i.e.}}
+
+\def\divop{\operatorname{div}}

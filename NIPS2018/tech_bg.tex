@@ -20,7 +20,7 @@
 
 \textbf{Wasserstein distance, optimal transport maps and Kantorovich potentials: }
 %
-For two probability measures $\mu,\nu \in \PS(\Omega)$, the 2-Wasserstein distance is defined as follows:
+For two probability measures $\mu,\nu \in \PS_2(\Omega)$, $\PS_2(\Omega) = \{ \mu \in \PS(\Omega) \, :\, \int_{\Omega} \norm[2]{x} \rmd \mu(x) < \plusinfty\}$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
 \W(\mu,\nu) \triangleq \Bigl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Bigr\}^{1/2}, \label{eqn:w2}
 \end{align}
@@ -37,7 +37,7 @@ where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\ps
 Provided that $\mu$ satisfies a mild regularity condition, we have the following nice uniqueness result.
 \begin{thm}[ \protect{\cite[Theorem 1.4]{santambrogio2010introduction}}]
 \label{thm:unqmap}
-Assume that  $\mu$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable transport map $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The optimal transport map $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
+Assume that  $\mu\in \PS_2(\Omega)$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable transport map $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The optimal transport map $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
 \end{thm}
 
 
@@ -48,15 +48,16 @@ This result implies that there exists a solution for transporting samples from $
 
 \textbf{Wasserstein spaces and gradient flows: }
 %
-Since $\Omega \subset \R^d$ is compact, the $\W$-distance forms a distance over $\PS(\Omega)$, such that convergence in $\W$ is equivalent to the weak convergence of probability measures (cf.\ \cite[Theorem 2.1]{santambrogio2010introduction}). The metric space $(\PS(\Omega),\W) $ is called the \emph{Wasserstein space}.
+By \cite[Proposition 7.1.5]{ambrosio2008gradient}, $\W$ is a distance over $\PS(\Omega)$.
+And in addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$\footnote{Note that in that case, $\PS_2(\Omega)=\PS(\Omega)$} is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
 
-In this study, we are interested in functional optimization problems in $(\PS(\Omega),\W)$, such as $\min_{\mu\in\PS(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
+In this study, we are interested in functional optimization problems in $(\PS_2(\Omega),\W)$, such as $\min_{\mu\in\PS_2(\Omega)} \F(\mu)$, where $\F$ is the functional that we would like to minimize. Similar to Euclidean spaces, one way to formulate this optimization problem is to construct a gradient flow of the form $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$, where $\nabla_{\W}$ denotes a notion of gradient in Wasserstein spaces. If such a flow can be constructed, then one can attempt to utilize it both for developing practical algorithms and theoretical analysis.
 
-Gradient flows $\partial_t \mu_t = \nabla_{\W} \mathcal{F}(\mu_t)$ with respect to a functional $\mathcal{F}$ in $(\PS(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Indeed, it is shown than under appropriate conditions on $\mathcal{F}$ (see \eg \cite{ambrosio2008gradient}), $(\mu_t)_t$ is a solution of the gradient flow if and only if it admits a density $\rho_t$ with respect to the Lebesgue measure for all $t \geq 0$, and solves the continuity equation given by:
+Gradient flows $\partial_t \mu_t = \nabla_{\W} \mathcal{F}(\mu_t)$ with respect to a functional $\mathcal{F}$ in $(\PS_2(\Omega),\W)$ have strong connections with partial differential equations (PDE) that are of the form of a \emph{continuity equation} \cite{santambrogio2017euclidean}. Indeed, it is shown than under appropriate conditions on $\mathcal{F}$ (see \eg \cite{ambrosio2008gradient}), $(\mu_t)_t$ is a solution of the gradient flow if and only if it admits a density $\rho_t$ with respect to the Lebesgue measure for all $t \geq 0$, and solves the continuity equation given by:
 % \begin{align}
 $\partial_t \rho_t + \nabla \cdot (v \rho_t) = 0$, %  \label{eqn:pde}
 % \end{align}
-where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
+where $v$ denotes a vector field and $\nabla \cdot (v \rho_t)$ denotes the divergence of the vector field $v\rho_t$. Then, for a given gradient flow in $(\PS_2(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
 % In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis. 
 % We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
@@ -81,7 +82,7 @@ Such PDEs are of our particular interest since they have a key role for building
 
 \textbf{Sliced-Wasserstein distance: }
 %
-In the one-dimensional case, i.e.\ $\mu,\nu \in \PS(\R)$, $\W$ has an analytical form, given as follows:
+In the one-dimensional case, i.e.\ $\mu,\nu \in \PS_2(\R)$, $\W$ has an analytical form, given as follows:
 % \begin{align}
 $\W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau$, %\label{eq:W1D}
 % \end{align}

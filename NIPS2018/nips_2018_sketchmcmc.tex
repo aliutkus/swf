@@ -21,23 +21,22 @@
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
 \usepackage{url}            % simple URL typesetting
-\usepackage{booktabs}       % professional-quality tables
+%\usepackage{booktabs}       % professional-quality tables
 \usepackage{amsfonts}       % blackboard math symbols
-\usepackage{nicefrac}       % compact symbols for 1/2, etc.
-\usepackage{microtype}      % microtypography
+%\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+%\usepackage{microtype}      % microtypography
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{xcolor}
+\usepackage{cleveref}
 \usepackage[active]{srcltx}
 
 \usepackage[algo2e,inoutnumbered,algoruled,vlined]{algorithm2e} %linesnumbered
 \usepackage{wrapfig}
 \usepackage{mathtools}
 
-\usepackage{float}
-
-
-
+%\usepackage{float}
+\usepackage{subfigure}
 
 
 % \newcommand{\W}{{\cal W}_2}
@@ -94,6 +93,9 @@
 }
 
 
+\usepackage{xr}
+\externaldocument{nips_2018_sketchmcmc_supp}
+
 
 \begin{document}
 % \nipsfinalcopy is no longer used
@@ -113,9 +115,9 @@
 
 \input{experiments}
 
+\input{conclusion}
 
 
-\section{Conclusion}
 
 
 

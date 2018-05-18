@@ -165,7 +165,7 @@ As a consequence of \Cref{asmp:lipschitz} and \Cref{asmp:init_fun}, we have $\| 
 &+ 6\lambda (t-kh)d\\
 =& 12(t-kh)^2 (L^2 \E[ \|Y_{kh}\|^2] + B^2) + 6\lambda (t-kh)d.
 \end{align}
-By Lemma 3.2 of \cite{raginsky17a}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq C_e +2  (1 \vee \frac1{m})(b+2B^2 + d \lambda)$, where $C_e$ denotes the entropy of $\mu_0$. Using this result in the above equation yields:
+By Lemma 3.2 of \cite{raginsky17a}\footnote{Note that Lemma 3.2 of \cite{raginsky17a} considers the case where the drift is not time- or measure-dependent. However, with \Cref{asmp:dissip} it is easy to show that the same result holds for our case as well.}, we have $\E[ \|Y_{kh}\|^2] \leq C_0 \triangleq C_e +2  (1 \vee \frac1{m})(b+2B^2 + d \lambda)$, where $C_e$ denotes the entropy of $\mu_0$. Using this result in the above equation yields:
 \begin{align}
 \E[ \|Y_t - Y_{kh} \|^2] \leq& 12(t-kh)^2 (L^2 C_0 + B^2) + 6\lambda (t-kh)d. \label{eqn:lem_bound1}
 \end{align}
@@ -259,10 +259,10 @@ Considering the bound given in Theorem~\ref{thm:euler}, the choice $h$ implies t
 \begin{align}
 \frac{\delta_\lambda L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) \leq \varepsilon^2. \label{eqn:cor_Th}
 \end{align}
-By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain 
-\begin{align}
-\| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} .
-\end{align}
+% By combining \eqref{eqn:cor_Th} with the inequality $\sqrt{a+b}\leq \sqrt{a} + \sqrt{b}$, we obtain 
+% \begin{align}
+% \| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} .
+% \end{align}
 % By the assumption, we know that $\lambda > \frac{KL^2h}{8}$, we finally have
 % \begin{align}
 % \| \mub_{Kh} - \nu_\lambda \|_{\TV} \leq \varepsilon + \left(\frac{2 C_2 \delta_\lambda \delta}{L^2}\right)^{1/2} .
