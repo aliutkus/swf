@@ -4,17 +4,17 @@
 
 \begin{figure}
 \subfigure[]{
-	\includegraphics[width=0.685\columnwidth]{figures/gmm_iter.pdf}
+	\includegraphics[width=0.65\columnwidth]{figures/gmm_iter.pdf}
 	\label{fig:toy_example}
 } \hfill
 \subfigure[]{ 
-\includegraphics[width=0.268\columnwidth]{figures/gmm_reg.pdf}
+\includegraphics[width=0.255\columnwidth]{figures/gmm_reg.pdf}
 \label{fig:lambda_supp}
  }
 \caption{a) Toy example. training data $y_i$ consists in $50 000$ samples drawn from a Gaussian Mixture Model with $20$ components of random weights, covariances and locations. \textbf{Left:} Output distribution for learning (top) and testing (bottom) particles. \textbf{Right:} (top) Close-up of some generated samples in red superimposed with learning points in black. (bottom) Target distribution. $N_\theta=30$, $N=3000$, $h=1$, $\lambda=10^{-4}$. b) Influence of the regularization parameter $\lambda$. The higher $\lambda$, the more entropic the output distribution.}
 \end{figure}
 
-In this section, we evaluate the proposed SWF Algorithm~\ref{algo:flow} on different datasets. In all cases, the $N$ initial particles $\bar{X}^i_0\in\mathbb{R}^d$ are obtained by first drawing i.i.d. $\bar{Z}^i\in\mathbb{R}^r$ with $r\leq d$, each one with i.i.d standard Gaussian entries. Then we take $\bar{X}^i_0=A\bar{Z}^i$ with $A$ being a random $d\times r$ matrix. This results in a proposal distribution $\mu=\mathcal{N}(0,AA^\star)$. This procedure allows to have an arbitrary input dimension and yet use SWF.
+In this section, we evaluate the SWF algorithm on different datasets. In all cases, the $N$ initial particles $\bar{X}^i_0\in\mathbb{R}^d$ are obtained by first drawing i.i.d. $\bar{Z}^i\in\mathbb{R}^r$ with $r\leq d$, each one with i.i.d standard Gaussian entries. Then we take $\bar{X}^i_0=A\bar{Z}^i$ with $A$ being a random $d\times r$ matrix. This results in a proposal distribution $\mu=\mathcal{N}(0,AA^\star)$. This procedure allows to have an arbitrary input dimension and yet use SWF.
 
 % \subsection{Toy example: multivariate Gaussian Mixture Model}
 % \label{sub:toy_example}
@@ -52,15 +52,15 @@ In a second set of experiments, we tested the SWF for implicit generative modeli
 
 \begin{figure}
 \centering
-\subfigure[]{
+\subfigure[Fashion MNIST]{
 \includegraphics[width=0.55\columnwidth]{figures/fmnist2.pdf}
 \label{fig:fashionmnist}	
 }\hfill
-\subfigure[]{
+\subfigure[MNIST]{
 \includegraphics[width=0.41\columnwidth]{figures/mnist.pdf}
 \label{fig:fashionmnist}	
 }
-\caption{Applying SWF on the Fashion MNIST dataset.}
+\caption{The evolution of the particles through iterations on different datasets.}
 \end{figure}
 
 % \begin{figure}

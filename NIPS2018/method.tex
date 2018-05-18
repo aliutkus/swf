@@ -151,26 +151,30 @@ where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total num
 % \subsection{Approximate Euler-Maruyama discretization}
 \textbf{Approximate Euler-Maruyama discretization:}
 %
-In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in practice, we propose an approximate Euler-Maruyama discretization for each particle SDE. First, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion. Then, they are updated at each step $k$ following:
+In order to be able to simulate the particle SDEs \eqref{eqn:sde_particle} in practice, we propose an approximate Euler-Maruyama discretization for each particle SDE. 
+The algorithm iteratively applies the following update equation:
+% First, all the initial particles $\{\bar{X}_0^i\}_{i=1}^N$ are drawn from $\mu_0$ in an i.i.d.\ fashion. Then, they are updated at each step $k$ following:
 \begin{align}
 \bar{X}^i_0 \simiid \mu_0, \quad \qquad \bar{X}^i_{k+1} = \bar{X}^i_k + h \hspace{0.5pt} \hat{v}_k(\bar{X}^i_k) + \sqrt{2 \lambda h} Z^i_{k+1}, \quad \qquad  \forall i \in  \{1,\dots,N\} \label{eqn:euler_particle}
 \end{align}
-where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{i=1}^N \delta_{\bar{X}_k^i}$ is the empirical distribution of $\{\bar{X}_k^i\}_{i=1}^N$. A question of fundamental practical importance is how to compute this function.
+where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{i=1}^N \delta_{\bar{X}_k^i}$ being the empirical distribution of $\{\bar{X}_k^i\}_{i=1}^N$. A question of fundamental practical importance is how to compute this function $\hat{v}$.
 
-In this work, we approximate the integral in $v$ \eqref{eqn:gradflow_reg} by a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. At each iteration $k$, this is done by drawing $N_\theta$ such samples $\theta_{k,n}$, and then by taking:
+We propose to approximate the integral in \eqref{eqn:gradflow_reg} via a simple Monte Carlo estimate.
+% a finite sum using $N_\theta$ i.i.d samples from the sphere $\Sp^{d-1}$. 
+At each iteration $k$, this is done by drawing $N_\theta$ uniform i.i.d.\ samples from the sphere $\Sp^{d-1}$, $\{\theta_{k,n}\}_{n=1}^{N_\theta}$, and computing:
 %
 \begin{align}
 \hat{v}_k(x) \triangleq - (1/{N_\theta}) \sum\nolimits_{n=1}^{N_\theta} \psi_{k, \theta_{k,n}}'(\langle\theta_{k,n},x\rangle ) \theta_{k,n}, \label{eqn:approxdrift}
 \end{align}
 %
-where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the Kantorovich potential defined in Section~\ref{sec:techbg}, but applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$:
+where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich potential (cf.\ Section~\ref{sec:techbg}) that is applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$: i.e.\, 
 % \begin{align}
    $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
  % \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
 \begin{wrapfigure}{R}{0.52\textwidth}
-\vspace{-13pt}
+\vspace{-14pt}
     \begin{minipage}{0.52\textwidth}
      \begin{algorithm2e} [H]
 		 \SetInd{0.1ex}{1.5ex}
@@ -208,21 +212,24 @@ where $\psi_{k, \theta}'$  for any $\theta$ is the derivative of the Kantorovich
 
 % \newcommand{\shr}{{\lserif\#}}
 For any particular $\theta\in\Sp^{d-1}$, the CDF $F_{\theta^*_\#\nu}$ for the projection of the target distribution $\nu$ on $\theta$ can be straightforwardly computed from the data. This is done by first computing the projections $\langle \theta, y_i\rangle$ for all data points $y_i$, and then computing the empirical CDF for this set of $P$ scalars.
+%
+Similarly, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the QF of the particles at iteration $k$, is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical quantile function of this set of $N$ scalar values.
 
-Similarly, the QF $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ for the particles at iteration $k$ is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical quantile function of this set of $N$ scalar values.
+In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}$ empirical quantiles\footnote{In practice, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully. Concerning the number of particles, we observed $N=3000$ to be sufficient for most purposes in our experiments.}. 
+Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target. 
 
-In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}$ empirical quantiles. In practice, we take $Q=100$ quantiles, which proved sufficient to approximate these functions faithfully.
-Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures centered on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target. Concerning the number of particles, we observed $N=3000$ to be sufficient for most purposes in our experiments.
-
-Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because i/ all these one-dimensional computations can be done very accurately and ii/ quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \umut{citation needed}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x\in \Omega$ and $\mu \in \PS(\Omega)$, where the expectation is taken over $\theta_{k,n}$.
+Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all these one-dimensional computations can be done very accurately and (ii) quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.
 
 %Given the fact that $\bar{\mu}^N_{kh}$ will be a collection of Dirac measures in practical applications, i.e.\ $\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\bar{X}_{k}^i}$, we directly have $\theta^*_{n\#}\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle} $, that is the one-dimensional empirical distribution of the projected samples $\{\langle \theta_n, \bar{X}_{k}^i \rangle\}_{i=1}^N$. From a similar point of view, for a given dataset ${\cal D} \equiv \{y_i\}_{i=1}^P$, we assume that we observe $P$ i.i.d.\ random samples from $\nu$. Therefore, we can use these samples to approximate $\theta^*_{n\#}\nu$, such that we have $\theta^*_{n\#}\nu \approx \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, that is the one-dimensional empirical distribution of the projected data points $\{\langle \theta_n, y^i \rangle\}_{i=1}^P$. We believe that this approximation would be accurate in practical applications since it is currently common to have a very large datasets.
 
 
 %Once the projections of the particles and the data points are computed along the directions $\{\theta_n\}_n$, it is straightforward to approximately compute the function $(F_{\theta^*_{n\#}\bar{\mu}}^{-1} \circ F_{\theta^*_{n\#}\nu}) $ by using standard techniques that are based on linear interpolation \umut{cite}, whose details are given in the supplementary document.
-The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a distributed manner that is independent of the sliced Wasserstein flow. We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.
+The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a massively distributed manner that is independent of the sliced Wasserstein flow. 
 
-Then, significant reductions in computing time may also be obtained when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches from the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences: since we may control the number of $\theta$ for which a given data point $y_i$ is used by SWF through its projections $\langle\theta,y_i\rangle$, we may guarantee that these projections do not allow to recover $y_i$, by simply picking fewer than necessary for reconstruction, as predicted by the compressed sensing theory \cite{donoho2009observed}.
+% \umut{We don't have any experiments for this at the moment}
+% We considered two scenarios in our experiment: they may first be computed \textit{beforehand}, if the $\theta_{k,n}$ are always picked from the same subset of the sphere, which we call a \textit{batch} mode, as opposed to the \textit{streaming} mode, where new directions $\theta_{k,n}$ are drawn each time.
+
+Besides, we can obtain further reductions in the computing time when the CDF $F_{\theta^*_\#\nu}$ for the target is only computed on random batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we may control the number of $\theta$s for which a given data point $y_i$ is used by SWF through its projections $\langle\theta,y_i\rangle$, we may guarantee that these projections do not allow to recover $y_i$, by simply picking fewer than necessary for reconstruction, as predicted by the compressed sensing theory \cite{donoho2009observed}.
 
 %%% Local Variables:
 %%% mode: latex
