@@ -14,11 +14,12 @@ In practice, we would like to approximate the measure sequence $(\mu_t)_t$ as ac
 
 In order to analyze this distance, we exploit the connections between \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}, which is a Bayesian posterior sampling method, and is obtained as a discretization of an SDE whose drift has a much simpler form. We then bound the distance by extending the recent results on SGLD \cite{raginsky17a} to time- and measure-dependent drifts, that are of our interest in the paper.
 
-We now present our second main theoretical result. Due to space limitations we present all our assumptions and the explicit forms of the constants in the supplementary document. 
+% Original: Due to space limitations, we present...
+We now present our second main theoretical result. We present all our assumptions and the explicit forms of the constants in \supp. 
 \vspace{-5pt}
 \begin{thm}
 \label{thm:euler}
-Assume that the conditions given in the supplementary document hold. Then, the following bound holds for $T=Kh$:
+Assume that the conditions given in \supp hold. Then, the following bound holds for $T=Kh$:
 \begin{align}
 \| \mub_{Kh} - \mu_T \|_{\TV}^2 \leq \delta_\lambda \left \lbrace  \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2  \delta K h}{4\lambda} \right \rbrace	,
 \end{align} 

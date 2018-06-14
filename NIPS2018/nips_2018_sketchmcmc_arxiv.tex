@@ -1,0 +1,118 @@
+\newif\ifabstract
+\abstracttrue
+%%%%ARXIV
+ \abstractfalse %Uncommenting this line gives the full version
+%%%
+\newif\iffull
+\ifabstract \fullfalse \else \fulltrue \fi
+%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt]{article}
+%\usepackage{fullpage}
+%\usepackage{epsfig}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\usepackage[algo2e,inoutnumbered,linesnumbered,algoruled,vlined]{algorithm2e}
+
+
+
+\usepackage{cleveref}
+\usepackage[active]{srcltx}
+
+\usepackage{wrapfig}
+\usepackage{mathtools}
+
+%\usepackage{float}
+\usepackage{subfigure}
+
+
+
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{amsthm}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{dsfont}
+\usepackage{xcolor}
+
+\usepackage{enumitem}
+\usepackage{lmodern}
+%\usepackage[backend=biber,style=authoryear]{biblatex}
+%\setcitestyle{authoryear,open={((},close={))}}
+
+% \input{preamble1}
+\input{defs}
+
+
+\setlength{\oddsidemargin}{-1 true cm}
+\setlength{\rightmargin}{1.0 true cm}
+\setlength{\leftmargin}{1.2 true cm}
+\setlength{\evensidemargin}{-.54 true cm}
+% \setlength{\topmargin}{0.04 true cm}
+% \setlength{\headheight}{0 true cm}
+\setlength{\textwidth}{18 true cm}
+
+\newcommand{\fint}{\int_{\Sp^{d-1}}}
+
+\begin{document}
+
+\title{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and MCMC}
+\author{Umut \c{S}im\c{s}ekli$^{\text{1}}$, Antoine Liutkus$^{\text{2}}$, Szymon Majewski$^{\text{3}}$, Alain Durmus$^{\text{4}}$  \vspace{3pt} \\
+{\small 1: LTCI, T\'{e}l\'{e}com Paristech, Universit\'{e} Paris-Saclay, 75013, Paris, France }\\
+{\small 2: Inria and LIRMM, Montpellier, France}\\
+{\small 3: Institute of Mathematics, Polish Academy of Science}\\
+{\small 4: CMLA - \'{E}cole normale sup\'{e}rieure Paris-Saclay, CNRS, Universit\'{e} Paris-Saclay, 94235 Cachan, France}}
+\date{}
+
+% \begin{titlepage}
+\maketitle
+
+\input{abstract}
+
+% \thispagestyle{empty}
+
+
+\tableofcontents
+
+% \end{titlepage}
+
+\input{intro}
+
+\input{tech_bg}
+
+\input{method}
+\input{analysis_main}
+
+
+\input{experiments}
+
+\input{conclusion}
+
+
+
+
+
+\bibliography{./references.bib}
+\bibliographystyle{unsrt}
+
+\addcontentsline{toc}{section}{Appendix}
+\section*{Appendix}
+
+\input{grad_flow}
+\input{euler}
+\input{comp_details}
+
+
+
+\end{document}
