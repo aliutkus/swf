@@ -41,10 +41,11 @@ if __name__ == "__main__":
     # load the sketch data and create the projectors object
     sketch_data = np.load(args.sketch_file).item()
     target_qf = sketch_data['qf']
-    data_dim = sketch_data['data_dim']
+    data_shape = sketch_data['data_shape']
+    data_dim = np.prod(data_shape)
     [num_sketches, num_thetas, num_quantiles] = target_qf.shape
     ProjectorClass = getattr(sketch, sketch_data['projectors_class'])
-    projectors = ProjectorClass(num_sketches, num_thetas, data_dim)
+    projectors = ProjectorClass(num_sketches, num_thetas, data_shape)
 
     # if no input chain is provided, create one (contains the parameters for
     # the IDT algorithm)
@@ -92,7 +93,7 @@ if __name__ == "__main__":
     if args.plot_target is not None:
         # just handle numpy arrays now
         target_samples = sketch.load_data(args.plot_target, None).dataset.data
-        data_dim = target_samples.shape[1]
+        data_dim = np.prod(target_samples.shape[1:])
 
         ntarget = min(10000, target_samples.shape[0])
         target_samples = target_samples[:ntarget]

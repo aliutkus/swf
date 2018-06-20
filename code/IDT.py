@@ -209,7 +209,7 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
         os.mkdir(args.plot_dir)
     data_dim = samples.shape[-1]
     image = False
-    figsize=(8, 8)
+    figsize = (8, 8)
     # try to identify if it's an image or not
     if data_dim > 700:
         # if the data dimension is large: probably an image.

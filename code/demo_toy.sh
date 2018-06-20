@@ -10,14 +10,14 @@ NUM_COMPONENTS=20
 NUM_SAMPLES=50000
 
 # parameters for sketching
-NUM_QUANTILES=50
+NUM_QUANTILES=100
 NUM_THETAS=50
-CLIPTO=1000
+CLIPTO=3000
 
 # parameters for SWF
 NUM_PARTICLES=3000
-STEPSIZE=1
-REG=0.01
+STEPSIZE=0.1
+REG=0.001
 INPUT_DIM=2
 BATCHSIZE=1
 
@@ -30,7 +30,7 @@ PLOTDIR_STRING=""
 
 PLOT_STRING="--plot"
 SEED_STRING="--seed 10"
-CONTOUR_EVERY=100
+CONTOUR_EVERY=500
 STOP=5000
 
 # Generate data:
@@ -76,5 +76,5 @@ if [ $1 = "stream" ]; then
   if [ "$PLOTDIR_STRING" != "" ]; then
     PLOTDIR_STRING=$PLOTDIR_STRING"_stream"
   fi
-  python streamIDT.py ./toydata.npy  --stop $STOP $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples $NUM_PARTICLES --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
+  python streamIDT.py ./toydata.npy  --contour_every $CONTOUR_EVERY --stop $STOP $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples $NUM_PARTICLES --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
 fi
