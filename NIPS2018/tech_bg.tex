@@ -35,12 +35,11 @@ In the case where $\Omega$ is finite, computing the Wasserstein distance between
 where $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
 Provided that $\mu$ satisfies a mild condition, we have the following nice uniqueness result.
-\begin{thm}[ \protect{\cite[Theorem 1.4]{santambrogio2010introduction}}]
+\begin{thm}[\protect{\cite[Theorem 1.4]{santambrogio2010introduction}}]
 \label{thm:unqmap}
-Assume that  $\mu\in \PS_2(\Omega)$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable transport map $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The optimal transport map $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
+Assume that  $\mu\in \PS_2(\Omega)$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable function $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The function $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
 \end{thm}
-
-
+The measurable function $T : \Omega \to \Omega$ is referred to as the optimal transport map from $\mu$ to $\nu$. 
 This result implies that there exists a solution for transporting samples from $\mu$ to samples from $\nu$ and this solution is optimal in the sense that it minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
 
@@ -88,7 +87,7 @@ $\W(\mu,\nu) = \int_0^1 |F_\mu^{-1}(\tau) - F_\nu^{-1}(\tau)|^2 \> d\tau$, %\lab
 % \end{align}
 where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of $\mu$ and $\nu$, respectively, and $F^{-1}_\mu, F^{-1}_\nu$ denote the inverse CDFs, also called quantile functions (QF).
 %
-In this case, the optimal transport map has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \cite{villani2008optimal}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
+In this case, the optimal transport map from $\mu$ to $\nu$  has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \cite{villani2008optimal}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum.
 %
 Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich potential is given as $\psi'(x) \triangleq \partial_x \psi(x) = x- (F_\nu^{-1} \circ F_\mu) (x)$.
 
@@ -102,7 +101,8 @@ The $\SW$ distance has important practical implications: provided that the distr
 
 % bernton2017inference
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc"
+%%% TeX-master: "nips_2018_sketchmcmc_arxiv"
 %%% End:

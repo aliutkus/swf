@@ -167,7 +167,7 @@ At each iteration $k$, this is done by drawing $N_\theta$ uniform i.i.d.\ sample
 %
 where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich potential (cf.\ Section~\ref{sec:techbg}) that is applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$: i.e.\,
 % \begin{align}
-   $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}} \circ F_{\theta^*_\#\nu}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
+   $\psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\nu} \circ F_{\theta^*_\#\bar{\mu}_{kh}^{N}}) (z)  \bigr]$ .%, \qquad \forall z \in \R$.
  % \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
@@ -189,10 +189,10 @@ where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich
 		    $\theta_{k,n} \sim \mathrm{Uniform}(\Sp^{d-1})$, \hfill $n = 1,\dots,N_\theta$\\
         \For{$\theta\in\{\theta_{k,n}\}_{n=1}^{N_\theta}$}
         {
-        {\color{purple} \small \tcp{CDF of projected target}}
-        $F_{\theta^*_\#\nu}=\textnormal{CDF}\{\langle\theta,y_i\rangle\}_{i=1}^P$\\
-        {\color{purple} \small \tcp{Quantiles of projected particles}}
-        $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}=\textnormal{QF}\{\langle\theta,\bar{X}_k^i\rangle\}_{i=1}^N$\\
+        {\color{purple} \small \tcp{CDF of projected particles}}
+        $F_{\theta^*_\#\bar{\mu}_{kh}^{N}}=\textnormal{CDF}\{\langle\theta,\bar{X}_k^i \rangle\}_{i=1}^P$\\
+        {\color{purple} \small \tcp{Quantiles of projected target}}
+        $F^{-1}_{\theta^*_\#\nu}=\textnormal{QF}\{\langle\theta,y_i \rangle\}_{i=1}^N$\\
           %$\theta^*_{n\#}\bar{\mu}^N_{kh} = \frac1{N} \sum_{i=1}^N \delta_{\langle \theta_n, \bar{X}_{k}^i \rangle}$, \hfill $n = 1,\dots,N_\theta$ \\
           %$\theta^*_{n\#}\nu = \frac1{N} \sum_{i=1}^P \delta_{\langle \theta_n, y_i \rangle} $, \hfill $n = 1,\dots,N_\theta$ \\
         }
@@ -231,7 +231,8 @@ Besides, we can obtain further reductions in the computing time if the CDF $F_{\
 
 
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc"
+%%% TeX-master: "nips_2018_sketchmcmc_arxiv"
 %%% End:
