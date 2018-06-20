@@ -20,7 +20,7 @@ As it turns out, OT brings new light on the generative modeling problem: there h
 
 
 OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.
-This can be written by using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $\int_A \nu(dx) = \int_{T^{-1}(A)} \mu(dx) $ for all Borel sets $A \subset \mca$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided mild conditions on these distributions hold (notably $\mu$ is non-atomic \cite{villani2008optimal}), existence and uniqueness of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
+This can be written by using some `push-forward operators': we seek a mapping $T$ that `pushes $\mu$ onto $\nu$', and is formally defined as $ \nu(A) =  \mu(T^{-1}(A)) $ for all Borel sets $A \subset \mca$. If this relation holds, we denote the push-forward operator $T_\#$, such that $T_\# \mu = \nu$. Provided mild conditions on these distributions hold (notably $\mu$ is non-atomic \cite{villani2008optimal}), existence of such a transport map is guaranteed; however, it remains a challenge to construct it in practice.
 
 One common point between VAE and GAN is to adopt an approximate strategy and consider transport maps that belong to a parametric family $T_{\phi}$ with $\phi \in \Phi$. Then, they aim at finding the best parameter $\phi^\star$ that would give $T_{\phi^\star \#}\mu \approx \nu$. This is typically achieved by attempting to minimize the following optimization problem:
 % \begin{align}
@@ -46,7 +46,8 @@ Apart from its nice theoretical properties, the proposed algorithm has also sign
 
 
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc"
+%%% TeX-master: "nips_2018_sketchmcmc_arxiv"
 %%% End:
