@@ -103,10 +103,11 @@ if __name__ == "__main__":
     # now create the callback plotting function
     def plot_function(samples, index, error):
         return IDT.base_plot_function(samples, index, error, log_writer,
-                                      args, axis_lim, target_samples)
+                                      args, axis_lim, target_samples,
+                                      args.contour_every)
 
     # now call the actual IDT function
-    samples, chain_out = batchIDT(target_qf, projectors, num_quantiles,
+    samples, chain_out = batchIDT(target_qf, projectors,
                                   input_chain, samples, plot_function,
                                   compute_output_chain)
 

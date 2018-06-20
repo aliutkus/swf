@@ -72,7 +72,7 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
     return samples, source_qf, sw_error
 
 
-def batchIDT(target_qf, projectors, num_quantiles, chain_in,
+def batchIDT(target_qf, projectors, chain_in,
              samples, plot_function, compute_chain_out=True):
 
     # prepare the projectors
@@ -81,8 +81,8 @@ def batchIDT(target_qf, projectors, num_quantiles, chain_in,
     projectors_loader = DataLoader(range(len(projectors)),
                                    batch_size=chain_in.batchsize,
                                    shuffle=True)
-    quantiles = np.linspace(0, 100, num_quantiles)
     [num_sketches, num_thetas, num_quantiles] = target_qf.shape
+    quantiles = np.linspace(0, 100, num_quantiles)
     if compute_chain_out:
         # prepare the chain_out
         chain_out = copy.copy(chain_in)
@@ -170,6 +170,10 @@ def add_plotting_arguments(parser):
                         help="Flag indicating whether or not to log the "
                              "sliced Wasserstein error along iterations.",
                         action="store_true")
+    parser.add_argument("--contour_every",
+                        help="Number of iterations between each contour plot.",
+                        type=int,
+                        default=50)
     parser.add_argument("--plot_target",
                         help="Samples from the target. Same constraints as "
                              "the `dataset` argument.")
@@ -183,8 +187,8 @@ def add_plotting_arguments(parser):
 
 
 def base_plot_function(samples, index, error, log_writer, args, axis_lim,
-                       target_samples):
-    
+                       target_samples, contour_every):
+
     # hacky code to plot the SW cost
     """if os.path.exists('logs.npy'):
         data = np.load('logs.npy').item()
@@ -201,10 +205,11 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
 
     if not args.plot and not args.plot_dir:
         return
-
+    if args.plot_dir and not os.path.exists(args.plot_dir):
+        os.mkdir(args.plot_dir)
     data_dim = samples.shape[-1]
     image = False
-
+    figsize=(8, 8)
     # try to identify if it's an image or not
     if data_dim > 700:
         # if the data dimension is large: probably an image.
@@ -220,17 +225,17 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
             img_dim = int(square_dim_bw)
 
     if not image:
-        contour = True
+        contour = not index % contour_every
         if contour:
             def contour_plot(x, y, fignum, colors, title, axis_lim, *kwargs):
-                fig = plt.figure(num=fignum, figsize=(2, 2))
+                fig = plt.figure(num=fignum, figsize=figsize)
                 plt.clf()
 
                 # Basic 2D density plot
                 sns.set_style("whitegrid")
 
-                g = sns.kdeplot(x, y, cmap=colors, shade=True, shade_lowest=False,
-                                *kwargs)
+                g = sns.kdeplot(x, y, cmap=colors, shade=True,
+                                shade_lowest=False, *kwargs)
                 axis_lim = [[l*1.2 for l in v] for v in axis_lim]
                 plt.xlim(axis_lim[0])
                 plt.ylim(axis_lim[1])
@@ -241,9 +246,6 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
                     plt.title(title)
                 plt.tight_layout()
                 return fig
-
-            if args.plot_dir and not os.path.exists(args.plot_dir):
-                os.mkdir(args.plot_dir)
 
             if index == 0:
                 x0 = target_samples[:, 0]
@@ -263,23 +265,24 @@ def base_plot_function(samples, index, error, log_writer, args, axis_lim,
                                          'output_dist_k=%d.pdf' % (index+1)))
 
         else:
-            # no image: just plot second data dimension vs first one
-            fig = plt.figure(num=1, figsize=(2, 2))
+            # just plot second data dimension vs first one
+            fig = plt.figure(num=1, figsize=figsize)
             plt.clf()
 
-            # Basic 2D density plot
             sns.set_style("whitegrid")
 
             plt.figure(1, figsize=(8, 8))
             if args.plot_target is not None:
                 g = sns.regplot(x=target_samples[:, 0], y=target_samples[:, 1],
-                                fit_reg=False, scatter_kws={"color":"black",
-                                                            "alpha":0.3,"s":2} )
+                                fit_reg=False, scatter_kws={"color": "black",
+                                                            "alpha": 0.1,
+                                                            "s": 70})
             g = sns.regplot(x=samples[:, 0], y=samples[:, 1],
-                            fit_reg=False, scatter_kws={"color":"darkred",
-                                                        "alpha":0.3,"s":2} )
-            #g = plt.plot(samples[:, 0], samples[:, 1], 'ob')
+                            fit_reg=False, scatter_kws={"color": "darkred",
+                                                        "alpha": 0.3,
+                                                        "s": 50})
             axis_lim = [[l*1.2 for l in v] for v in axis_lim]
+            #axis_lim = [[-0.2, 0.4],[-1, 0.10]]
             plt.xlim(axis_lim[0])
             plt.ylim(axis_lim[1])
             ticks = [np.linspace(*v, 5) for v in axis_lim]

@@ -5,27 +5,36 @@
 #        `demo_toy.sh batch load` for using a computing chain.
 
 # parameters for data generation
-DIMENSION=5
+DIMENSION=2
 NUM_COMPONENTS=20
+NUM_SAMPLES=50000
 
 # parameters for sketching
-NUM_QUANTILES=100
-NUM_THETAS=30
-CLIPTO=5000
+NUM_QUANTILES=50
+NUM_THETAS=50
+CLIPTO=1000
 
 # parameters for SWF
+NUM_PARTICLES=3000
 STEPSIZE=1
-REG=0.5
-INPUT_DIM=5
+REG=0.01
+INPUT_DIM=2
 BATCHSIZE=1
 
 EPOCHS=1
-PLOTDIR_STRING="--plot_dir toydata_reg0.5"
-PLOT_STRING=""
-SEED_STRING="--seed 0"
+
+# if we want to save the plots, uncomment the following line
+#PLOTDIR_STRING="--plot_dir toy_P"$NUM_SAMPLES"_N"$NUM_PARTICLES"_Q"$NUM_QUANTILES"_CLIPTO"$CLIPTO"_REG_"$REG
+#else:
+PLOTDIR_STRING=""
+
+PLOT_STRING="--plot"
+SEED_STRING="--seed 10"
+CONTOUR_EVERY=100
+STOP=5000
 
 # Generate data:
- python ./generate_toydata.py  --output toydata --dim $DIMENSION --num_samples 50000 --num_components $NUM_COMPONENTS $SEED_STRING
+ python ./generate_toydata.py  --output toydata --dim $DIMENSION --num_samples $NUM_SAMPLES --num_components $NUM_COMPONENTS $SEED_STRING
 
 if [ $1 = "batch" ]; then
   # batch version
@@ -35,7 +44,7 @@ if [ $1 = "batch" ]; then
     PLOTDIR_STRING=$PLOTDIR_STRING"_batch"
   fi
 
-  NUM_SKETCHES=70
+  NUM_SKETCHES=100
    if [ $2 = "save" ]; then
      echo " ... will save the chain."
      CHAIN_STRING="--output_chain chain_save"
@@ -49,8 +58,8 @@ if [ $1 = "batch" ]; then
      # Sketch
       python qsketch/sketch.py ./toydata.npy --num_sketches $NUM_SKETCHES --clip $CLIPTO --num_thetas $NUM_THETAS --num_quantiles $NUM_QUANTILES --output toysketch --projectors RandomProjectors
 
-     # IDT
-     python batchIDT.py toysketch.npy $PLOT_STRING --input_dim $INPUT_DIM --num_samples 3000 --plot_target toydata.npy  --stepsize $STEPSIZE --batchsize $BATCHSIZE --reg $REG --epochs $EPOCHS --log  --logdir logs/toy/batch/$NUMTHETAS $CHAIN_STRING $PLOTDIR_STRING
+     # SWF
+     python batchIDT.py toysketch.npy $PLOT_STRING --contour_every $CONTOUR_EVERY --input_dim $INPUT_DIM --num_samples $NUM_PARTICLES --plot_target toydata.npy  --stepsize $STEPSIZE --batchsize $BATCHSIZE --reg $REG --epochs $EPOCHS --log  --logdir logs/toy/batch/$NUMTHETAS $CHAIN_STRING $PLOTDIR_STRING
    else
      echo " ... using previously saved chain."
      if [ "$PLOTDIR_STRING" != "" ]; then
@@ -67,5 +76,5 @@ if [ $1 = "stream" ]; then
   if [ "$PLOTDIR_STRING" != "" ]; then
     PLOTDIR_STRING=$PLOTDIR_STRING"_stream"
   fi
-  python streamIDT.py ./toydata.npy  --stop 500 $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples 3000 --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
+  python streamIDT.py ./toydata.npy  --stop $STOP $PLOT_STRING --clip $CLIPTO --num_quantiles $NUM_QUANTILES  --projectors RandomProjectors  --input_dim $INPUT_DIM --batchsize $BATCHSIZE --num_samples $NUM_PARTICLES --plot_target toydata.npy  --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS  --log --logdir logs/toy/stream $PLOTDIR_STRING
 fi

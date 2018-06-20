@@ -90,8 +90,9 @@ if __name__ == "__main__":
 
     def plot_function(samples, index, error):
         return IDT.base_plot_function(samples, index, error, log_writer,
-                                      args, axis_lim, target_samples)
-
+                                      args, axis_lim, target_samples,
+                                      args.contour_every)
+        
     samples = streamIDT(sketches, samples, args.stepsize, args.reg,
                         plot_function)
 
