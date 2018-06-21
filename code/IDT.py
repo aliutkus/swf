@@ -15,7 +15,6 @@ plt.ion()
 
 
 class Chain:
-
     def __init__(self, batchsize, epochs, stepsize=1, reg=1):
         self.batchsize = batchsize
         self.epochs = epochs
@@ -59,10 +58,7 @@ def IDTiteration(samples, projector, source_qf, target_qf, quantiles,
         zd = np.clip(zd, 0, 100)
         transported[:, d] = Ginv(zd)
 
-    shape_noise = samples.shape
-    noise = np.random.randn(*shape_noise)/np.sqrt(d)
-    # from scipy.stats import levy_stable
-    # noise = levy_stable.rvs(alpha=1.5, beta=0, size= shape_noise)
+    noise = np.random.randn(*samples.shape)/np.sqrt(d)
 
     samples += (stepsize *
                 np.dot(transported - projections, projector)/num_thetas
@@ -76,7 +72,6 @@ def batchIDT(target_qf, projectors, chain_in,
              samples, plot_function, compute_chain_out=True):
 
     # prepare the projectors
-    import torch
     torch.manual_seed(7)
     projectors_loader = DataLoader(range(len(projectors)),
                                    batch_size=chain_in.batchsize,
@@ -121,7 +116,6 @@ def batchIDT(target_qf, projectors, chain_in,
 
 
 def streamIDT(sketches, samples, stepsize, reg, plot_function):
-    # prepare the logger
     index = 0
     for target_qf, projector in sketches:
         print('Transporting, sketch %d' % index, sep=' ', end='\r')

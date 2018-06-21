@@ -40,11 +40,12 @@ if __name__ == "__main__":
         args.root_data_dir = 'data/'+args.dataset
     data_loader = sketch.load_data(args.dataset, args.clip, args.root_data_dir,
                                    args.img_size, args.memory_usage)
-    data_dim = int(np.prod(data_loader.dataset[0][0].shape))
+    data_shape = data_loader.dataset[0][0].shape
+    data_dim = np.prod(data_shape)
 
     # prepare the projectors
     ProjectorsClass = getattr(sketch, args.projectors)
-    projectors = ProjectorsClass(np.inf, args.num_thetas, data_dim)
+    projectors = ProjectorsClass(np.inf, args.num_thetas, data_shape)
 
     # prepare the sketch iterator
     sketches = sketch.SketchIterator(data_loader, projectors, args.batchsize,
@@ -92,7 +93,7 @@ if __name__ == "__main__":
         return IDT.base_plot_function(samples, index, error, log_writer,
                                       args, axis_lim, target_samples,
                                       args.contour_every)
-        
+
     samples = streamIDT(sketches, samples, args.stepsize, args.reg,
                         plot_function)
 
