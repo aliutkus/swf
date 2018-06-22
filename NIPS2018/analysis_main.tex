@@ -1,7 +1,7 @@
 %!TEX root = ./nips_2018_sketchmcmc.tex
 
-% \subsection{Finite-time analysis for the infinite particle regime}
-\textbf{Finite-time analysis for the infinite particle regime: }
+\subsection{Finite-time analysis for the infinite particle regime}
+% \textbf{Finite-time analysis for the infinite particle regime: }
 %
 In this section we will analyze the behavior of the proposed algorithm in the asymptotic regime where the number of particles $N \rightarrow \infty$. Within this regime, we will assume that the original SDE \eqref{eqn:sde} can be directly simulated by using an approximate Euler-Maruyama scheme, defined as follows:
 \begin{align}
@@ -26,7 +26,7 @@ Assume that the conditions given in \supp hold. Then, the following bound holds 
 for some $C_1,C_2,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$.  % The explicit forms of the constants are given in the proof.
 \end{thm}
 Here, the constants $C_1$, $C_2$, $L$ are related to the regularity and smoothness of the functions $v$ and $\hat{v}$, $\delta$ is directly proportional to the variance of $\hat{v}$, and $\delta_\lambda$ is inversely proportional to $\lambda$. The theorem shows that 
-% the error of the infinite-particle is bounded for all $K$ and the the bound has two terms, one increasing as $\sqrt{K}$ and the other one exponentially decreasing with $K$. Therefore, 
+% 
 if we choose $h$ small enough, we can have a non-asymptotic error guarantee, which is formally shown in the following corollary. 
 \vspace{-5pt}
 \begin{cor}
@@ -36,8 +36,10 @@ if we choose $h$ small enough, we can have a non-asymptotic error guarantee, whi
 $h = (3/C_1)\wedge\left(\frac{2 \varepsilon^2 \lambda}{\delta_\lambda L^2 T}(1+3\lambda d)^{-1}\right)^{1/2}$, % \,,
   % \end{align}
   we have
-  % \begin{align}
-    $\| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} $, for $T=Kh$. 
-  % \end{align}
+  \begin{align}
+    % $\| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} $, for $T=Kh$. 
+    \| \mub_{Kh} - \mu_T \|_{\TV} \leq \varepsilon + \left(\frac{C_2 \delta_\lambda \delta K h}{4\lambda}\right)^{1/2} 
+  \end{align}
+  for $T=Kh$.
 \end{cor}
 This corollary shows that for a large horizon $T$, the approximate drift $\hat{v}$ should have a small variance in order to obtain accurate estimations. This result is similar to Theorem 2.1 of \cite{raginsky17a}: for small $\varepsilon$ the variance of the approximate drift should be small as well. On the other hand, we observe that the error decreases as $\lambda$ increases. This behavior is expected since for large $\lambda$, the Brownian term in \eqref{eqn:sde} dominates the drift, which makes the simulation easier.

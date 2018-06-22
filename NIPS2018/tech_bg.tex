@@ -3,29 +3,20 @@
 \section{Preliminaries and Technical Background}
 \label{sec:techbg}
 
-% \begin{itemize}
-% \item Brief intro to gradient flows in $\W$
-% \item Fokker-Planck equations and relations to SDEs
-% \item Langevin equation as a special case
-% \item SGLD for optimization \cite{raginsky17a,zhang17b}
-% \end{itemize}
 
-% \subsection{Notation}
-
-% For a vector $v \in \R^d$, we denote its $\ell_2$-norm by $\|v\| \triangleq \sqrt{v^\top v}$. We occasionally denote the Euclidean inner-product of two vectors by $\langle v, y \rangle \triangleq v^\top y$ for $v,y \in \R^d$.
 
 % \subsection{Wasserstein distance, optimal transport maps and Kantorovich potentials}
 
 \vspace{-5pt}
 
-\textbf{Wasserstein distance, optimal transport maps and Kantorovich potentials: }
+\subsection{Wasserstein distance, optimal transport maps and Kantorovich potentials }
+% \textbf{Wasserstein distance, optimal transport maps and Kantorovich potentials: }
 %
 For two probability measures $\mu,\nu \in \PS_2(\Omega)$, $\PS_2(\Omega) = \{ \mu \in \PS(\Omega) \, :\, \int_{\Omega} \norm[2]{x} \mu(\rmd x) < \plusinfty\}$, the 2-Wasserstein distance is defined as follows:
 \begin{align}
 \W(\mu,\nu) \triangleq \Bigl\{ \inf_{\gamma \in {\cal C}(\mu,\nu)} \int_{\Omega \times \Omega} \|x-y\|^2 \gamma(dx , dy) \Bigr\}^{1/2}, \label{eqn:w2}
 \end{align}
 where ${\cal C}(\mu,\nu)$ is called the set of \emph{transportation plans} and defined as the set of probability measures $\gamma$ on $\Omega \times \Omega$ satisfying for all $A \in {\cal A}$, $\gamma(A \times \Omega) = \mu(A)$ and $\gamma(\Omega \times A)=\nu(A)$, i.e. the  marginals of $\gamma$  coincide with $\mu$ and $\nu$. From now on, we will assume that $\Omega$ is a compact subset of $\R^d$.
-% More precisely, ${\cal C}(\mu,\nu) \triangleq \{\gamma \in \PS(\Omega \times \Omega) | \Pi_{1\#}\gamma = \mu, \Pi_{2\#}\gamma = \nu  \}$, where $\Pi_1(x,y) \triangleq x$ and $\Pi_2(x,y) \triangleq y$, $\Pi_{1\#}$ and $\Pi_{2\#}$ then denote the marginalization operators.
 
 
 In the case where $\Omega$ is finite, computing the Wasserstein distance between two probability measures turns out to be  a linear program with linear constraints, and has therefore a dual formulation. Since $\Omega$ is a Polish space (i.e.\ a complete and separable metric space), this dual formulation can be generalized as follows \cite[Theorem 5.10]{villani2008optimal}:
@@ -43,9 +34,9 @@ The measurable function $T : \Omega \to \Omega$ is referred to as the optimal tr
 This result implies that there exists a solution for transporting samples from $\mu$ to samples from $\nu$ and this solution is optimal in the sense that it minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
 
-% \subsection{Wasserstein spaces and gradient flows}
+\subsection{Wasserstein spaces and gradient flows}
 
-\textbf{Wasserstein spaces and gradient flows: }
+% \textbf{Wasserstein spaces and gradient flows: }
 %
 By \cite[Proposition 7.1.5]{ambrosio2008gradient}, $\W$ is a distance over $\PS(\Omega)$.
 In addition, if $\Omega \subset \R^d$ is compact, the topology associated with $\W$ is equivalent to the weak convergence of probability measures and $(\PS(\Omega),\W)$\footnote{Note that in that case, $\PS_2(\Omega)=\PS(\Omega)$} is compact. The metric space $(\PS_2(\Omega),\W) $ is called the \emph{Wasserstein space}.
@@ -58,28 +49,15 @@ $\partial_t \rho_t + \divop (v \rho_t) = 0$, %  \label{eqn:pde}
 % \end{align}
 where $v$ denotes a vector field and $\divop$ denotes the divergence operator. Then, for a given gradient flow in $(\PS_2(\Omega),\W)$, we are interested in the evolution of the densities $\rho_t$, i.e.\ the PDEs which they solve.
 %
-% In order to prove that the curve $(\rho_t)_t$ solves a PDE for a given gradient flow, one first needs to show that there exits a path $(\rho_t)_t$ that appears as the limit of the solution of a \emph{time-discretized} problem \cite{jordan1998variational,santambrogio2017euclidean}. Afterwards, the form of the vector field $v$ in \eqref{eqn:pde} can be determined by further analysis.
-% We provide more information about gradient flows in $(\PS(\Omega),\W)$ in the supplementary document.
-%
-% this sentence is grammatically Correct :)
 Such PDEs are of our particular interest since they have a key role for building practical algorithms.
 
-% In particular, we need to show that for $\mu_t(dx) = \rho_t(x)dx$, $(\mu_t)_{t\geq 0}$ is point-wise limit of a family $(\mu_t^h)_{t\geq 0}$, where $\mu_t^h = \mu_{kh}^h$ for $t \in [kh, (k+1)h)$ (i.e.\ piece-wise constant), and $\mu_{(k+1)h}^h$ solves the following optimization problem:
-% \begin{align*}
-% \mu^{h}_{(k+1)h} = \argmin_\mu \mathcal{G}(h, k , \mu, \mu^h_{kh}), \quad \text{where,} \quad \mathcal{G}(h, k , \mu_+, \mu_-) \triangleq \mathcal{F}(\mu_+) + \frac{1}{2h}\W(\mu_+, \mu_-). %\triangleq \mathcal{F}(\mu) + \frac{1}{2h}\W(\mu, \mu^k) %\argmin_\rho \Bigl\{ \F(\rho) + \frac1{2h}\W^2(\rho, \rho_k^h) \Bigr\},
-% \end{align*}
-% If $(\mu_t)_{t\geq 0}$ appears as the limiting curve $\lim_{h\rightarrow 0}(\mu_t^h)_{t\geq 0}$, then $(\mu_t)_{t\geq 0}$ is called a \emph{generalized minimizing movement} \cite{santambrogio2017euclidean,bonnotte2013unidimensional}. Proving that $(\mu_t)_{t\geq 0}$ is a minimizing movement ensures that the gradient flow $\partial_t \mu_t = - \nabla_{\W} \F(\mu_t)$ exists; however, the form of the vector field $v$ in \eqref{eqn:pde} can only be determined by further analysis.
-
-% where, by abusing the notation, we denoted the functional $\F$ as a function of the density $\rho$.
 
 
-% This is formally defined by using \emph{generalized minimizing movements} .
 
-
-% \subsection{Sliced-Wasserstein distance}
+\subsection{Sliced-Wasserstein distance}
 % \label{sec:sw}
 
-\textbf{Sliced-Wasserstein distance: }
+% \textbf{Sliced-Wasserstein distance: }
 %
 In the one-dimensional case, i.e.\ $\mu,\nu \in \PS_2(\R)$, $\W$ has an analytical form, given as follows:
 % \begin{align}
@@ -99,7 +77,7 @@ where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$. As sh
 
 The $\SW$ distance has important practical implications: provided that the distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed (since the projected measures are one-dimensional). Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replace the integral in \eqref{eqn:sw} with a finite-sample average. Thanks to its computational benefits, $\SW$ was very recently considered for OT-based VAEs and GANs \cite{deshpande2018generative,autotranspoter,kolouri2018sliced}, appearing as a stable alternative to the adversarial methods. 
 
-% bernton2017inference
+
 
 
 %%% Local Variables:
