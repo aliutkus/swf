@@ -1,0 +1,139 @@
+\documentclass{article}
+
+\usepackage{nips_2018_author_response}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\usepackage{lipsum}
+\usepackage{xcolor}
+\newcommand{\rev}[1]{{\color{red} #1}}
+% \newcommand{\rev}[1]{}
+\newcommand{\umut}[1]{{\color{blue} #1}}
+
+\begin{document}
+We would like to thank to all the three reviewers for their comments, feedback, and for their time in creating these reviews. The detailed responses to the reviewers' comments are given below.
+
+\textbf{General Responses: (R1, R2, R3)}
+
+From the reviewers' comments, we suspect that the term `MCMC' in our title might have caused a confusion. From our point of view, we see MCMC as a family of methods for \emph{generating samples from a complicated distribution by forming and simulating a Markov chain}. From this respect, our approach is indeed an approximate method for simulating a continuous-time Markov chain (cf. Eqns 7, 9) and it aims at generating samples from a (complicated) data distribution, and this is the reason why we chose to use the term MCMC. On the other hand, the proposed algorithm is definitely \textbf{not} a Bayesian posterior sampling algorithm. We understand the reviewers' concern and agree that the title might cause confusion since the approach is fundamentally different from classical MCMC. As a solution, we propose to change the title of the paper to "Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions".
+
+\umut{As a general response -- Experiments}
+
+\textbf{Rev1: }
+
+We thank the reviewer for the detailed review and the comments on the originality, clarity, and the impact of our submission.  
+
+\rev{I think the experiments section has room for improvement. For instance, one advantage of the SWF method is computational efficiency. How would this idea then scale up to higher resolution images or a more complex data set?}
+
+\umut{Antoine?}
+
+\rev{Is there a way to assess the validity or quality of the implicit generative model?}
+
+\umut{I don't know, Antoine? We can argue that most papers put visual results.}
+
+\rev{Is there a way to manipulate the model to alter generated samples (e.g. along a latent dimension)?}
+
+\umut{We in fact didn't try this. Antoine, let's talk about this to see if we can put a figure on this.}
+
+\rev{- The result of the algorithm is a set of particles — synthesized data? I may be missing something — Is there a way to recover the generative process so you can generate new particles? If you already have samples from the empirical distributions, what does having simulations afford?}
+
+\umut{Antoine, we should explain this in detail, I think it's missing in the paper.}
+
+\rev{- In the experiments you say you observe N=3000 particles are sufficient —- sufficient for what? To compare certain estimated quantities?}
+
+\umut{Antoine?}
+
+\rev{- What was the qualitative effect of the regularization parameter on the real data set? Did you notice the samples converging to fainter or fuzzier images?}
+
+\umut{Yes? Antoine?}
+
+\rev{- Within this framework, how would you assess overfitting? Could it be possible that the flow ends up just reproducing examples from the training data?}
+
+\umut{Very good question, I don't know.}
+
+\textbf{Rev2:}
+
+\umut{This guy misunderstood the whole thing. We should write a convincing response.}
+
+\umut{We must admit that we have found some of the comments and the rejection conclusion to be very harsh. We believe that we can address all the criticized points and we hope that it would help the reviewer reconsider his/her conclusions.
+}
+
+\rev{The paper claims to be proposing a novel gradient-based MCMC algorithm but its main idea seems to be driven by the SGLD algorithm.} 
+
+\umut{Wrong.}
+
+\rev{The paper also proposes to use the SW2 distance with some regularisation term as the objective function, but I fail to see how this is a novel contribution to their proposed MCMC method.}
+
+\umut{Good for you.}
+
+\rev{I find the paper to be poorly written and quite hard to follow. It is filled with math proofs that can be moved to the appendix section.}
+
+\umut{WTF? We should mention that it's technical paper.}
+
+\rev{Also, the experiment section is very weak. They only provided visual samples on toy datasets and failed to provide qualitative measurements on their samples such as using ESS.}
+
+\umut{ESS is meaningless. We should refer to the initial explanation.}
+
+
+\textbf{Rev3:}
+
+
+\umut{We thank the reviewer for the detailed comments. We believe we have addressed bla bla. We hope the reviewer can increase the grade etc. }
+
+\rev{1. The title of the paper is "Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and MCMC". This is a bit misleading. I do not see that the proposed algorithm has an MCMC aspect on it. The authors state that "gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods". But it does not justify saying that this is a generative modeling algorithm via MCMC.} 
+
+1.  
+
+\rev{2. Furthermore, it is not clear to me how the proposed algorithm is nonparametric.} 
+
+\umut{There is no NN.}
+
+\rev{3. In Section 1, $T_t$ is proposed as a transport map at time t. What is the range of t? I suspect it is $(0, \infty)$ only from Section 3.} 
+
+3. Yes, indeed $t \in [0, \infty)$. We will clarify this issue.
+
+\rev{4. Again in Section 1, the authors state that "One would hope for $\mu_t = T_t \#\mu$ to converge to the minimum of the functional optimization problem." Has there been any theoretical studies on this? If so, any citations?} 
+
+\umut{Alain?}
+
+\rev{5. In the end of Section 1, it says that "we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods." I don't see how the proposed algorithm is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods.} 
+
+5. This question is partially answered in lines 259-263. Stochastic gradient MCMC methods are based on simulating a continuous-time SDE (see Chen et al 2015). For instance, SGLD, the first and most well-known SG-MCMC approach, is based on the discretization of the Langevin SDE: $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ is a `regular enough' function which does not depend either on the time $t$ or the measure $\mu_t$. In this sense, our approach is algorithmically and conceptually similar to SGLD, where we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue by improving the paragraph in lines 259-263.
+
+\rev{6. In Section 2, the authors write that "The optimal map T is also known as the increasing arrangement, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum." Is there a reference for this?} 
+
+\umut{Antoine?}
+
+\rev{7. At the end of Section 2, the authors write that "Therefore, one can easily approximate (4) by using a simple Monte Carlo scheme that draws uniform random samples from $S^{d-1}$ and replace the integral in (4) with a finite-sample average." I think that the problem with this simple Monte Carlo method is that when d is large, the approximation will be very poor. This is not made clear in the paper and I think that it is an important issue that should be discussed further in the paper.} 
+
+\umut{Antoine, what happens if we use a very small number of projections? It gives shitty results or not?}
+
+\rev{8. It appears to me that the proposed approach requires that $\mu$ and $\nu$ have the same support/dimension d. This may seriously limit its application as it cannot be used in purposes like dimension reduction.} 
+
+\umut{True. Don't we discuss this in the conclusion?}
+
+\rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?} 
+
+\umut{We should explicitly mention those methods. We should mention that it's difficult to compare these approaches.}
+
+\rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.} 
+
+\umut{Oops. Antoine, Alain, what do we say?}
+
+\rev{11. What is $N_\theta$ in Section 4, and what is $L^1$ in Equation (3) in Section 2?} 
+
+11. $N_\theta$ denotes the number of projections $\theta_{k,n}$ (i.e.\ $n = 1,2,\dots, N_\theta$) and it is implicitly defined in line 206. $L^1(\mu)$ denotes the class of functions that are absolutely integrable under the measure $\mu$. We will clarify these definitions.  
+
+\rev{12. Typos: Ref [1]: Monte carlo -> Monte Carlo; Ref [4]: bayes -> Bayes; Ref [14]: Gan and vae: GAN and VAE; etc.}
+
+12. We have corrected all the typos, thank you for pointing out. 
+
+
+\end{document}
