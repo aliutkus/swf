@@ -16,6 +16,7 @@
 \newcommand{\rev}[1]{{\color{red} #1}}
 % \newcommand{\rev}[1]{}
 \newcommand{\umut}[1]{{\color{blue} #1}}
+\newcommand{\alain}[1]{{\color{cyan} #1}}
 \newcommand{\antoine}[1]{{\color{orange} #1}}
 
 \begin{document}
@@ -33,7 +34,7 @@ We thank the reviewer for the detailed review and the comments on the originalit
 
 \rev{I think the experiments section has room for improvement. For instance, one advantage of the SWF method is computational efficiency. How would this idea then scale up to higher resolution images or a more complex data set?}
 
-\antoine{Our impression is that the proposed method is not so much dependent on the actual dimension of the data rather than its \textit{sparsity}. In effect, generating up-sampled MNIST digits does behave very well, whereas CelebA images of the same dimension are still a challenge. We suspect there is a relation between the number of random projections needed to achieve good performance and the structure of the data, as in the theory of compressed sampling. These considerations however require further investigation and were left out of the present paper, although we will shortly mention such questions in the open questions.}
+\antoine{Our impression is that the proposed method is not so much dependent on the actual dimension of the data rather than its \textit{sparsity}. In effect, generating up-sampled MNIST digits does behave very well, whereas CelebA images of the same dimension are still a challenge. We suspect there is a relation between the number of random projections needed to achieve good performance and the structure of the data, as in the theory of compressed sampling. These considerations however require further investigation and were left out of the present paper.}
 
 \rev{Is there a way to assess the validity or quality of the implicit generative model?}
 
@@ -108,8 +109,7 @@ We thank the reviewer for the detailed review and the comments on the originalit
 3. Yes, indeed $t \in [0, \infty)$. We will clarify this issue.
 
 \rev{4. Again in Section 1, the authors state that "One would hope for $\mu_t = T_t \#\mu$ to converge to the minimum of the functional optimization problem." Has there been any theoretical studies on this? If so, any citations?}
-
-\umut{Alain?}
+\alain{Unfortunately, there is very few results regarding the  convergence of gradient flows to global minimizers of the functional of interest, expect in the case where this functional is geodesically convex in the Wasserstein space $(\mathcal{P}_2,W_2)$. We will give adequate references (last sections of [21]) and clarify this comment.}
 
 \rev{5. In the end of Section 1, it says that "we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods." I don't see how the proposed algorithm is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods.}
 
@@ -137,7 +137,7 @@ We thank the reviewer for the detailed review and the comments on the originalit
 \rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.}
 
 \antoine{The parameter $h$ may be thought of as a learning rate. In our experiments, we took $h=1$ everywhere. Still, experiments with smaller $h$ may lead to better results, even if performance is much slower? Should we do this? Do we have time?...}
-\umut{Oops. Antoine, Alain, what do we say?}
+\umut{Oops. Antoine, Alain, what do we say?} \alain{we could say that ``due to space constraints, we did not give a full numerical study of the effect of the step size on generated models''}
 
 \rev{11. What is $N_\theta$ in Section 4, and what is $L^1$ in Equation (3) in Section 2?}
 
