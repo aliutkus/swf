@@ -10,6 +10,7 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 % \usepackage{microtype}      % microtypography
+\usepackage{ stmaryrd }
 
 \usepackage{lipsum}
 \usepackage{xcolor}
@@ -20,6 +21,7 @@
 \newcommand{\antoine}[1]{{\color{orange} #1}}
 \newcommand{\ubul}[1]{{\large \color{red} \textcircled{\small #1}}}
 \newcommand{\uunder}[1]{\underline{\smash{#1}}}
+
 
 \begin{document}
 We thank the reviewers for their comments and feedback. We appreciate that the reviewers find our approach to be original, technically correct, and clearly presented. We believe that we have addressed all the criticized points and we hope that it would help the reviewers reconsider their final marks.
@@ -32,7 +34,7 @@ We start by addressing the common concerns:
 %
 \textbf{\uunder{Contributions \& Experiments:}} We would like to underline that, to our knowledge, SWF is the first nonparametric IGM algorithm with explicit theoretical guarantees. Our approach is \emph{substantially} different than all the existing approaches and might introduce a new branch to IGM. 
 % Besides, the random projections bring an interesting feature which might have important implications in terms of privacy. 
-In this sense, our main contributions are mostly theoretical and conceptual, which are then validated by our experiments. The goal of our experiments is to provide a `proof-of-concept', rather than to try to achieve state-of-the-art results. This is the reason why we mostly focused on validating our algorithm, rather than comparing it with the existing approaches. On the other hand, unfortunately it is very difficult the assess the validity of IGM algorithms. \emph{The most common way is to visualize the generated samples, as is done in our paper.} To enable comparison with other algorithms, we will include their visual results in the supp.\ doc. \vspace{2pt} \\
+In this sense, our main contributions are mostly theoretical and conceptual, which are then validated by our experiments. The goal of our experiments is to provide a `proof-of-concept', rather than to try to achieve state-of-the-art results. This is the reason why we mostly focused on validating our algorithm, rather than comparing it with the existing approaches. On the other hand, unfortunately it is already very difficult the assess the validity of IGM algorithms. \emph{The most common way is to visualize the generated samples, as is done in our paper.} To enable comparison with other algorithms, we will include their visual results in the supp.\ \vspace{2pt} \\
 %
 % \umut{As a general response -- Experiments}
 %
@@ -43,7 +45,7 @@ We thank R1 for the detailed review and the positive comments on the originality
 % \rev{I think the experiments section has room for improvement. For instance, one advantage of the SWF method is computational efficiency. How would this idea then scale up to higher resolution images or a more complex data set?}
 %
 \textbf{\uunder{Experiments:}} SWF is not so much dependent on the actual dimension of the data but its \textit{complexity}: generating MNIST seems much easier than generating CelebA images of the same dimension. We suspect a dependency between $N_\theta$ and the structure of the data, as in the theory of compressed sampling. We will have a discussion on this matter. \\
-\textbf{\uunder{Manipulation:}} \\
+\textbf{\uunder{Manipulation:}} This topic was overlooked due to space limitations. One possible way is to interpolate two particles coming from $\mu$ in the beginning of the algorithm and observe the outputs of the algorithm for the interpolated particles. We have conducted new experiments now and obtained interesting outcomes, which we will present in the supp.\ doc. \\
 %
 % The proposed method is not so much dependent on the actual dimension of the data and is rather dependent on its \textit{complexity}. Indeed, generating (up-sampled) MNIST digits does behave very well, whereas CelebA images of the same dimension are still a challenge. We suspect that there is a relation between $N_\theta$ and the structure of the data, as in the theory of compressed sampling. We will have a discussion on this matter. % These considerations however require further investigation and were left out of the present paper.
 %
@@ -72,7 +74,7 @@ We thank R1 for the detailed review and the positive comments on the originality
 % \umut{Antoine?}
 %
 % \rev{- What was the qualitative effect of the regularization parameter on the real data set? Did you notice the samples converging to fainter or fuzzier images?}
-\textbf{\uunder{Effect of $\lambda$:}} \\
+\textbf{\uunder{Effect of $\lambda$:}} As the reviewer mentions, larger $\lambda$ yields fuzzier images. We will illustrate this in the supp.\ doc. \\
 %
 % \antoine{Honestly, I don't think there was too much influence of this parameter, except than theoretical validity....}
 % \umut{Yes? Antoine?}
@@ -99,15 +101,17 @@ We can agree that the paper is technical and our notation might be sometimes hea
 %
 \textbf{\color{red} \underline{Rev. 3:}}
 %
-We thank the reviewer for the detailed investigation and constructive comments. % We believe we have addressed bla bla. We hope the reviewer can increase the grade etc.
+We thank the reviewer for the very detailed investigation and constructive comments. % We believe we have addressed bla bla. We hope the reviewer can increase the grade etc.
 %
 % \rev{1. The title of the paper is "Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and MCMC". This is a bit misleading. I do not see that the proposed algorithm has an MCMC aspect on it. The authors state that "gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods". But it does not justify saying that this is a generative modeling algorithm via MCMC.}
 %
-\ubul{1} We see MCMC as a family of methods for \emph{generating samples from a distribution by simulating a Markov chain}. From this respect, our approach indeed has the same goal: generating samples from the data distribution by simulating a Markov chain (Eqn 7,9). On the other hand, \emph{SWF is definitely \textbf{not} a Bayesian posterior sampling algorithm}. We understand the reviewer's concern and propose replacing the term `MCMC' in the title with `Diffusions'.
+\ubul{1} We see MCMC as a family of methods for \emph{generating samples from a distribution by simulating a Markov chain}. In this sense, SWF indeed has the same goal: generating samples from $\nu$ by simulating the Markov chain in Eqn 7. On the other hand, \emph{SWF is definitely \textbf{not} a Bayesian posterior sampling algorithm}. We understand the concern and propose replacing the term `MCMC' in the title with `Diffusions'.
 %
 % \rev{2. Furthermore, it is not clear to me how the proposed algorithm is nonparametric.}
 %
-\ubul{2} SWF is nonparametric in the sense that the transport map it generates between $\mu$ and $\nu$ does not belong to some family of functions, like a deep network. At each iteration, the map is augmented with the application of another function, yielding a truly non-parametric approach. We will clarify this in the revision.
+\ubul{2} SWF is nonparametric in the sense that the transport map it generates between $\mu$ and $\nu$ does not belong to some family of functions, like a deep network. 
+% At each iteration, the map is augmented with the application of another function, yielding a truly non-parametric approach. 
+We will clarify this in the revision.
 %
 % \rev{3. In Section 1, $T_t$ is proposed as a transport map at time t. What is the range of t? I suspect it is $(0, \infty)$ only from Section 3.}
 %
@@ -115,18 +119,18 @@ We thank the reviewer for the detailed investigation and constructive comments. 
 %
 % \rev{4. Again in Section 1, the authors state that "One would hope for $\mu_t = T_t \#\mu$ to converge to the minimum of the functional optimization problem." Has there been any theoretical studies on this? If so, any citations?}
 %
-\ubul{4} We will cite the last sections of [21] and clarify this comment.
+\ubul{4} We will cite the last sections of [21]. % and clarify this comment.
 %
 % \alain{4. Unfortunately, there is only a few results regarding the convergence of gradient flows to global minimizers of the functional of interest, expect in the case where this functional is geodesically convex in the Wasserstein space $(\mathcal{P}_2,W_2)$. }
 %
 % \rev{5. In the end of Section 1, it says that "we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods." I don't see how the proposed algorithm is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods.}
 %
-\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating an SDE. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ does not depend either on the time $t$ or the measure $\mu_t$. In this sense, our approach is similar to SGLD, where we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue. 
+\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating SDEs. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ neither depends on $t$ nor $\mu_t$. In this sense, SWF is similar to SGLD: we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue. 
 % by improving the paragraph in lines 259-263.
 %
 % \rev{6. In Section 2, the authors write that "The optimal map T is also known as the increasing arrangement, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum." Is there a reference for this?}
 %
-\ubul{6} We will cite the corresponding chapter of [7] and clarify this comment.
+\ubul{6} We will cite the corresponding chapter of [7]. % and clarify this comment.
 %
 % \antoine{We now refer to the book by C. Villani for a proof of this fact.}
 %
@@ -134,28 +138,30 @@ We thank the reviewer for the detailed investigation and constructive comments. 
 %
 % \umut{Antoine, what happens if we use a very small number of projections? It gives shitty results or not?}
 % \antoine{See the answer we gave to Rev. 1 for an answer to this very relevant question.}
-\ubul{7} \umut{Sphere MC.}
+\ubul{7} Please see the `\textbf{Experiments}' response that we provided for Rev.\ 1.  
 % \rev{8. It appears to me that the proposed approach requires that $\mu$ and $\nu$ have the same support/dimension d. This may seriously limit its application as it cannot be used in purposes like dimension reduction.}
 %
 % \umut{True. Don't we discuss this in the conclusion?}
 %
-\ubul{8} In fact, the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic. A very simple trick to use our method whenever the input dimension is different from $d$ is to multiply the input by a random full-rank matrix of appropriate size. Since we did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, we omitted this detail in our first submission. We will briefly mention this matter.
+\ubul{8} In fact, the theory allows us to use a lower dimensional $\mu$ by using 
+% the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic. 
+a very simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by a random full-rank matrix of size $d' \times d$, and use this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this feature. We will discuss this topic in the paper.
 %
 % \rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?}
 %
 %\antoine{We were tacitly referring to parametric IGM methods such as GANs. The fact is that such methods have been witnessing a tremendous popularity in the recent years and the quality of generated samples is good. ***In terms of qualitative metrics, can we skip the comparison?***}
 % \umut{We should explicitly mention those methods. We should mention that it's difficult to compare these approaches.}
-\ubul{9} We were tacitly referring to parametric IGM methods such as GANs and VAEs. Please see our initial comment about comparison with these methods.  
+\ubul{9} We were tacitly referring to parametric IGM methods such as the recent GANs and VAEs, we will clarify this issue. Please see our initial comment about comparison with these methods.  
 % \rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.}
 %
 % \antoine{The parameter $h$ may be thought of as a learning rate. In our experiments, we took $h=1$ everywhere. Still, experiments with smaller $h$ may lead to better results, even if performance is much slower? Should we do this? Do we have time?...}
 % \umut{Oops. Antoine, Alain, what do we say?} 
 %
 % \alain{we could say that ``due to space constraints, we did not give a full numerical study of the effect of the step size on generated models''}
-\ubul{10} Even though our theory provides error guarantees for small values of $h$, it does not imply that larger $h$ would not perform well. In all the experiments we used $h=1$ and observed that we obtain similar performance within a smaller amount of time.    
+\ubul{10} Even though the guarantees are for small $h$, the theory does not imply that larger $h$ would not perform well. In all the experiments we used $h=1$ and observed that we obtain similar performance within a smaller amount of time.    
 % \rev{11. What is $N_\theta$ in Section 4, and what is $L^1$ in Equation (3) in Section 2?}
 %
-\ubul{11} $N_\theta$ denotes the number of projections $\theta_{k,n}$ (i.e.\ $n = 1,2,\dots, N_\theta$) and it is implicitly defined in line 206. $L^1(\mu)$ denotes the class of functions that are absolutely integrable under the measure $\mu$. We will clarify these definitions.
+\ubul{11} $N_\theta$ denotes the number of projections $\theta_{k,n}$ (i.e.\ $n \in \llbracket 1, N_\theta \rrbracket$) and it is implicitly defined in line 206. $L^1(\mu)$ denotes the absolutely integrable functions under $\mu$. We will clarify these definitions.
 %
 % \rev{12. Typos: Ref [1]: Monte carlo -> Monte Carlo; Ref [4]: bayes -> Bayes; Ref [14]: Gan and vae: GAN and VAE; etc.}
 %
