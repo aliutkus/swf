@@ -86,7 +86,7 @@ We thank R1 for the detailed review and the positive comments on the originality
 %
 We must admit that we have found some of the comments and the rejection conclusion to be very harsh. We would like to clarify that our proposed algorithm is \textbf{not} a gradient-based MCMC algorithm, and is in fact a nonparametric IGM algorithm that uses some ideas from Langevin MCMC. \\
 %
-We can agree that the paper is technical and our notation might be sometimes heavy since we bring rather disconnected fields together (i.e., IGM, gradient flows and diffusions). However, as other two reviewers also mention explicitly, we believe that our paper is very carefully organized and well-written considering its technicalness. On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document. Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting. Please refer to the response \ubul{1} below for more clarifications. We would like to ask the reviewer to reconsider our submission in the light of these informations.  \vspace{2pt} \\
+We can agree that the paper is technical and our notation might be sometimes heavy since we bring rather disconnected fields together (i.e., IGM, gradient flows and diffusions). However, as other two reviewers also mention explicitly, we believe that our paper is very carefully organized and well-written considering its technicalness. On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document. Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting. Please refer to the response \ubul{1} below and the initial notes for more clarifications. We would like to ask the reviewer to reconsider our submission in the light of these informations.  \vspace{2pt} \\
 % \rev{The paper claims to be proposing a novel gradient-based MCMC algorithm but its main idea seems to be driven by the SGLD algorithm.}
 % \umut{Wrong.}
 % \rev{The paper also proposes to use the SW2 distance with some regularisation term as the objective function, but I fail to see how this is a novel contribution to their proposed MCMC method.}
@@ -140,21 +140,21 @@ We thank the reviewer for the detailed investigation and constructive comments. 
 % \umut{True. Don't we discuss this in the conclusion?}
 %
 \ubul{8} In fact, the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic. A very simple trick to use our method whenever the input dimension is different from $d$ is to multiply the input by a random full-rank matrix of appropriate size. Since we did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, we omitted this detail in our first submission. We will briefly mention this matter.
-
-\rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?}
-
-\antoine{We were tacitly referring to parametric IGM methods such as GANs. The fact is that such methods have been witnessing a tremendous popularity in the recent years and the quality of generated samples is good. ***In terms of qualitative metrics, can we skip the comparison?***}
+%
+% \rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?}
+%
+%\antoine{We were tacitly referring to parametric IGM methods such as GANs. The fact is that such methods have been witnessing a tremendous popularity in the recent years and the quality of generated samples is good. ***In terms of qualitative metrics, can we skip the comparison?***}
 % \umut{We should explicitly mention those methods. We should mention that it's difficult to compare these approaches.}
-
-\rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.}
-
-\antoine{The parameter $h$ may be thought of as a learning rate. In our experiments, we took $h=1$ everywhere. Still, experiments with smaller $h$ may lead to better results, even if performance is much slower? Should we do this? Do we have time?...}
+\ubul{9} We were tacitly referring to parametric IGM methods such as GANs and VAEs. Please see our initial comment about comparison with these methods.  
+% \rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.}
+%
+% \antoine{The parameter $h$ may be thought of as a learning rate. In our experiments, we took $h=1$ everywhere. Still, experiments with smaller $h$ may lead to better results, even if performance is much slower? Should we do this? Do we have time?...}
 % \umut{Oops. Antoine, Alain, what do we say?} 
-
-\alain{we could say that ``due to space constraints, we did not give a full numerical study of the effect of the step size on generated models''}
-
+%
+% \alain{we could say that ``due to space constraints, we did not give a full numerical study of the effect of the step size on generated models''}
+\ubul{10} Even though our theory provides error guarantees for small values of $h$, it does not imply that larger $h$ would not perform well. In all the experiments we used $h=1$ and observed that we obtain similar performance within a smaller amount of time.    
 % \rev{11. What is $N_\theta$ in Section 4, and what is $L^1$ in Equation (3) in Section 2?}
-
+%
 \ubul{11} $N_\theta$ denotes the number of projections $\theta_{k,n}$ (i.e.\ $n = 1,2,\dots, N_\theta$) and it is implicitly defined in line 206. $L^1(\mu)$ denotes the class of functions that are absolutely integrable under the measure $\mu$. We will clarify these definitions.
 %
 % \rev{12. Typos: Ref [1]: Monte carlo -> Monte Carlo; Ref [4]: bayes -> Bayes; Ref [14]: Gan and vae: GAN and VAE; etc.}
