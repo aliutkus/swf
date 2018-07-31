@@ -227,18 +227,18 @@
 % Uncomment before submitting!!
 
 
-% \newcounter{pagecount}
-% \ifx\latex@outputpage\@undefined\relax
-%   \global\let\latex@outputpage\@outputpage
-% \fi
-% \gdef\@outputpage{%
-%   \stepcounter{pagecount}%
-%   \ifnum\value{pagecount}>1\relax%
-%     % Do not output the page
-%     \PackageWarning{nips_author_response}{Only one page allowed! Discarding any extra output.}
-%   \else
-%     \latex@outputpage%
-%   \fi
-% }
+\newcounter{pagecount}
+\ifx\latex@outputpage\@undefined\relax
+  \global\let\latex@outputpage\@outputpage
+\fi
+\gdef\@outputpage{%
+  \stepcounter{pagecount}%
+  \ifnum\value{pagecount}>1\relax%
+    % Do not output the page
+    \PackageWarning{nips_author_response}{Only one page allowed! Discarding any extra output.}
+  \else
+    \latex@outputpage%
+  \fi
+}
 
 \endinput
