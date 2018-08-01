@@ -9,7 +9,7 @@ REG=0
 INPUT_DIM=100
 BATCHSIZE=1
 
-PROJECTORS="RandomLocalizedProjectors"
+PROJECTORS="RandomProjectors"
 
 if [ $1 = "batch" ]; then
   # batch version
