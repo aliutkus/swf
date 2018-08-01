@@ -10,7 +10,7 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 % \usepackage{microtype}      % microtypography
-\usepackage{ stmaryrd }
+%\usepackage{ stmaryrd }
 
 \usepackage{lipsum}
 \usepackage{xcolor}
@@ -24,7 +24,7 @@
 
 
 \begin{document}
-We thank the reviewers for their comments and feedback. We appreciate that the reviewers find our approach to be original, technically correct, and clearly presented. We believe that we have addressed all the criticized points and we hope that it would help the reviewers reconsider their final marks.
+We thank the reviewers for their comments and feedback. We appreciate that our approach was found original, technically correct, and clearly presented. We believe we addressed all the criticized points and we hope that the reviewers will reconsider their final marks.
 We start by addressing the common concerns:
 \vspace{1.5pt}\\
 % \textbf{General Responses:}
@@ -32,15 +32,18 @@ We start by addressing the common concerns:
 %
 % this is the reason why we chose to use the term MCMC.
 %
-\textbf{\uunder{Contributions \& Experiments:}} We would like to underline that, to our knowledge, SWF is the first nonparametric IGM algorithm with explicit theoretical guarantees. Our approach is \emph{substantially} different than all the existing approaches and might introduce a new branch to IGM. 
-% Besides, the random projections bring an interesting feature which might have important implications in terms of privacy. 
-In this sense, our main contributions are mostly theoretical and conceptual, which are then validated by our experiments, whose goal is to provide a `proof-of-concept', rather than to try to achieve state-of-the-art results. This is the reason why we mostly focused on validating our algorithm, rather than comparing it with the existing approaches. On the other hand, unfortunately it is already very difficult the assess the validity of IGM algorithms. \emph{The most common way is to visualize the generated samples, as is done in our paper.} To enable comparison with other algorithms, we will include their visual results in the supp.\ \vspace{2pt} \\
+\textbf{\uunder{Contributions \& Experiments:}} We highlight that, to our knowledge, SWF is the first nonparametric IGM algorithm with explicit theoretical guarantees. In this respect, our approach is \emph{substantially} new and might introduce a new branch to IGM.
+% Besides, the random projections bring an interesting feature which might have important implications in terms of privacy.
+Since many concepts and proofs are introduced in this paper, it has a resolutely theoretical flavour, which we believe is its main strength.
+The proposed method is validated by `proof-of-concept' experiments, whose objective is \emph{not} to achieve state-of-the-art results. This part is the topic of ongoing research and is not claimed in the paper. This said, assessing the validity of IGM algorithms \emph{is generally done by visualizing the generated samples, as is done in our paper.} To enable comparison with other algorithms, we will include their visual results in the supp.\ \vspace{2pt} \\
 %
 % \umut{As a general response -- Experiments}
 %
 \textbf{\color{red} \uunder{Rev. 1: }}
 %
-We thank R1 for the detailed review and the positive comments on the originality, clarity, and the impact. \\ % of our submission.
+We thank R1 for the detailed positive review
+%and the positive comments on the originality and clarity,
+and the very relevant suggestions for minor modifications.\\ % of our submission.
 %
 % \rev{I think the experiments section has room for improvement. For instance, one advantage of the SWF method is computational efficiency. How would this idea then scale up to higher resolution images or a more complex data set?}
 %
@@ -86,9 +89,9 @@ We thank R1 for the detailed review and the positive comments on the originality
 %
 \textbf{\color{red} \underline{Rev. 2:}}
 %
-We must admit that we have found some of the comments and the rejection conclusion to be very harsh. We would like to clarify that our proposed algorithm is \textbf{not} a gradient-based MCMC algorithm, and is in fact a nonparametric IGM algorithm that uses some ideas from Langevin MCMC. \\
+We must admit that we found some comments and the rejection conclusion very harsh. We would like to clarify that our proposed algorithm is \textbf{not} a gradient-based MCMC algorithm, but a nonparametric IGM algorithm only using ideas from Langevin MCMC. We felt the title was not clear enough in this respect. Please refer to the response \ubul{1} below and the initial notes for more clarifications.
 %
-We can agree that the paper is technical and our notation might be sometimes heavy since we bring rather disconnected fields together (i.e., IGM, gradient flows and diffusions). However, as other two reviewers also mention explicitly, we believe that our paper is very carefully organized and well-written if we consider its technicalness. On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document. Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting. Please refer to the response \ubul{1} below and the initial notes for more clarifications. We would like to ask the reviewer to reconsider our submission in the light of these informations.  \vspace{2pt} \\
+Then, we agree that the paper is resolutely technical and that our notations might sometimes feel new, bringing previously disconnected fields together:  IGM, gradient flows and diffusions. However, care was taken to have them consistent and rigorous. The two other reviewers explicitly appreciated our effort to carefully organize and write this paper, notwithstanding its technicalness. On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document. Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting. We would very much appreciate the reviewer to reconsider our submission.\vspace{2pt} \\
 % \rev{The paper claims to be proposing a novel gradient-based MCMC algorithm but its main idea seems to be driven by the SGLD algorithm.}
 % \umut{Wrong.}
 % \rev{The paper also proposes to use the SW2 distance with some regularisation term as the objective function, but I fail to see how this is a novel contribution to their proposed MCMC method.}
@@ -96,7 +99,7 @@ We can agree that the paper is technical and our notation might be sometimes hea
 % \rev{I find the paper to be poorly written and quite hard to follow. It is filled with math proofs that can be moved to the appendix section.}
 % \umut{WTF? We should mention that it's technical paper.}
 % \rev{Also, the experiment section is very weak. They only provided visual samples on toy datasets and failed to provide qualitative measurements on their samples such as using ESS.}
-% 
+%
 % \umut{ESS is meaningless. We should refer to the initial explanation.}
 %
 \textbf{\color{red} \underline{Rev. 3:}}
@@ -109,8 +112,8 @@ We thank the reviewer for the very detailed investigation and constructive comme
 %
 % \rev{2. Furthermore, it is not clear to me how the proposed algorithm is nonparametric.}
 %
-\ubul{2} SWF is nonparametric in the sense that the transport map it generates between $\mu$ and $\nu$ does not belong to some family of functions, like a deep network. 
-% At each iteration, the map is augmented with the application of another function, yielding a truly non-parametric approach. 
+\ubul{2} SWF is nonparametric in the sense that the transport map it generates between $\mu$ and $\nu$ does not belong to some family of functions, like a deep network.
+% At each iteration, the map is augmented with the application of another function, yielding a truly non-parametric approach.
 We will clarify this in the revision.
 %
 % \rev{3. In Section 1, $T_t$ is proposed as a transport map at time t. What is the range of t? I suspect it is $(0, \infty)$ only from Section 3.}
@@ -125,7 +128,7 @@ We will clarify this in the revision.
 %
 % \rev{5. In the end of Section 1, it says that "we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods." I don't see how the proposed algorithm is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods.}
 %
-\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating SDEs. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ neither depends on $t$ nor $\mu_t$. In this sense, SWF is similar to SGLD: we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue. 
+\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating SDEs. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ neither depends on $t$ nor $\mu_t$. In this sense, SWF is similar to SGLD: we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue.
 % by improving the paragraph in lines 259-263.
 %
 % \rev{6. In Section 2, the authors write that "The optimal map T is also known as the increasing arrangement, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum." Is there a reference for this?}
@@ -138,27 +141,27 @@ We will clarify this in the revision.
 %
 % \umut{Antoine, what happens if we use a very small number of projections? It gives shitty results or not?}
 % \antoine{See the answer we gave to Rev. 1 for an answer to this very relevant question.}
-\ubul{7} Please see the `\textbf{Experiments}' response that we provided for Rev.\ 1.  
+\ubul{7} Please see the `\textbf{Experiments}' response that we provided for Rev.\ 1.
 % \rev{8. It appears to me that the proposed approach requires that $\mu$ and $\nu$ have the same support/dimension d. This may seriously limit its application as it cannot be used in purposes like dimension reduction.}
 %
 % \umut{True. Don't we discuss this in the conclusion?}
 %
-\ubul{8} In fact, the theory allows us to use a lower dimensional $\mu$ by using 
-% the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic. 
-a very simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by a random full-rank matrix of size $d' \times d$, and use this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this feature. We will discuss this topic in the paper.
+\ubul{8} In fact, the theory allows us to use a lower dimensional $\mu$ by using
+% the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic.
+a very simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by a random full-rank matrix of size $d' \times d$, and use this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this feature. We will mention this topic in the paper.
 %
 % \rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?}
 %
 %\antoine{We were tacitly referring to parametric IGM methods such as GANs. The fact is that such methods have been witnessing a tremendous popularity in the recent years and the quality of generated samples is good. ***In terms of qualitative metrics, can we skip the comparison?***}
 % \umut{We should explicitly mention those methods. We should mention that it's difficult to compare these approaches.}
-\ubul{9} We were tacitly referring to parametric IGM methods such as the recent GANs and VAEs, we will clarify this issue. Please see our initial comment about comparison with these methods.  
+\ubul{9} We were tacitly referring to parametric IGM methods such as the recent GANs and VAEs, we will clarify this issue. Please see our initial comment about comparison with these methods.
 % \rev{10. Theorem 3 shows that when h is small enough, there is a non-asymptotic error guarantee. The first experiment chooses h = 1. Is this considered a big value? The value of h for the second experiment is not provided.}
 %
 % \antoine{The parameter $h$ may be thought of as a learning rate. In our experiments, we took $h=1$ everywhere. Still, experiments with smaller $h$ may lead to better results, even if performance is much slower? Should we do this? Do we have time?...}
-% \umut{Oops. Antoine, Alain, what do we say?} 
+% \umut{Oops. Antoine, Alain, what do we say?}
 %
 % \alain{we could say that ``due to space constraints, we did not give a full numerical study of the effect of the step size on generated models''}
-\ubul{10} Even though the guarantees are for small $h$, the theory does not imply that larger $h$ would not perform well. In all the experiments we used $h=1$ and observed that we obtain similar performance within a smaller amount of time.    
+\ubul{10} Even though the guarantees are for small $h$, the theory does not imply that larger $h$ would not perform well. In all the experiments we used $h=1$ and observed that we obtain similar performance within a smaller amount of time.
 % \rev{11. What is $N_\theta$ in Section 4, and what is $L^1$ in Equation (3) in Section 2?}
 %
 \ubul{11} $N_\theta$ denotes the number of projections $\theta_{k,n}$ (i.e.\ $n \in \llbracket 1, N_\theta \rrbracket$) and it is implicitly defined in line 206. $L^1(\mu)$ denotes the absolutely integrable functions under $\mu$. We will clarify these definitions.
