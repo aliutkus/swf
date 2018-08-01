@@ -10,7 +10,7 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 % \usepackage{microtype}      % microtypography
-\usepackage{ stmaryrd }
+% \usepackage{ stmaryrd }
 
 \usepackage{lipsum}
 \usepackage{xcolor}
@@ -48,7 +48,7 @@ and the very relevant suggestions for minor modifications.\\ % of our submission
 % \rev{I think the experiments section has room for improvement. For instance, one advantage of the SWF method is computational efficiency. How would this idea then scale up to higher resolution images or a more complex data set?}
 %
 \textbf{\uunder{Experiments:}} SWF seems to depend more on the \textit{complexity} of the data than on its dimensionality:
-% SWF is not so much dependent on the actual dimension of the data but its \textit{complexity}: 
+% SWF is not so much dependent on the actual dimension of the data but its \textit{complexity}:
 generating MNIST turns out to be much easier than generating CelebA images of the same dimension. We suspect a dependency between $N_\theta$ and the structure of the data, as in the theory of compressive sampling. We will have a discussion on this matter. \\
 \textbf{\uunder{Manipulation:}} This topic was overlooked due to space limitations. One possible way is to interpolate two particles coming from $\mu$ in the beginning of the algorithm and observe the outputs of the algorithm for the interpolated particles. We have conducted new experiments now and obtained interesting outcomes, which we will present in the supp.\ doc. \\
 %
@@ -91,9 +91,14 @@ generating MNIST turns out to be much easier than generating CelebA images of th
 %
 \textbf{\color{red} \underline{Rev. 2:}}
 %
-We must admit that we found some comments and the rejection conclusion very harsh. We would like to clarify that our proposed algorithm is \textbf{not} a gradient-based MCMC algorithm, but a nonparametric IGM algorithm only using ideas from Langevin MCMC. We felt the title was not clear enough in this respect. Please refer to the response \ubul{1} below and the initial notes for more clarifications.
-%
-Then, we agree that the paper is resolutely technical and that our notations might sometimes feel new, bringing previously disconnected fields together:  IGM, gradient flows and diffusions. However, care was taken to have them consistent and rigorous. The two other reviewers explicitly appreciated our effort to carefully organize and write this paper, notwithstanding its technicality. On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document. Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting. We would very much appreciate the reviewer to reconsider our submission.\vspace{2pt} \\
+We must admit that we found some comments and the rejection conclusion very harsh. However, reading the review, we felt our title was not clear enough and the connection with MCMC was confusing.
+\ubul{1} We see MCMC as a family of methods for \emph{generating samples from a distribution by simulating a Markov chain}. In this sense, SWF indeed has the same goal: generating samples from $\nu$ by simulating the Markov chain in Eqn 7. However, we agree that \emph{SWF is definitely \textbf{not} a Bayesian posterior sampling algorithm}. We understand the concern and propose replacing the term `MCMC' in the title with `Diffusions': our proposed algorithm is \textbf{not} a gradient-based MCMC algorithm, but a nonparametric IGM algorithm only using ideas from Langevin MCMC.
+
+\vspace{-5pt}Then, we agree that the paper is resolutely technical and that our notations might sometimes feel new, bringing previously disconnected fields together:  IGM, gradient flows and diffusions. However, care was taken to have them consistent and rigorous. The two other reviewers explicitly appreciated our effort to carefully organize and write this paper, notwithstanding its technicality.
+% On the other hand, we do not understand which proofs the reviewer is referring to, since all the proofs are already provided in the supplementary document.
+Finally, ESS would not be an appropriate metric for measuring the performance since we are not in a classical MCMC setting, which should now be clearer than in the original version.
+
+\vspace{-5pt}In light of these clarifications, we would very much appreciate the reviewer to reconsider our submission favorably.\\
 % \rev{The paper claims to be proposing a novel gradient-based MCMC algorithm but its main idea seems to be driven by the SGLD algorithm.}
 % \umut{Wrong.}
 % \rev{The paper also proposes to use the SW2 distance with some regularisation term as the objective function, but I fail to see how this is a novel contribution to their proposed MCMC method.}
@@ -106,21 +111,21 @@ Then, we agree that the paper is resolutely technical and that our notations mig
 %
 \textbf{\color{red} \underline{Rev. 3:}}
 %
-We thank the reviewer for the very detailed investigation and constructive comments. % We believe we have addressed bla bla. We hope the reviewer can increase the grade etc.
+We thank the reviewer for the detailed investigation and constructive comments. % We believe we have addressed bla bla. We hope the reviewer can increase the grade etc.
 %
 % \rev{1. The title of the paper is "Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and MCMC". This is a bit misleading. I do not see that the proposed algorithm has an MCMC aspect on it. The authors state that "gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods". But it does not justify saying that this is a generative modeling algorithm via MCMC.}
 %
-\ubul{1} We see MCMC as a family of methods for \emph{generating samples from a distribution by simulating a Markov chain}. In this sense, SWF indeed has the same goal: generating samples from $\nu$ by simulating the Markov chain in Eqn 7. On the other hand, \emph{SWF is definitely \textbf{not} a Bayesian posterior sampling algorithm}. We understand the concern and propose replacing the term `MCMC' in the title with `Diffusions'.
 %
 % \rev{2. Furthermore, it is not clear to me how the proposed algorithm is nonparametric.}
 %
+Concerning wording the method as MCMC, please refer to the response \ubul{1} above.
 \ubul{2} SWF is nonparametric in the sense that the transport map it generates between $\mu$ and $\nu$ does not belong to some family of functions, like a deep network.
 % At each iteration, the map is augmented with the application of another function, yielding a truly non-parametric approach.
 We will clarify this in the revision.
 %
 % \rev{3. In Section 1, $T_t$ is proposed as a transport map at time t. What is the range of t? I suspect it is $(0, \infty)$ only from Section 3.}
 %
-\ubul{3} Yes, indeed $t \in [0, \infty)$. We will clarify this issue.
+\ubul{3} Yes, indeed $t \in [0, \infty)$. We will clarify this.
 %
 % \rev{4. Again in Section 1, the authors state that "One would hope for $\mu_t = T_t \#\mu$ to converge to the minimum of the functional optimization problem." Has there been any theoretical studies on this? If so, any citations?}
 %
@@ -130,7 +135,7 @@ We will clarify this in the revision.
 %
 % \rev{5. In the end of Section 1, it says that "we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods." I don't see how the proposed algorithm is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods.}
 %
-\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating SDEs. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ neither depends on $t$ nor $\mu_t$. In this sense, SWF is similar to SGLD: we also discretize a (much more complicated) SDE for generating samples from a target distribution. We will clarify this issue.
+\ubul{5} This question is partially answered in lines 259-263. Stochastic gradient MCMC (SG-MCMC) methods are based on simulating SDEs. The most well-known SG-MCMC approach being SGLD, is obtained by discretizing $d X_t = - \nabla U(X_t) dt + \sqrt{2} dW_t$ which resembles the SDE in Eqn 7. Here, $U$ neither depends on $t$ nor $\mu_t$. In this sense, SWF is similar to SGLD: we also discretize a (much more complicated) SDE for generating samples from a target distribution. This will be made clearer.
 % by improving the paragraph in lines 259-263.
 %
 % \rev{6. In Section 2, the authors write that "The optimal map T is also known as the increasing arrangement, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum." Is there a reference for this?}
@@ -148,9 +153,9 @@ We will clarify this in the revision.
 %
 % \umut{True. Don't we discuss this in the conclusion?}
 %
-\ubul{8} In fact, the theory allows us to use a lower dimensional $\mu$ by using
+\ubul{8} In fact, theory allows us to use a lower dimensional $\mu$ by using
 % the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic.
-a very simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by a random full-rank matrix of size $d' \times d$, and use this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this feature. We will mention this topic in the paper.
+a simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d' \times d$, using this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this development, but will include it again.
 %
 % \rev{9. I like the fact that there are detailed discussions about related work in the paper with the page limit. However, there is no comparison with the state-of-the-art algorithms in this domain at all in the experiment section. The authors wrote that "The whole experiment on the FashionMNIST requires around 1 hour of computational time on the CPU of a standard laptop computer, to be compared with the significant resource requirements of the current IGM methods." But what are these compared IGM methods and what is the quantitative performance comparison with these methods besides the computational/resource requirements?}
 %
