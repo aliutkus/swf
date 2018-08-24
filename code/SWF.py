@@ -16,7 +16,7 @@ from math import sqrt
 import torch.multiprocessing as mp
 import queue
 from math import floor
-from interp import interpolate
+from interpolate import interp1d
 
 
 def train_swf(particles, target_queue, num_quantiles,
@@ -55,9 +55,9 @@ def train_swf(particles, target_queue, num_quantiles,
         loss = criterion(particles_qf, target_qf)
 
         # transort the marginals
-        z = interpolate(particles_qf, quantiles, projections)
+        z = interp1d(particles_qf, quantiles, projections)
         z = torch.clamp(z, 0, 100)
-        z = interpolate(quantiles, target_qf, z)
+        z = interp1d(quantiles, target_qf, z)
 
         noise = torch.randn(num_samples, data_dim, device=device) / sqrt(data_dim)
 
