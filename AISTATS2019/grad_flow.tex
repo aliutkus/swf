@@ -1,0 +1,233 @@
+%!TEX root = ./nips_2018_sketchmcmc_supp.tex
+
+\section{Proof of Theorem~\ref{thm:continuity}}
+
+We first need to generalize \cite[Lemma 5.4.3]{bonnotte2013unidimensional} to distribution $\rho \in \mrl^{\infty}(\cB(0,r))$, $r >0$.
+\begin{thm} \label{thm:implicit_step}
+ Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a time step $h > 0$, regularization constant $\lambda > 0$ and a radius $r > \sqrt{d}$. For any probability measure $\mu_0$ on $\cB(0, r)$ with density $\rho_0 \in \mrl^{\infty}(\cB(0, r))$, there is a probability measure $\mu$ on $\cB(0,r)$ minimizing:
+\[
+\mathcal{G}(\mu) = \mcf^{\nu}_{\lambda} (\mu) + \frac{1}{2h} \W^2(\mu, \mu_0) ,
+\]
+where $\mcf^{\nu}_\lambda$ is given by \eqref{eqn:sw_optim}.
+Moreover the optimal $\mu$ has a density $\rho$ on $\cB(0,r)$ and:
+\begin{equation} \label{ineq:inf_norm_bound}
+||\rho||_{\mrl^{\infty}} \leq (1 + h/\sqrt{d})^d ||\rho_0||_{\mrl^{\infty}}.
+\end{equation}
+\end{thm}
+\begin{proof}
+The set of measures supported on $\cB(0,r)$ is compact in the topology given by $\W$ metric. Furthermore by \cite[Lemma 9.4.3]{ambrosio2008gradient} $\He$ is lower semicontinuous on $(\PS(\cB(0,r)),\W)$. Since by \cite[Proposition 5.1.2, Proposition 5.1.3]{bonnotte2013unidimensional}, $\SW$ is a distance  on $\PS(\cB(0,r))$, dominated by $d^{-1/2} \W$, we have:
+\[
+|\SW(\pi_0, \nu) - \SW(\pi_1, \nu)| \leq \SW(\pi_0, \pi_1) \leq \frac{1}{\sqrt{d}}\W(\pi_0, \pi_1).
+\]
+The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology given by $\W$, which implies that $\SW^2(\cdot, \nu)$ is continuous in this topology as well. Therefore $\mcg : \PS(\cB(0,r)) \to \ocint{-\infty,\plusinfty}$ is a lower semicontinuous function on the compact set $(\PS(\cB(0,r)),\W)$. Hence there exists a minimum  $\mu$ of $\mcg$ on $\mathcal{P}(\cB(0,r))$. Furthermore, since $\mch(\pi) = +\infty$  for measures $\pi$ that do not admit a density with respect to Lebesgue measure, the measure $\mu$ must admit a density $\rho$.
+
+If $\rho_0$ is smooth and positive on $\cB(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} When $\rho_0$ is just in $\mrl^{\infty}(\cB(0,r))$, we proceed by smoothing. 
+For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $(t,x,y) \mapsto (2\pi)^{d/2} \exp(\norm[2]{x-y}/2)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $(\rho_t)_{t}$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
+%Let $\mu_t$ be the heat flow on $\cB(0,r)$ starting from $\mu_0$ ([[some ref on existance?]]). 
+%Then for any $t > 0$, $\mu_t$ has a smooth density $\rho_t$ such that  
+For $t \in (0, 1]$ let $\hat{\mu}_t$ be the minimum of $ \mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho}_t$ be the density of $\hat{\mu}_t$. Using \cite[Lemma 5.4.3.]{bonnotte2013unidimensional} we get 
+\[
+||\hat{\rho}_t ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
+\]
+so $\hat{\rho_{t}}$ lies in a ball of finite radius in $\mrl^{\infty}$.  Using compactness of $\mathcal{P}(\cB(0,r))$ in weak topology and compactness of closed ball in $\mrl^{\infty}(\cB(0,r))$ in weak star topology, we can choose a subsequence $\hat{\mu}_{t_k} , \hat{\rho}_{t_k}$, $\lim_{k \to \plusinfty} t_k =0$, that converges along that subsequence to limits $\hat{\mu}$, $\hat{\rho}$. Obviously $\hat{\rho}$ is the density of $\hat{\mu}$, since for any continuous function $f$  on $\cB(0,r)$ we have:
+\[
+\int \hat{\rho} f dx = \lim_{k \rightarrow \infty} \int \rho_{t_k} f dx = \lim_{k \rightarrow \infty} \int f d\mu_{t_k} = \int f d\mu.
+\]
+Furthermore, since $\hat{\rho}$ is the weak star limit of a bounded subsequence, we have:
+\[
+||\hat{\rho} ||_{\mrl^{\infty}} \leq \limsup_{k \rightarrow \infty}(1 + h\sqrt{d})^d ||\rho_{t_k}||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_0||_{\mrl^{\infty}}.
+\]
+To finish, we just need to prove that $\hat{\mu}$ is a minimum of $\mcg$. We remind our reader, that we already established existence of some minimum $\mu$ (that might be different from $\hat{\mu}$). Since $\hat{\mu}_{t_k}$ converges weakly to $\hat{\mu}$ in $\mathcal{P}(\cB(0,r))$, it implies convergence  in $\W$ as well since $\cB(0,r)$ is compact. Similarly $\mu_{t_k}$ converges to $\mu_0$ in $\W$. Using the lower semicontinuity of $\mcg$ we now have:
+\[
+\begin{aligned}
+\mcf^{\nu}_{\lambda}(\hat{\mu}) + \frac{1}{2h} \W^2(\hat{\mu}, \mu_0)  & \leq \liminf_{k \rightarrow \infty} \left( \mcf^{\nu}_{\lambda}(\hat{\mu}_{t_k}) + \frac{1}{2h} \W^2(\hat{\mu}_{t_k} , \mu_0) \right) \\
+& \leq \liminf_{k \rightarrow \infty}  \mcf^{\nu}_{\lambda}(\mu) + \frac{1}{2h} \W^2(\mu , \mu_{t_k})   \\
+& + \frac{1}{2h}  \W^2(\hat{\mu}_{t_k}, \mu_0) - \frac{1}{2h} \W^2(\hat{\mu}_{t_k}, \mu_{t_k})   \\
+& = \mcf^{\nu}_{\lambda} (\mu) + \frac{1}{2h} \W^2(\mu, \mu_0) ,
+\end{aligned}
+\]
+where the second inequality comes from the fact, that $\hat{\mu}_{t_k}$ minimizes $\mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h}\W^2(\cdot, \mu_{t_k})$. From the above inequality and previously established facts, it follows that $\hat{\mu}$ is a minimum of $\mcg$ with density satisfying \ref{ineq:inf_norm_bound}.
+\end{proof}
+
+\begin{definition} \textbf{Minimizing movement scheme}
+  \label{def:mini_move}
+Let $r >0$ and  $\mcf : \mathbb{R_+} \times \PS(\cB(0,r)) \times \PS(\cB(0,r))\rightarrow \rset$ be a functional. Let $\mu_0 \in \PS(\cB(0,r))$ be a starting point. For $h> 0$ a piecewise constant trajectory $\mu^h : [0, \infty) \rightarrow \PS(\cB(0,r))$ for $\mcf$ starting at $\mu_0$ is a function such that:
+\begin{itemize}
+\item $\mu^h(0) = \mu_0$.
+\item $\mu^h$ is constant on each interval $[nh, (n+1)h)$, so $\mu^h(t) = \mu^h(nh)$ with $n = \lfloor t/h \rfloor$.
+\item $\mu^h((n+1)h )$ minimizes the  functional $ \zeta  \mapsto \mcf(h,  \zeta ,\mu^h(nh))$, for all $n \in \nset$.
+\end{itemize}
+We say $\hat{\mu}$ is a minimizing movement scheme for $\mcf$ starting at $\mu_0$, if there exists a family of piecewise constant trajectory $(\mu^h)_{h >0}$ for $\mcf$ such that $\hat{\mu}$ is a pointwise limit of $\mu^h$ as $h$ goes to $0$, \ie~for all $t \in \rset_+$, $\lim_{h \to 0} \mu^h(t) = \mu(t)$ in $\PS(\cB(0,r))$. We say that $\tilde{\mu}$ is a generalized minimizing movement for  $\mcf$ starting at $\mu_0$, if there exists a family of piecewise constant trajectory $(\mu^h)_{h >0}$ for $\mcf$ and  a sequence $(h_n)_n$, $\lim_{n \to \infty} h_n = 0$, such that $\mu^{h_n}$ converges pointwise to $\tilde{\mu}$.
+\end{definition}
+
+
+\begin{thm} \label{thm:existance_gmm_scheme}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Fix a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Given an absolutely continuous measure $\mu_0 \in \mathcal{P}(\cB(0,r))$ with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$, there is a generalized minimizing movement scheme $(\mu_t)_t$ in $\mathcal{P}(\cB(0,r))$ starting from $\mu_0$ for the functional defined by 
+\begin{equation} \label{gmm:sw_ent_functional}
+\mcf^{\nu}(h, \mu_+, \mu_-) = \mcf^{\nu}_{\lambda}(\mu_+) + \frac{1}{2h}\W^2(\mu_+, \mu_-).
+\end{equation}
+Moreover for any time $t > 0$, the probability measure $\mu_t = \mu(t)$ has density $\rho_t$ with respect to the Lebesgue measure and:
+\begin{equation}
+  \label{eq:bound:existance_gmm_scheme}
+||\rho_t||_{\mrl^{\infty}} \leq e^{d t\sqrt{d}} ||\rho_0||_{\mrl^{\infty}} .  
+\end{equation}
+\end{thm}
+\begin{proof}
+We start by noting, that by \ref{thm:implicit_step} for any $h > 0$ there exists a piecewise constant trajectory $\mu^h$ for \ref{gmm:sw_ent_functional} starting at $\mu_0$. Furthermore for $t \geq 0$ measure $\mu_t^h = \mu^h(t)$ has density $\rho_t^h$, and:
+\begin{equation} \label{ineq:dens_bound}
+||\rho_t^h||_{\mrl^{\infty}} \leq e^{d \sqrt{d} (t+ h)} ||\rho_0||_{\mrl^{\infty}}.
+\end{equation}
+Let us choose $T > 0$. We denote $\rho^h(t,x) = \rho_t^h(x)$. 
+%Also, for $h > 0$ we define a measure $\rho^h$ on $[0, T] \times \cB(0,r)$ by:
+%\[
+%\int \xi(t,x) d\rho^h(t,x) dx dt = \frac{1}{T} \int_0^T \int \xi(t,x) d\rho_t^h(x dx) dt 
+%\]
+%for all continuous and bounded functions $\xi$. 
+For $ h \leq 1$, the functions $\rho^h$ lie in a ball in $\mrl^{\infty}([0,T] \times \cB(0,r))$, so from Banach-Alaoglu theorem there is a sequence $h_n$ converging to $0$, such that $\rho^{h_n}$ converges in weak-star topology in $\mrl^{\infty}([0,T] \times \cB(0,r))$ to a certain limit $\rho$. Since $\rho$ has to be nonnegative except for a set of measure zero, we assume $\rho$ is nonnegative. We denote $\rho_t(x) = \rho(t,x)$. We will prove that for almost all $t$, $\rho_t$ is a probability density and $\mu_{t}^{h_n}$ converges in $\W$ to a measure $\mu_t$ with density $\rho_t$.
+
+First of all, for almost all $t \in [0,T]$, $\rho_t$ is a probability density, since for any Borel set $A \subseteq [0,T]$ the indicator of set $A \times \cB(0,r)$ is integrable, and hence by definition of the weak-star topology:
+\[
+\int_A \int_{\cB(0,r)} \rho_t(x) dx dt = \lim_{n \rightarrow \infty} \int_A \int_{\cB(0,r)} \rho_t^{h_n}(x) dx dt,
+\]
+and so we have to have $\int \rho_t(x) dx = 1$ for almost all $t \in [0,T]$. Nonnegativity of $\rho_t$ follows from nonnegativity of $\rho$. 
+
+We will now prove, that for almost all $t \in [0,T]$ the measures $\mu_t^{h_n}$ converge to a measure with density $\rho_t$. Let $t \in (0,T)$, take $\delta < \min(T-t, t)$ and $\zeta \in \rmc^1(\cB(0,r))$. We have:
+\begin{multline} \label{ineq:mu_t_conv_bound}
+\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \int_{\cB(0,r)} \zeta d\mu_t^{h_m} \right| \leq \\ \left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_n} ds \right| + 
+\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_m} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_m} ds \right| +  \\
+\left| \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_m} ds - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_n} ds \right|.
+\end{multline}
+
+Because $\mu_t^{h_n}$ have densities $\rho_t^{h_n}$ and both $\rho^{h_n}$, $\rho^{h_m}$ converge to $\rho$ in weak-star topology, the last element of the sum on the right hand side converges to zero, as $n,m \rightarrow \infty$. Next, we get a bound on the other two terms.
+
+
+First, if we denote by $\gamma$ the optimal transport plan between $\mu_t^{h_n}$ and $\mu_s^{h_n}$, we have:
+\begin{multline} \label{ineq:expectation_W2_bound}
+\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \int_{\cB(0,r)} \zeta d\mu_s^{h_n} \right|^2 \leq \int_{\cB(0,r) \times \cB(0,r)} \left| \zeta(x) - \zeta(y) \right|^2 d\gamma(x,y)\\ \leq ||\nabla \zeta||_{\infty}^2 \W^2(\mu_t^{h_n}, \mu_s^{h_n}).
+\end{multline}
+In addition, for $n_t = \lfloor t/h_n \rfloor$ and $n_s = \lfloor s/h_n \rfloor$ we have $\mu_t^{h_n} = \mu_{n_t h_n}^{h_n}$ and $\mu_s^{h_n} = \mu_{n_s h_n}^{h_n}$. For all $k \geq 0$ we have:
+\begin{equation}
+  \label{eq:wasser_bound_1}
+\W^2(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \leq 2h_n(\mcf^{\nu}_{\lambda}(\mu_{kh_n}^{h_n}) - \mcf^{\nu}_{\lambda}(\mu_{(k+1)h_n}^{h_n})  .  
+\end{equation}
+Using this result and \eqref{ineq:expectation_W2_bound} and assuming without loss of generality $n_t \leq n_s$, from the Cauchy-Schwartz inequality we get:
+\begin{align}
+\nonumber
+  \W^2(\mu_{t}^{h_n}, \mu_s^{h_n}) & \leq \left( \sum_{k= n_t}^{n_s-1} \W(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \right)^2 \\
+  \nonumber
+                                   & \leq |n_t - n_s|\sum_{k=n_t}^{n_s 1} \W^2(\mu_{kh_n}^{h_n}, \mu_{(k+1)h_n}^{h_n}) \\
+    \label{eq:wasser_bound_2}
+& \leq 2h_n|n_t - n_s|(\mcf^{\nu}_{\lambda}(\mu_{n_t h_n}^{h_n}) - \mcf^{\nu}_{\lambda}(\mu_{n_s h_n}^{h_n}))  \leq 2C(|t-s| + h_n),
+\end{align}
+where we used for the last inequality, denoting $C = \mcf^{\nu}_{\lambda}(\mu_0) - \min_{\PS(\cB(0,r))} \mcf^{\nu}_{\lambda}$, that $(\mcf^{\nu}_{\lambda}(\mu_{kh_n}^{h_n}))_n$ is non-increasing by \eqref{eq:wasser_bound_1} and $\min_{\PS(\cB(0,r))} \mcf^{\nu}_{\lambda}$ is finite since $ \mcf^{\nu}_{\lambda}$ is lower semi-continuous.
+Finally, using Jensen's inequality, the above bound and \ref{ineq:expectation_W2_bound} we get:
+\[
+\begin{aligned}
+\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \int_{\cB(0,r)} \zeta d\mu_s^{h_n} ds \right|^2 & \leq \frac{1}{2\delta} \int_{t - \delta}^{t + \delta} \left| \int_{\cB(0,r)} \zeta d\mu_{t}^{h_n} - \int_{\cB(0,r)} \zeta d\mu_s^{h_n} \right|^2 ds \\
+& \leq \frac{C ||\nabla \zeta||_{\infty}^2}{\delta} \int_{t-\delta}^{t+\delta} (|t-s| +h_n) ds \\
+& \leq 2C ||\nabla \zeta||_{\infty}^2 (h_n + \delta).
+\end{aligned}
+\]
+Together with \eqref{ineq:mu_t_conv_bound}, when taking $\delta = h_n$, this result means that $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ is a Cauchy sequence for all $t \in (0, T)$. On the other hand, since $\rho^{h_n}$ converges to $\rho$ in weak-star topology on $\mrl^{\infty}$, the limit of $\int_{\cB(0,r)} \zeta d\mu_t^{h_n}$ has to be $\int_{\cB(0,r)} \zeta(x) \rho_t(x) dx$ for almost all $t \in (0,T)$. This means that for almost all $t \in [0,T]$ sequence $\mu_{t}^{h_n}$ converges to a measure $\mu_t$ with density $\rho_t$.
+
+Let $ S \in [0,T]$ be the set of times such that for $t \in S$ sequence $\mu_{t}^{h_n}$ converges to $\mu_t$. As we established almost all points from $[0,T]$ belong to $S$. Let $ t \in [0,T] \setminus S$. Then, there exists a sequence of times $t_k \in S$ converging to $t$, such that $\mu_{t_k}$ converge to some limit $\mu_t$. We have:
+\[
+\W(\mu_t^{h_n}, \mu_t) \leq \W(\mu_{t}^{h_n}, \mu_{t_k}^{h_n}) + \W(\mu_{t_k}^{h_n}, \mu_{t_k}) + \W(\mu_{t_k}, \mu_t).
+\]
+From which we have for all $k \geq 1$:
+\[
+\limsup_{n \rightarrow \infty} \W(\mu_{t}^{h_n}, \mu_t) \leq \W(\mu_{t_k}, \mu_t) + \limsup_{n\rightarrow \infty} \W(\mu_t^{h_n}, \mu_{t_k}^{h_n}),
+\]
+and using \eqref{eq:wasser_bound_2}, we get $\mu_{t}^{h_n} \rightarrow \mu_t$. Furthermore, the measure $\mu_t$ has to have density, since $\rho_{t}^{h_n}$ lie in a ball in $\mrl^{\infty}(\cB(0,r))$, so we can choose a subsequence of $\rho_t^{h_n}$ converging in weak-star topology to a certain limit $\hat{\rho}_t$, which is the density of $\mu_t$. 
+
+We use now the diagonal argument to get convergence for all $t >0$. Let $(T_k)_{k=1}^{\infty}$ be a sequence of times increasing to infinity. Let $h_{n}^1$ be a sequence converging to $0$, such that $\mu_t^{h_n^1}$ converge to $\mu_t$ for all $t \in [0, T_1]$. Using the same arguments as above, we can choose a subsequence $h_n^2$ of $h_n^1$, such that $\mu_{t}^{h_n^2}$ converges to a limit $\mu_t$ for all $t \in [0, T_2]$. Inductively, we construct subsequences $h_{n}^k$, and in the end take $h_n = h_n^n$. For this subsequence we have that $\mu_t^{h_n}$ converges to $\mu_t$ for all $t > 0$, and $\mu_t$ has a density satisfying the bound from the statement of the theorem.
+
+Finally, note that \eqref{thm:existance_gmm_scheme} follows from \eqref{ineq:dens_bound}.
+\end{proof}
+
+\begin{thm}
+Let $(\mu_t)_{t \geq 0}$ be a generalized minimizing movement scheme given by Theorem~\ref{thm:existance_gmm_scheme} with initial distribution $\mu_0$ with density $\rho_0 \in \mrl(\cB(0,r))$. We denote by $\rho_t$ the density of $\mu_t$ for all $t \geq 0$. Then $\rho_t$ satisfies the continuity equation:
+\[
+\frac{\partial \rho_t}{\partial t} + \divop(v_t \rho_t) + \lambda \Delta \rho_t = 0 \,, \quad \quad \quad v_t(x) = - \int_{\mathbb{S}^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta ,
+\]
+in a weak sense, that is for all $\xi \in \rmc_c^{\infty} ([0, \infty)\times \cB(0,r))$ we have:
+\[
+\int_0^{\infty} \int_{\cB(0,r)} \left[\frac{\partial \xi}{\partial t}(t,x) - v_t \nabla \xi(t,x)  - \lambda \Delta \xi(t,x)\right] \rho_t(x) dx dt = -\int_{\cB(0,r)} \xi(0,x)\rho_0(x) dx.
+\]
+\end{thm}
+\begin{proof}
+Our proof is based on the proof of \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. We proceed in five steps.
+
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt,label=(\arabic*)]
+\item Let $h_n \rightarrow 0$ be a sequence given by Theorem~\ref{thm:existance_gmm_scheme}, such that $\mu_t^{h_n}$ converges to $\mu_t$ pointwise. Furthermore we know that $\mu^{h_n}$ have densities $\rho^{h_n}$ that converge to $\rho$ in $\mrl^r$, for $r \geq 1$, and in weak-star topology in $\mrl^{\infty}$. Let $\xi \in \rmc_c^{\infty} ([0, \infty) \times \cB(0,r))$. We denote $\xi_{k}^n(x)  = \xi(kh_n, x)$. Using part $1$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we obtain:
+\begin{multline} \label{thm:cont_proof_part1}
+\int_{\cB(0,r)} \xi(0, x) \rho_0(x) dx + \int_0^{\infty} \int_{\cB(0,r)} \frac{\partial \xi}{\partial t}(t,x) \rho_t(x) dx dt \\
+= \lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x) }{h_n} dx.
+\end{multline}
+\item Again, this part is the same as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}. For any $\theta \in \mathbb{S}^{d-1}$ we denote by $\psi_{t, \theta}$ the unique Kantorovich potential from $\theta_{\#}^{*}\mu_t$ to $\theta_{\#}^{*}\nu$, and by $\psi_{t, \theta}^{h_n}$ the unique Kantorovich potential from $\theta_{\#}^{*} \mu_t^{h_n}$ to $\theta_{\#}^{*} \nu$. Then, by the same reasoning as part $2$ of the proof of  \cite[Theorem 5.6.1]{bonnotte2013unidimensional}, we get:
+
+\begin{multline} \label{thm:cont_proof_part2}
+\int_0^{\infty} \int_{\cB(0,r)} \fint (\psi_{t, \theta})' (\langle \theta, x \rangle ) \langle \theta , \nabla \xi (x, t) \rangle d\theta d\mu_t(x) dt \\
+= \lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n}.
+\end{multline}
+\item  Since $\xi$ is compactly supported and smooth, $\Delta \xi$ is Lipschitz, and so for any $ t \geq 0$ if we take $k = \lfloor t/h_n \rfloor$ we get $| \Delta \xi_k^n(x) - \Delta \xi(t,x) | \leq C h_n$ for some constant $C$. Let $T > 0$ be such that $\xi(t,x) = 0 $ for $t > T$. We have:
+\[
+\left| \sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx - \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt \right| \leq CTh_n .
+\]
+On the other hand,  we know, that $\rho^{h_n}$ converges to $\rho$ in weak star topology on $\mrl^{\infty}([0,T] \times \cB(0,r))$, and $\Delta \xi$ is bounded, so:
+\[
+\lim_{n \to \plusinfty}\left| \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi(t,x) \rho_{t}^{h_n}(x) dx dt - \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt \right|= 0.
+\]
+Combining those two results give:
+\begin{equation} \label{thm:cont_proof_part3}
+\lim_{n \rightarrow \infty} h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx = \int_{0}^{\plusinfty} \int_{\cB(0,r)} \Delta \xi (t,x) \rho_t(x) dx dt.
+\end{equation}
+
+\item 
+  Let $\phi_{k}^{h_n}$ denote the unique Kantorovich potential from $\mu_{kh_n}^{h_n}$ to $\mu_{(k-1)h_n}^{h_n}$. Using  \cite[Propositions 1.5.7 and 5.1.7]{bonnotte2013unidimensional}, as well as \cite[Equation (38)]{jordan1998variational} with $\Psi = 0$, and optimality of $\mu_{kh_n}^{h_n}$, we get:
+\begin{multline} \label{thm:cont_proof_eq0}
+\frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_{k}^n(x) \rangle d\mu_{kh_n}^{h_n}(x)   - \int_{\cB(0,r)} \fint (\psi_{kh_n}^{h_n})'(\theta^{*}) \langle \theta, \nabla \xi_k^n(x) \rangle d\theta d\mu_{kh_n}^{h_n}(x)\\ - \lambda \int_{\cB(0,r)}   \Delta \xi_k^n(x) d\mu_{kh_n}^{h_n}(x) ,
+\end{multline}
+which is the derivative of $\mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h_n}\W^2(\cdot, \mu_{(k-1)h_n})$ in the direction given by vector field $\nabla \xi_k^n$ is zero.
+
+Let $\gamma$ be the optimal transport between $\mu_{kh_n}^{h_n}$ and $\mu_{(k-1)h_n}^{h_n}$. Then:
+\begin{equation} \label{thm:cont_proof_eq1}
+\int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n}(x) - \rho_{(k-1)h_n}^{h_n}(x)}{h_n} dx = \frac{1}{h_n} \int_{\cB(0,r)} (\xi_k^n(y) - \xi_k^n(x)) d\gamma(x,y).
+\end{equation}
+\begin{equation} \label{thm:cont_proof_eq2}
+\frac{1}{h_n}\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n}(x) , \nabla \xi_k^n(x) \rangle d\mu_{kh_n}^{h_n}(x)  = \frac{1}{h_n} \int_{\cB(0,r)} \langle \nabla \xi_k^n(x), y-x \rangle d\gamma(x,y). 
+\end{equation}
+Since $\xi$ is $\rmc_c^{\infty}$, it has Lipschitz gradient. Let $C$ be twice the Lipschitz constant of $\nabla \xi$. Then we have $| \xi(y) - \xi(x) - \langle \nabla \xi(x), y-x \rangle | \leq C|x- y|^2$, and hence:
+\begin{equation} \label{thm:cont_proof_eq3}
+\int_{\cB(0,r)} |\xi_k^n(y) - \xi_k^n(x) - \langle \nabla \xi_k^n(x), y-x \rangle | d \gamma(x,y) \leq C\W^2( \mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}).
+\end{equation}
+Combining \eqref{thm:cont_proof_eq1}, \eqref{thm:cont_proof_eq2} and \eqref{thm:cont_proof_eq3}, we get:
+\begin{multline} \label{thm:cont_proof_eq4}
+\left|\sum_{k=1}^{\infty} h_n \int_{\cB(0,r)} \xi_k^n(x) \frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx  + 
+\sum_{k=1}^{\infty} h_n\int_{\cB(0,r)} \langle \nabla \phi_k^{h_n} , \nabla \xi_k^n \rangle d\mu_{kh_n}^{h_n} \right| \\
+\leq C\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}).
+\end{multline}
+
+As  some $\mcf^{\nu}_{\lambda}$ have a finite minimum on $\mathcal{P}(\cB(0,r))$, we have:
+\begin{equation} \label{thm:cont_proof_eq5}
+\begin{aligned}
+\sum_{k=1}^{\infty} \W^2(\mu_{(k-1)h_n}^{h_n}, \mu_{kh_n}^{h_n}) & \leq  2 h_n \sum_{k=1}^{\infty} \mcf^{\nu}_{\lambda}(\mu_{(k-1)h_n}^{h_n}) - \mcf^{\nu}_{\lambda}(\mu_{kh_n}^{h_n}) \\ & \leq 2h_n \left(\mcf^{\nu}_{\lambda}(\mu_0) - \min_{\mathcal{P}(\cB(0,r))}\mcf^{\nu}_{\lambda} \right).
+\end{aligned}
+\end{equation}
+and so the sum on the right hand side of the equation goes to zero as $n$ goes to infinity.
+
+From \eqref{thm:cont_proof_eq4}, \eqref{thm:cont_proof_eq5} and \eqref{thm:cont_proof_eq0} we conclude:
+\begin{multline} \label{thm:cont_proof_part4}
+\lim_{n \rightarrow \infty} - h_n \sum_{k=1}^{\infty} \xi_k^n(x)\frac{\rho_{kh_n}^{h_n} - \rho_{(k-1)h_n}^{h_n}}{h_n} dx = \\
+\lim_{n \rightarrow \infty} \left( h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \fint \psi_{kh_n, \theta}^{h_n} (\theta^{*}) \langle \theta, \nabla \xi_{k}^n \rangle d \theta d\mu_{kh_n}^{h_n} + h_n \sum_{k=1}^{\infty} \int_{\cB(0,r)} \Delta \xi_k^n(x) \rho_{kh_n}^{h_n}(x) dx  \right),
+\end{multline}
+where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \eqref{thm:cont_proof_part1}.
+\item  Combining \eqref{thm:cont_proof_part1}, \eqref{thm:cont_proof_part2}, \eqref{thm:cont_proof_part3} and \eqref{thm:cont_proof_part4} we get the result.   
+\end{enumerate}
+%
+\end{proof}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "nips_2018_sketchmcmc_supp"
+%%% End:
