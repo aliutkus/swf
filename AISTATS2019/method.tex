@@ -157,6 +157,18 @@ Besides, we can obtain further reductions in the computing time if the CDF $F_{\
 
 
 
+% \begin{remark}
+We also note that, even though the proposed algorithm assumes that $\mu$ and $\nu$ have the same dimensionality, the theory in fact allows us to use a lower dimensional $\mu$ by using a simple procedure: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d' \times d$, and then use this sample as the input to the algorithm. This procedure does not violate the theoretical guarantees. 
+%
+%
+% \umut{True. Don't we discuss this in the conclusion?}
+%
+% \ubul{8} In fact, theory allows us to use a lower dimensional $\mu$ by using
+% % the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic.
+% a simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d' \times d$, using this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this development, but will include it again.
+% \end{remark}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "nips_2018_sketchmcmc_arxiv"
