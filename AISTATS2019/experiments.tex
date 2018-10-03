@@ -11,6 +11,7 @@
  }
  % \vspace{-\baselineskip}
 \caption{a) \textbf{Left:} Distribution of particles (contour plots) during the estimation (top) and prediction (bottom) stages. \textbf{Right:} (top) Close-up of some generated particles in red superimposed with data points in black. (bottom) Target distribution. b) Influence of the regularization parameter~$\lambda$. }
+\label{fig:gmm1}
 \end{figure*}
 
 \section{Experiments}
@@ -30,12 +31,18 @@ We perform the first set of experiments on synthetic data where we consider a st
 We set the number of the mixture components to $20$ and for each component we randomly draw the weight, covariance matrix and the centroid. We make sure that the centroids are sufficiently distant from each other in order to make the problem more challenging. Given the model parameters, we generate $P=50000$ data samples in each experiment.
 
 
-In our first experiment, we set $d=2$ for visualization purposes and illustrate the general behavior of the algorithm. Figure~\ref{fig:toy_example} shows the evolution of the particles through the iterations. Here, we set $N_\theta=30$, $h=1$\footnote{Even though our guarantees are for small h, we have observed that $h=1$ provides similar results to the ones obtained with smaller $h$ within a smaller amount of time.}, and $\lambda=10^{-4}$.
+In our first experiment, we set $d=2$ for visualization purposes and illustrate the general behavior of the algorithm. Figure~\ref{fig:toy_example} shows the evolution of the particles through the iterations. Here, we set $N_\theta=30$, $h=1$,\footnote{Even though our guarantees are for small h, we have observed that $h=1$ provides similar results to the ones obtained with smaller $h$ within a smaller amount of time.} and $\lambda=10^{-4}$.
 %
-We observe that the empirical distribution of the particles converges rapidly to the target distribution. Furthermore, we can see that the QF, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ that is computed with one set of particles (so-called the \textit{estimation} stage) can be perfectly re-used for new unseen particles in a subsequent \textit{prediction} stage. In both cases, we observe two remarkable outcomes: (i) Even when some modes are isolated from the others, SWF is able to capture them successfully and we never observe a mode collapse. This is due to the OT nature of the procedure. (ii) The generated particles do not collapse on the data points, thanks to the entropy regularization.
+We observe that the empirical distribution of the particles converges rapidly to the target distribution. Furthermore, we can see that the QFs, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ that are computed with the initial set of particles (so-called the \textit{estimation} stage in Figure~\ref{fig:gmm1}) can be perfectly re-used for new unseen particles in a subsequent \textit{prediction} stage. In other words, while running the algorithm, we can store the CDFs and QFs of the particles and then we can generate a new particle by first drawing a new sample from $\mu$ and updating it by using the existing CDFs and QFs that were stored beforehand (without running the complete algorithm).
+%
+% once the algorithm is run for $K$ iterations, we can generate new particles by re-using the CDFs and QFs of existing particles and then using them for any other new particle.
+%
+% We note that, 
+%
+In both cases, we observe two remarkable outcomes: (i) Even when some modes are isolated from the others, SWF is able to capture them successfully and we never observe a mode collapse. This is due to the OT nature of the procedure. (ii) The generated particles do not collapse on the data points, thanks to the entropy regularization.
 
 
-% We note that, once the algorithm is run for $K$ iterations, we can generate new particles by using the CDFs and QFs of the existing particles and then using them for any other new particle.
+
 
 In our second experiment, we investigate the effect of the level of the regularization. We use the same setting as the previous experiment, whereas we differ the value of $\lambda$ and run the algorithm for sufficiently many iterations. As we can observe from Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
 
