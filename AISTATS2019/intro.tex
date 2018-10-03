@@ -1,4 +1,4 @@
-%!TEX root = ./nips_2018_sketchmcmc.tex
+%!TEX root = ./aistats_2019_sketchmcmc.tex
 
 \section{Introduction}
 
@@ -28,15 +28,15 @@ $\phi^\star = \argmin_{\phi \in \Phi} \W(T_{\phi \#}\mu, \nu)$,
 % \end{align}
 where $\W$ denotes the Wasserstein distance that will be properly defined in Section~\ref{sec:techbg}. It has been shown that \cite{genevay2017gan} OT-based GANs \cite{arjovsky2017wasserstein} and VAEs \cite{tolstikhin2017wasserstein} both use this formulation with different parameterizations and different equivalent definitions of $\W$; however, their resulting algorithms still lack theoretical understanding.
 
-In this study, we follow a completely different approach for IGM and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit along iterations. Formally, we take $T_t$ as the constructed transport map at time $t$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will converge to the solution of a functional optimization problem, defined through a gradient flow in the Wasserstein space. Informally, we will consider a gradient flow that have the following form:
+In this study, we follow a completely different approach for IGM and we seek to estimate a transport map between source $\mu$ and target $\nu$ that is \textit{nonparametric}, but rather iteratively augmented, always increasing the quality of the fit along iterations. Formally, we take $T_t$ as the constructed transport map at time $t \in [0,\infty)$, and define $\mu_t=T_t \# \mu$ as the corresponding output distribution. Our objective is to build the maps so that $\mu_t$ will converge to the solution of a functional optimization problem, defined through a gradient flow in the Wasserstein space. Informally, we will consider a gradient flow that have the following form:
 \begin{align}
-\partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \, , \qquad \mu_0 = \mu,\label{eqn:gradflow}
+\partial_t \mu_t = - \nabla_{\W} \Bigl\{ \mathrm{Cost}(\mu_t, \nu) + \mathrm{Reg}(\mu_t)\Bigr\} \, , \>\> \mu_0 = \mu,\label{eqn:gradflow}
 \end{align}
 where the functional $\mathrm{Cost}$ computes a discrepancy between $\mu_t$ and $\nu$, $\mathrm{Reg}$ denotes a regularization functional, and $\nabla_{\W}$ denotes a notion of gradient with respect to a probability measure in the $\W$ metric for probability measures\footnote{This gradient flow is similar to the usual Euclidean gradient flows, i.e.\ $\partial_t x_t = - \nabla (f(x_t) + r(x_t))$, where $f$ is typically the data-dependent cost function and $r$ is a regularization term. The (explicit) Euler discretization of this flow results in the well-known gradient descent algorithm for solving $\min_x (f(x)+r(x))$.}. If this flow can be simulated, one would hope for $\mu_t=T_t\#\mu$ to converge to the minimum of the functional optimization problem: $\min_\mu ( \mathrm{Cost}(\mu, \nu) + \mathrm{Reg}(\mu)$).
 
 
 % In this study,
-We construct a gradient flow where we choose the $\mathrm{Cost}$ functional as the \textit{sliced Wasserstein distance} ($\SW$) and the $\mathrm{Reg}$ functional as the negative entropy. The $\SW$ distance is equivalent to the $\W$ distance \cite{bonnotte2013unidimensional} and has important computational implications since it can be expressed as an average of (one-dimensional) projected optimal transportation costs whose analytical expressions are available.
+We construct a gradient flow where we choose the $\mathrm{Cost}$ functional as the \textit{sliced Wasserstein distance} ($\SW$) \cite{bonneel2015sliced} and the $\mathrm{Reg}$ functional as the negative entropy. The $\SW$ distance is equivalent to the $\W$ distance \cite{bonnotte2013unidimensional} and has important computational implications since it can be expressed as an average of (one-dimensional) projected optimal transportation costs whose analytical expressions are available.
 
 We first show that, with the choice of $\SW$ and the negative-entropy functionals as the overall objective, we obtain a valid gradient flow that has a solution path $(\mu_t)_t$, and the probability density functions of this path solve a particular partial differential equation, which has close connections with stochastic differential equations. Even though the gradient flows in Wasserstein spaces cannot be solved in general, by exploiting this connection, we are able to develop a practical algorithm that provides approximate solutions to the gradient flow and is reminiscent of stochastic gradient Markov Chain Monte Carlo (MCMC) methods \cite{WelTeh2011a,raginsky17a}. We provide finite-time error guarantees for the proposed algorithm and show explicit dependence of the error to the algorithm parameters.
 

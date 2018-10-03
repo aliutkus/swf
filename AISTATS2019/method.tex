@@ -13,23 +13,28 @@
 
 % \textbf{Construction of the flow: }
 %
-We propose in this paper to consider the minimization of the functional $\F^{\nu}_{\lambda}$ on $\PS_2(\Omega)$, that is defined as follows:
+
+In this paper, we propose the following functional minimization problem on $\PS_2(\Omega)$ for implicit generative modeling:
+% We propose in this paper to consider the minimization of the functional $\F^{\nu}_{\lambda}$ on $\PS_2(\Omega)$, that is defined as follows:
 \begin{equation}
- \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu),  \label{eqn:sw_optim}
+ \min_{\mu} \Bigl\{ \F^{\nu}_\lambda(\mu) \triangleq  \frac1{2} \SW^2(\mu, \nu) + \lambda \He(\mu) \Bigr\},  \label{eqn:sw_optim}
 \end{equation}
 where $\lambda >0$ is a regularization parameter and $\He$ denotes the negative entropy defined by $\He(\mu) \triangleq \int_{\Omega} \rho(x) \log \rho(x) dx $ if $\mu$ has density $\rho$ with respect to the Lebesgue measure and $\He(\mu) = + \infty$ otherwise. Note that the case $\lambda =0$ has been already proposed and studied in \cite{bonnotte2013unidimensional} in a more general OT context. Here, in order to introduce the necessary noise inherent to generative model, we suggest to penalize the slice-Wasserstein distance using $\He$. In other words, the main idea is to find a measure $\mu^\star$ that is close to $\nu$ as much as possible and also has a certain amount of entropy to make sure that it is sufficiently expressive for generative modeling purposes.
-The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution. Note that this regularization is fundamentally different than the one used in Sinkhorn distances\cite{genevay2018learning}.
+The importance of the entropy regularization becomes prominent in practical applications where we have finitely many data samples that are assumed to be drawn from $\nu$. In such a circumstance, the regularization would prevent $\mu^\star$ to collapse on the data points and therefore avoid `over-fitting' to the data distribution. Note that this regularization is fundamentally different than the one used in Sinkhorn distances \cite{genevay2018learning}.
 
 
-In the next result, we show that there exists a flow $(\mu_t)_{t\geq0}$ in $(\PS(\cB(0,r)),\W)$ which decreases along $\F_\lambda^\nu$, where $\cB(0,a)$ denotes the closed unit ball centered at $0$ and radius $a$. This flow will be referred to as a generalized minimizing movement scheme (see Definition~$1$ in \supp).  In addition, the flow $(\mu_t)_{t \geq 0}$ admits a density $\rho_t$ with respect to the Lebesgue measure for all $t>0$ and $(\rho_t)_{t \geq 0}$ is solution of a non-linear PDE (in the weak sense). %  
+In our first result, we show that there exists a flow $(\mu_t)_{t\geq0}$ in $(\PS(\cB(0,r)),\W)$ which decreases along $\F_\lambda^\nu$, where $\cB(0,a)$ denotes the closed unit ball centered at $0$ and radius $a$. This flow will be referred to as a generalized minimizing movement scheme (see Definition~$1$ in \supp).  In addition, the flow $(\mu_t)_{t \geq 0}$ admits a density $\rho_t$ with respect to the Lebesgue measure for all $t>0$ and $(\rho_t)_{t \geq 0}$ is solution of a non-linear PDE (in the weak sense). %  
 %
 %
 \begin{thm}
 \label{thm:continuity}
 Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with respect to the Lebesgue measure with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$. There exists a generalized minimizing movement scheme  $(\mu_t)_{t \geq 0}$ given by Theorem~S$2$ in \supp and if $\rho_t$ stands for the density of $\mu_t$ for all $t \geq 0$, then $(\rho_t)_t$ satisfies the following continuity equation:
 \begin{align}
-\frac{\partial \rho_t}{\partial t}   &= -\divop (v_t \rho_t) + \lambda \Delta \rho_t\\
- v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\frac{\partial \rho_t}{\partial t}   &= -\divop (v_t \rho_t) + \lambda \Delta \rho_t, 
+ % v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+\end{align}
+\begin{align}
+v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 \end{align}
 in a weak sense. Here, $\Delta$ denotes the Laplacian operator, $\divop$ the divergence operator, and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$.
 \end{thm}
@@ -132,22 +137,22 @@ where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich
 % \end{wrapfigure}
 
 % \newcommand{\shr}{{\lserif\#}}
-For any particular $\theta\in\Sp^{d-1}$, the QF $F_{\theta^*_\#\nu}^{-1}$ for the projection of the target distribution $\nu$ on $\theta$ can be easily computed from the data. This is done by first computing the projections $\langle \theta, y_i\rangle$ for all data points $y_i$, and then computing the empirical quantile function for this set of $P$ scalars.
+For any particular $\theta\in\Sp^{d-1}$, the QF, $F_{\theta^*_\#\nu}^{-1}$ for the projection of the target distribution $\nu$ on $\theta$ can be easily computed from the data. This is done by first computing the projections $\langle \theta, y_i\rangle$ for all data points $y_i$, and then computing the empirical quantile function for this set of $P$ scalars.
 %
 Similarly, $F_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the CDF of the particles at iteration $k$, is easy to compute: we first project all particles $\bar{X}_k^i$ to get $\langle \theta, \bar{X}_k^i\rangle$, and then compute the empirical CDF of this set of $N$ scalar values.
 
 In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles.
 Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target.
 
-Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all these one-dimensional computations can be done very accurately and (ii) quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an unbiased estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.
+Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all of these one-dimensional computations can be done very accurately and (ii) the quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}. Therefore, we will assume that $\hat{v}_k$ is an \emph{unbiased} estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{k,n}$.
 
 
 
-The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDF of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a massively distributed manner that is independent of the sliced Wasserstein flow. This aspect is reminiscent of the \textit{compressive learning} methodology \cite{gribonval2017compressive}, except we exploit quantiles of random projections here, instead of random moments as done there.
+The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDFs of its projections on the many $\theta_{k,n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed in a massively distributed manner that is independent of the sliced Wasserstein flow. This aspect is reminiscent of the \textit{compressive learning} methodology \cite{gribonval2017compressive}, except we exploit quantiles of random projections here, instead of random moments as done there.
 
 
 
-Besides, we can obtain further reductions in the computing time if the CDF $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure also has some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
+Besides, we can obtain further reductions in the computing time if the CDF $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure might also have some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
 
 
 

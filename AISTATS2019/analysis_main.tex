@@ -9,23 +9,23 @@ In this section we will analyze the behavior of the proposed algorithm in the as
 \end{align}
 where $\mub_{kh}$ denotes the law of $\bar{X}_k$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it captures the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
 
-In practice, we would like to approximate the measure sequence $(\mu_t)_t$ as accurate as possible, where $\mu_t$ denotes the law of $X_t$. Therefore, we are interested in analyzing the distance $\| \mub_{Kh} - \mu_{T} \|_{\TV}$, where $T=Kh$ and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. 
+In practice, we would like to approximate the measure sequence $(\mu_t)_t$ as accurate as possible, where $\mu_t$ denotes the law of $X_t$. Therefore, we are interested in analyzing the distance $\| \mub_{Kh} - \mu_{T} \|_{\TV}$, where $K$ denotes the total number of iterations, $T=Kh$ is called the horizon, and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: $\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$. 
 %
 
-In order to analyze this distance, we exploit the connections between \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}, which is a Bayesian posterior sampling method, and is obtained as a discretization of an SDE whose drift has a much simpler form. We then bound the distance by extending the recent results on SGLD \cite{raginsky17a} to time- and measure-dependent drifts, that are of our interest in the paper.
+In order to analyze this distance, we exploit the algorithmic similarities between \eqref{eqn:euler_asymp} and the stochastic gradient Langevin dynamics (SGLD) algorithm \cite{WelTeh2011a}, which is a Bayesian posterior sampling method having a completely different goal, and is obtained as a discretization of an SDE whose drift has a much simpler form than the one of ours. We then bound the distance by extending the recent results on SGLD \cite{raginsky17a} to time- and measure-dependent drifts, that are of our interest in the paper.
 
 % Original: Due to space limitations, we present...
 We now present our second main theoretical result. We present all our assumptions and the explicit forms of the constants in \supp. 
 \vspace{-5pt}
 \begin{thm}
 \label{thm:euler}
-Assume that the conditions given in \supp hold. Then, the following bound holds for $T=Kh$:
+Assume that the conditions given in \supp{} hold. Then, the following bound holds for $T=Kh$:
 \begin{align}
 \| \mub_{Kh} - \mu_T \|_{\TV}^2 \leq \delta_\lambda \left \lbrace  \frac{L^2 K}{2\lambda} \Bigl( \frac{C_1 h^3}{3} + 3 \lambda d h^2 \Bigr) + \frac{C_2  \delta K h}{4\lambda} \right \rbrace	,
 \end{align} 
 for some $C_1,C_2,L >0$, $\delta \in (0,1)$, and $\delta_\lambda >1$.  % The explicit forms of the constants are given in the proof.
 \end{thm}
-Here, the constants $C_1$, $C_2$, $L$ are related to the regularity and smoothness of the functions $v$ and $\hat{v}$, $\delta$ is directly proportional to the variance of $\hat{v}$, and $\delta_\lambda$ is inversely proportional to $\lambda$. The theorem shows that 
+Here, the constants $C_1$, $C_2$, $L$ are related to the regularity and smoothness of the functions $v$ and $\hat{v}$; $\delta$ is directly proportional to the variance of $\hat{v}$, and $\delta_\lambda$ is inversely proportional to $\lambda$. The theorem shows that 
 % 
 if we choose $h$ small enough, we can have a non-asymptotic error guarantee, which is formally shown in the following corollary. 
 \vspace{-5pt}

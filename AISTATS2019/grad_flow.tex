@@ -1,4 +1,4 @@
-%!TEX root = ./nips_2018_sketchmcmc_supp.tex
+%!TEX root = ./aistats_2019_sketchmcmc_supp.tex
 
 \section{Proof of Theorem~\ref{thm:continuity}}
 
@@ -103,7 +103,7 @@ Because $\mu_t^{h_n}$ have densities $\rho_t^{h_n}$ and both $\rho^{h_n}$, $\rho
 
 First, if we denote by $\gamma$ the optimal transport plan between $\mu_t^{h_n}$ and $\mu_s^{h_n}$, we have:
 \begin{multline} \label{ineq:expectation_W2_bound}
-\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \int_{\cB(0,r)} \zeta d\mu_s^{h_n} \right|^2 \leq \int_{\cB(0,r) \times \cB(0,r)} \left| \zeta(x) - \zeta(y) \right|^2 d\gamma(x,y)\\ \leq ||\nabla \zeta||_{\infty}^2 \W^2(\mu_t^{h_n}, \mu_s^{h_n}).
+\left| \int_{\cB(0,r)} \zeta d\mu_t^{h_n} - \int_{\cB(0,r)} \zeta d\mu_s^{h_n} \right|^2 \leq \int_{\cB(0,r) \times \cB(0,r)} \left| \zeta(x) - \zeta(y) \right|^2 d\gamma(x,y) \leq ||\nabla \zeta||_{\infty}^2 \W^2(\mu_t^{h_n}, \mu_s^{h_n}).
 \end{multline}
 In addition, for $n_t = \lfloor t/h_n \rfloor$ and $n_s = \lfloor s/h_n \rfloor$ we have $\mu_t^{h_n} = \mu_{n_t h_n}^{h_n}$ and $\mu_s^{h_n} = \mu_{n_s h_n}^{h_n}$. For all $k \geq 0$ we have:
 \begin{equation}
