@@ -41,19 +41,6 @@ We observe that the empirical distribution of the particles converges rapidly to
 In both cases, we observe two remarkable outcomes: (i) Even when some modes are isolated from the others, SWF is able to capture them successfully and we never observe a mode collapse. This is due to the OT nature of the procedure. (ii) The generated particles do not collapse on the data points, thanks to the entropy regularization.
 
 
-
-
-In our second experiment, we investigate the effect of the level of the regularization. We use the same setting as the previous experiment, whereas we differ the value of $\lambda$ and run the algorithm for sufficiently many iterations. As we can observe from Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
-
-
-
-We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior.
-%
-Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. We also observe that the magnitude of $\SW$ decreases as $d$ increases. This outcome can be explained by the fact that $\SW = {\cal O}(d^{-1/2}\W)$ (cf.\ \cite{bonnotte2013unidimensional}).
-
-
-
-
 \begin{figure}
 % \begin{wrapfigure}{R}{0.40\textwidth}
 % \vspace{-10pt}
@@ -69,17 +56,31 @@ Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choice
 \begin{figure*}[t]
 \centering
 \subfigure[MNIST]{
-\includegraphics[width=\columnwidth]{mnist.pdf}
+\includegraphics[width=0.86\columnwidth]{mnist.pdf}
 \label{fig:mnist}
-}\hfill
+}
+\hfill
 \subfigure[Fashion MNIST]{
-\includegraphics[width=\columnwidth]{fmnist2.pdf}
+\includegraphics[width=1.145\columnwidth]{fmnist2.pdf}
 \label{fig:fashionmnist}
 }
 % \vspace{-10pt}
 \caption{The evolution of the particles through $15000$ iterations on different datasets.}
 % \vspace{-10pt}
 \end{figure*}
+
+In our second experiment, we investigate the effect of the level of the regularization. We use the same setting as the previous experiment, whereas we differ the value of $\lambda$ and run the algorithm for sufficiently many iterations. As we can observe from Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
+
+
+
+We also illustrate the behavior of the algorithm for varying dimensionality $d$. Since visualizing the results becomes non-trivial for large $d$, in this experiment we directly monitor the (approximately computed) $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior.
+%
+Figure~\ref{fig:toy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady decrease in the cost for all runs, which is in line with our theory. We also observe that the magnitude of $\SW$ decreases as $d$ increases. This outcome can be explained by the fact that $\SW = {\cal O}(d^{-1/2}\W)$ (cf.\ \cite{bonnotte2013unidimensional}).
+
+
+
+
+
 
 \subsection{Experiments on real data}
 % \label{sub:real_data}
