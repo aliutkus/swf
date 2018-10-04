@@ -152,13 +152,13 @@ The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarka
 
 
 
-Besides, we can obtain further reductions in the computing time if the CDF $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure might also have some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
+Besides, we can obtain further reductions in the computing time if the CDF, $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure might also have some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for a each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
 
 
 
 
 % \begin{remark}
-We also note that, even though the proposed algorithm assumes that $\mu$ and $\nu$ have the same dimensionality, the theory in fact allows us to use a lower dimensional $\mu$ by using a simple procedure: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d' \times d$, and then use this sample as the input to the algorithm. This procedure does not violate the theoretical guarantees. 
+We also note that, even though the proposed algorithm assumes that $\mu$ and $\nu$ have the same dimensionality, the theory in fact allows us to use a lower dimensional $\mu$ by using a simple procedure: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d \times d'$, and then use this sample as the input to the algorithm. We have the same theoretical guarantees with this procedure. 
 %
 %
 % \umut{True. Don't we discuss this in the conclusion?}
