@@ -25,7 +25,7 @@ In the case where $\Omega$ is finite, computing the Wasserstein distance between
 \end{align}
 where $\mathrm{L}^1(\mu)$ denotes the class of functions that are absolutely integrable under $\mu$ and $\psi^c$ denotes the c-conjugate of $\psi$ and it is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
-Provided that $\mu$ satisfies a mild condition, we have the following nice uniqueness result.
+Provided that $\mu$ satisfies a mild condition, we have the following  uniqueness result.
 \begin{thm}[\protect{\cite[Theorem 1.4]{santambrogio2010introduction}}]
 \label{thm:unqmap}
 Assume that  $\mu\in \PS_2(\Omega)$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable function $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The function $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
@@ -80,7 +80,8 @@ The $\SW$ distance has important practical implications: provided that the proje
 
 
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc_arxiv"
+%%% TeX-master: "aistats_2019_sketchmcmc"
 %%% End:

@@ -49,11 +49,11 @@ The precise statement of this Theorem, related results and its proof are postpon
 % \textbf{Connection with stochastic differential equations: }
 %
 % 
-As a consequence of the entropy regularization, we obtain the Laplacian operator $\Delta$ in the PDE given in \eqref{eqn:gradflow_reg}. We therefore observe that the overall PDE is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart, which can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution of the following SDE:
+As a consequence of the entropy regularization, we obtain the Laplacian operator $\Delta$ in the PDE given in \eqref{eqn:gradflow_reg}. We therefore observe that the overall PDE is a Fokker-Planck-type equation \cite{bogachev2015fokker} that has a well-known probabilistic counterpart, which can be expressed as a stochastic differential equation (SDE). More precisely, let us consider a stochastic process $(X_t)_{t}$, that is the solution of the following SDE starting at $X_0 \sim \mu_0$:
 \begin{align}
-d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \qquad X_0 \sim \mu_0 \label{eqn:sde}
+d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
 \end{align}
-where $W_t$ denotes the standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to the solution of \eqref{eqn:sw_optim}, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $(\mu_t)_t$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
+where $(W_t)_t$ denotes a standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to the solution of \eqref{eqn:sw_optim}, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $(\mu_t)_t$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
 
 
 
@@ -169,7 +169,8 @@ We also note that, even though the proposed algorithm assumes that $\mu$ and $\n
 % \end{remark}
 
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc_arxiv"
+%%% TeX-master: "aistats_2019_sketchmcmc"
 %%% End:
