@@ -16,7 +16,7 @@ from math import sqrt
 import torch.multiprocessing as mp
 import queue
 from math import floor
-from interpolate import interp1d
+from pytorch_interp1d.interpolate import interp1d
 
 
 def train_swf(particles, target_queue, num_quantiles,
@@ -37,6 +37,8 @@ def train_swf(particles, target_queue, num_quantiles,
 
     # for each sketch
     index = 0
+    interp_q = None
+    transported = None
     while True:
         target_qf, projector, id = target_queue.get()
         target_qf = target_qf.to(device)
@@ -55,14 +57,20 @@ def train_swf(particles, target_queue, num_quantiles,
         loss = criterion(particles_qf, target_qf)
 
         # transort the marginals
-        z = interp1d(particles_qf, quantiles, projections)
-        z = torch.clamp(z, 0, 100)
-        z = interp1d(quantiles, target_qf, z)
+        interp_q = interp1d(x=particles_qf,
+                            y=quantiles,
+                            xnew=projections,
+                            out=interp_q)
+        interp_q = torch.clamp(interp_q, 0, 100)
+        transported = interp1d(x=quantiles,
+                               y=target_qf,
+                               xnew=interp_q,
+                               out=transported)
 
         noise = torch.randn(num_samples, data_dim, device=device) / sqrt(data_dim)
-
+        #import ipdb; ipdb.set_trace()
         particles += (stepsize/num_thetas *
-                      torch.mm((z - projections).transpose(0, 1),
+                      torch.mm((transported - projections).transpose(0, 1),
                                projector))
         logger(particles, model, index, loss)
 
@@ -71,7 +79,7 @@ def train_swf(particles, target_queue, num_quantiles,
         index += 1
 
         #print('should put to the queue here')
-        model.queue.put((particles_qf.detach().to('cpu'), None, None))
+        #model.queue.put((particles_qf.detach().to('cpu'), None, None))
 
         # puts back the data into the Queue if it's not full already
         if not target_queue.full():
@@ -138,8 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("--regularization",
                         help="Regularization term for the additive noise",
                         type=float,
-                        default=1e-3)
-
+                        default=1e-5)
     parser.add_argument("--plot_every",
                         help="Number of iterations between each plot."
                              " Negative value means no plot",
