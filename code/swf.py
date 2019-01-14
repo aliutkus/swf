@@ -213,6 +213,7 @@ if __name__ == "__main__":
                         num_quantiles=args.num_quantiles)
 
     # generates the particles
+    print(device)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
 
     # multiply them by a random matrix if not of the appropriate size
@@ -225,9 +226,9 @@ if __name__ == "__main__":
     # generate test particles
     nb_interp_test = 10
     nb_test_pic = 100
-    interpolation = torch.linspace(0, 1, nb_interp_test)
+    interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
     test_particles = torch.zeros(nb_interp_test * nb_test_pic,
-                                 projectors.data_dim)
+                                 projectors.data_dim).to(device)
     for id in range(nb_test_pic):
         for id_in_q, q in enumerate(interpolation):
             test_particles[id*nb_interp_test+id_in_q, :] = (
