@@ -14,7 +14,8 @@ def draw_GMM_parameters(d, K, seed = None):
     w /= np.sum(w)
 
     # means
-    mu = randn(d, K)*K*10*np.log(d)
+    mu = randn(d, K)*K*10*np.log(d)#**3
+    mu[:,0] *= 3
 
     # covariances
     L = (randn(d, d, K) * rand(1, 1, K) * K
@@ -55,7 +56,7 @@ def rand_GMM(params, T):
     order = np.random.permutation(T)
     x = x.flatten()[order] if d == 1 else x[order]
     y = y[order]
-    return (x, y)
+    return (x.astype(np.float32), y)
 
 
 if __name__ == "__main__":

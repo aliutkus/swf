@@ -1,0 +1,1 @@
+from .searchsorted import searchsorted
