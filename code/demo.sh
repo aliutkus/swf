@@ -7,7 +7,7 @@ CLIPTO=5000
 INPUT_DIM=5
 NUM_SAMPLES=5000
 
-STEPSIZE=500
+STEPSIZE=100
 REG=0
 
 if [ $1 = "toy.npy" ]; then
@@ -22,8 +22,4 @@ if [ $1 = "toy.npy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-<<<<<<< HEAD
-python swf.py $1  --root_data_dir ~/data/$1  --clip $CLIPTO --num_quantiles $NUM_QUANTILES   --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
-=======
-python swf.py $1 --root_data_dir ~/data/$1 --clip $CLIPTO --num_quantiles $NUM_QUANTILES   --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
->>>>>>> fix demo
+python swf.py $1 --root_data_dir ~/data/$1 --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
