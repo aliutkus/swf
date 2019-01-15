@@ -1,14 +1,14 @@
 # parameters for sketching
-NUM_QUANTILES=100
-NUM_THETAS=500
-CLIPTO=5000
+NUM_QUANTILES=1000
+NUM_THETAS=5000
+CLIPTO=500
 
 # parameters for SWF
-INPUT_DIM=500
-NUM_SAMPLES=5000
+INPUT_DIM=5
+NUM_SAMPLES=500
 
-STEPSIZE=50
-REG=0
+STEPSIZE=100
+REG=0.0001
 
 if [ $1 = "toy.npy" ]; then
   echo "generating toy data, and then SWF on it"
@@ -21,5 +21,5 @@ if [ $1 = "toy.npy" ]; then
   python ./generate_toydata.py  --output toy --dim $INPUT_DIM --num_samples $NUM_SAMPLES_TOY --num_components $NUM_COMPONENTS_TOY $SEED_STRING
 fi
 
-# streaming version
+# now launch the sliced Wasserstein flow
 python swf.py $1  --root_data_dir ~/data/CIFAR10  --clip $CLIPTO --num_quantiles $NUM_QUANTILES   --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1

@@ -56,6 +56,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         interp_q['test'] = None
         transported['test'] = None
     while True:
+        # get the data from the sketching queue
         target_qf, projector, id = target_queue.get()
         target_qf = target_qf.to(device)
         projector = projector.to(device)
@@ -63,7 +64,6 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         (num_thetas, data_dim) = projector.shape
 
         for task in particles:  # will include the test particles if provided
-            print(task)
             # project the particles
             projections[task] = torch.mm(projector,
                                          particles[task].transpose(0, 1))
@@ -123,6 +123,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 def logger_function(particles, index, loss,
                     plot_dir, log_writer,
                     plot_every, img_shape):
+    """ Logging function."""
+    
     if log_writer is not None:
         for task in loss:
             log_writer.add_scalar('data/%s_loss' % task,

@@ -116,6 +116,9 @@ class Sketcher(Dataset):
 
 
 class SketchStream:
+    """A SketchStream object constructs a queue attribute that will be
+    filled with sketches, which are quantiles of random projections"""
+
     def __init__(self):
         self.processes = []
         self.data = None
