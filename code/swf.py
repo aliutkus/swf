@@ -23,21 +23,38 @@ from interp1d import Interp1d
 def swf(train_particles, test_particles, target_queue, num_quantiles,
         stepsize, regularization,
         device_str, logger):
+    """Starts a Sliced Wasserstein Flow with the train_particles, to match
+    the distribution whose sketches are given by the target queue.
 
+    The function gets sketches from the queue, and then applies steps of a
+    SWF to the particles. The flow is parameterized by a stepsize and a
+    regularization parameter. """
     # get the device
     device = torch.device(device_str)
 
     # prepare stuff
     criterion = nn.MSELoss()
     quantiles = torch.linspace(0, 100, num_quantiles).to(device)
-    train_particles = train_particles.to(device)
-    test_particles = test_particles.to(device)
+    particles = {}
+    particles['train'] = train_particles.to(device)
+    if test_particles is not None:
+        particles['test'] = test_particles.to(device)
     data_dim = train_particles.shape[-1]
 
-    # for each sketch
+    # batch index init
     index = 0
-    interp_q = None
-    transported = None
+
+    # pre-allocate variables, for speedup
+    interp_q = {}
+    transported = {}
+    particles_qf = {}
+    projections = {}
+    loss = {}
+    interp_q['train'] = None
+    transported['train'] = None
+    if test_particles is not None:
+        interp_q['test'] = None
+        transported['test'] = None
     while True:
         target_qf, projector, id = target_queue.get()
         target_qf = target_qf.to(device)
@@ -45,58 +62,47 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
         (num_thetas, data_dim) = projector.shape
 
-        # project the particles
-        train_projections = torch.mm(projector,
-                                     train_particles.transpose(0, 1))
-        test_projections = torch.mm(projector,
-                                    test_particles.transpose(0, 1))
+        for task in particles:  # will include the test particles if provided
+            print(task)
+            # project the particles
+            projections[task] = torch.mm(projector,
+                                         particles[task].transpose(0, 1))
 
-        # compute the corresponding quantiles
-        percentile_fn = Percentile(num_quantiles, device)
-        train_particles_qf = percentile_fn(train_projections)
-        test_particles_qf = percentile_fn(test_projections)
+            # compute the corresponding quantiles
+            percentile_fn = Percentile(num_quantiles, device)
+            particles_qf[task] = percentile_fn(projections[task])
 
-        # compute the loss: squared error over the quantiles
-        train_loss = criterion(train_particles_qf, target_qf)
-        test_loss = criterion(test_particles_qf, target_qf)
-
-        # use the train_particles_qf for both the train and the test particles
-        for (desc, particles, projections) in (
-                ('test', test_particles, test_projections),
-                ('train', train_particles, train_projections)):
+            # compute the loss: squared error over the quantiles
+            loss[task] = criterion(particles_qf[task], target_qf)
 
             # transort the marginals
-            interp_q = Interp1d()(x=train_particles_qf,
-                                  y=quantiles,
-                                  xnew=projections,
-                                  out=interp_q)
-            interp_q = torch.clamp(interp_q, 0, 100)
-            transported = Interp1d()(x=quantiles,
-                                     y=target_qf,
-                                     xnew=interp_q,
-                                     out=transported)
+            interp_q[task] = Interp1d()(x=particles_qf[task],
+                                        y=quantiles,
+                                        xnew=projections[task],
+                                        out=interp_q[task])
 
-            particles += (stepsize/num_thetas *
-                          torch.mm((transported - projections).transpose(0, 1),
-                                   projector))
-            # import matplotlib.pyplot as plt
-            # print(particles.shape)
-            # plt.ion()
-            # plt.figure(desc)
-            # plt.clf()
-            # plt.plot(particles.numpy()[:, :3], '.')
-            # plt.draw()
-            # plt.show()
-            # plt.pause(0.02)
+            interp_q[task] = torch.clamp(interp_q[task], 0, 100)
+            transported[task] = Interp1d()(x=quantiles,
+                                           y=target_qf,
+                                           xnew=interp_q[task],
+                                           out=transported[task])
+
+            particles[task] += (
+                stepsize/num_thetas *
+                torch.mm(
+                    (transported[task] - projections[task]).transpose(0, 1),
+                    projector))
 
         # call the logger with the transported train and test particles
-        logger(train_particles, test_particles, index, train_loss, test_loss)
+        logger(particles, index, loss)
 
         # now add the noise for the SWF step
-        for particles in (train_particles, test_particles):
-            noise = torch.randn(particles.shape[0], data_dim, device=device)
+        for task in particles:
+            noise = torch.randn(
+                particles[task].shape[0],
+                data_dim, device=device)
             noise /= sqrt(data_dim)
-            particles += sqrt(stepsize*data_dim) * regularization * noise
+            particles[task] += sqrt(stepsize*data_dim) * regularization * noise
 
         index += 1
 
@@ -109,38 +115,39 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             except queue.Full:
                 pass
 
-    return (train_particles, test_particles)
+    return (
+        (particles['train'], particles['test']) if 'test' in particles
+        else particles['train'])
 
 
-def logger_function(train_particles, test_particles, index,
-                    train_loss, test_loss,
+def logger_function(particles, index, loss,
                     plot_dir, log_writer,
                     plot_every, img_shape):
     if log_writer is not None:
-        log_writer.add_scalar('data/train_loss', train_loss.item(), index)
-        log_writer.add_scalar('data/test_loss', test_loss.item(), index)
-    print('iteration {}, train_loss:{:.6f}, test_loss:{:.6f}'
-          .format(index + 1, train_loss.item(), test_loss.item()))
+        for task in loss:
+            log_writer.add_scalar('data/%s_loss' % task,
+                                  loss[task].item(), index)
+    loss_str = 'iteration %d: ' % (index + 1)
+    for item, value in loss.items():
+        loss_str += item + ': %0.6f ' % value
+    print(loss_str)
 
     if plot_every < 0 or index % plot_every:
         return
 
     # displays generated images
-    train_pic = make_grid(train_particles[:104, ...].view(-1, *img_shape),
-                          nrow=8, padding=2, normalize=True, scale_each=True)
-    test_pic = make_grid(test_particles[:104, ...].view(-1, *img_shape),
-                         nrow=8, padding=2, normalize=True, scale_each=True)
-    if log_writer is not None:
-        log_writer.add_image('Train Image', train_pic, index)
-        log_writer.add_image('Test Image', test_pic, index)
-    if plot_dir is not None:
-        # create the temporary folder for plotting generated samples
-        if not os.path.exists(plot_dir):
-            os.mkdir(plot_dir)
-        save_image(train_pic,
-                   '{}/train_image_{}.png'.format(plot_dir, index))
-        save_image(test_pic,
-                   '{}/test_image_{}.png'.format(plot_dir, index))
+    for task in particles:
+        pic = make_grid(particles[task][:104, ...].view(-1, *img_shape),
+                        nrow=8, padding=2, normalize=True, scale_each=True)
+        if log_writer is not None:
+            log_writer.add_image('%s Image' % task, pic, index)
+
+        if plot_dir is not None:
+            # create the temporary folder for plotting generated samples
+            if not os.path.exists(plot_dir):
+                os.mkdir(plot_dir)
+            save_image(pic,
+                       '{}/{}_image_{}.png'.format(plot_dir, task, index))
 
 
 if __name__ == "__main__":
@@ -215,7 +222,6 @@ if __name__ == "__main__":
     # generates the particles
     print(device, args.num_samples, args.input_dim)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
-
 
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:

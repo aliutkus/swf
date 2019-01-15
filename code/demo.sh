@@ -1,13 +1,13 @@
 # parameters for sketching
-NUM_QUANTILES=1000
-NUM_THETAS=15000
+NUM_QUANTILES=100
+NUM_THETAS=500
 CLIPTO=5000
 
 # parameters for SWF
 INPUT_DIM=500
 NUM_SAMPLES=5000
 
-STEPSIZE=5000
+STEPSIZE=50
 REG=0
 
 if [ $1 = "toy.npy" ]; then
