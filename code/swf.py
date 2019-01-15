@@ -213,8 +213,9 @@ if __name__ == "__main__":
                         num_quantiles=args.num_quantiles)
 
     # generates the particles
-    print(device)
+    print(device, args.num_samples, args.input_dim)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
+
 
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:
@@ -224,7 +225,7 @@ if __name__ == "__main__":
         train_particles = torch.mm(train_particles, input_linear)
 
     # generate test particles
-    nb_interp_test = 10
+    nb_interp_test = 8
     nb_test_pic = 100
     interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
     test_particles = torch.zeros(nb_interp_test * nb_test_pic,
