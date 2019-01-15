@@ -10,7 +10,6 @@ dependencies:
   - python=3.6.8
   - scipy=1.1.0
   - seaborn=0.8.1
-  - cuda91
   - pytorch==0.4.1
   - torchvision=0.2.1
   - pip:
