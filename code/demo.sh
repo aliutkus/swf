@@ -22,4 +22,4 @@ if [ $1 = "toy.npy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python swf.py $1  --root_data_dir ~/data/CIFAR10  --clip $CLIPTO --num_quantiles $NUM_QUANTILES   --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
+python swf.py $1  --root_data_dir ~/data/$1  --clip $CLIPTO --num_quantiles $NUM_QUANTILES   --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
