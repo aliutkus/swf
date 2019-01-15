@@ -124,7 +124,7 @@ def logger_function(particles, index, loss,
                     plot_dir, log_writer,
                     plot_every, img_shape):
     """ Logging function."""
-    
+
     if log_writer is not None:
         for task in loss:
             log_writer.add_scalar('data/%s_loss' % task,
@@ -221,9 +221,21 @@ if __name__ == "__main__":
                         projectors=projectors,
                         num_quantiles=args.num_quantiles)
 
-    # generates the particles
+    # generates the train particles
     print(device, args.num_samples, args.input_dim)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
+
+    # generate test particles
+    nb_interp_test = 8
+    nb_test_pic = 100
+    interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
+    test_particles = torch.zeros(nb_interp_test * nb_test_pic,
+                                 args.input_dim).to(device)
+
+    for id in range(nb_test_pic):
+        for id_in_q, q in enumerate(interpolation):
+            test_particles[id*nb_interp_test+id_in_q, :] = (
+             q * train_particles[id+1] + (1-q)*train_particles[id])
 
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:
@@ -231,17 +243,7 @@ if __name__ == "__main__":
         input_linear = torch.randn(args.input_dim,
                                    projectors.data_dim).to(device)
         train_particles = torch.mm(train_particles, input_linear)
-
-    # generate test particles
-    nb_interp_test = 8
-    nb_test_pic = 100
-    interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
-    test_particles = torch.zeros(nb_interp_test * nb_test_pic,
-                                 projectors.data_dim).to(device)
-    for id in range(nb_test_pic):
-        for id_in_q, q in enumerate(interpolation):
-            test_particles[id*nb_interp_test+id_in_q, :] = (
-                q * train_particles[id] + (1-q)*train_particles[id+1])
+        test_particles = torch.mm(test_particles, input_linear)
 
     # create the logger
     if args.log:
