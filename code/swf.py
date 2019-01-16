@@ -18,6 +18,8 @@ import torch.multiprocessing as mp
 import queue
 from math import floor
 from interp1d import Interp1d
+from torchvision import transforms
+from autoencoder import AE
 
 
 def swf(train_particles, test_particles, target_queue, num_quantiles,
@@ -208,6 +210,16 @@ if __name__ == "__main__":
     data_loader = data.load_data(args.dataset, args.root_data_dir,
                                  args.img_size, args.clip_to)
     data_shape = data_loader.dataset[0][0].shape
+
+    # prepare AE
+    ae_encode = True
+    if ae_encode:
+        autoencoder = AE(data_loader.dataset[0][0].shape, device=device, nb_epochs=20)
+        autoencoder.train(data_loader)
+        # TODO: adding encoder as transform gets differention error... 
+        # TODO: lets add it to the sketcher than
+        # t = transforms.Lambda(lambda x: autoencoder.model.encode(x))
+        # data_loader.dataset.transform.transforms.append(t)
 
     # prepare the projectors
     projectors = sketch.Projectors(args.num_thetas, data_shape)

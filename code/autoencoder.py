@@ -39,7 +39,7 @@ class AutoEncoderModel(nn.Module):
 
 
 class AE(object):
-    def __init__(self, input_shape, device, nb_epochs=10, bottleneck_size=64):
+    def __init__(self, input_shape, device, nb_epochs=10, bottleneck_size=32):
         super(AE, self).__init__()
         self.nb_epochs = nb_epochs
         self.bottleneck_size = bottleneck_size
@@ -107,6 +107,7 @@ if __name__ == '__main__':
     device = torch.device("cuda" if args.cuda else "cpu")
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
+
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=True, download=True,
                        transform=transforms.ToTensor()),
