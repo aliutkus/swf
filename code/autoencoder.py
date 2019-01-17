@@ -8,6 +8,48 @@ from torchvision import datasets, transforms
 from torchvision.utils import save_image
 import numpy as np
 
+
+class ConvEncoder(nn.Module):
+    def __init__(self, input_shape, bottleneck_size=64):
+        super(ConvEncoder, self).__init__()
+        self.input_shape = input_shape
+        self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(3, 32, kernel_size=2, stride=2, padding=0)
+        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.relu = nn.ReLU()
+        self.fc1 = nn.Linear(16 * 16 * 32, bottleneck_size)
+
+    def forward(self, x):
+        out = self.relu(self.conv1(x))
+        out = self.relu(self.conv2(out))
+        out = self.relu(self.conv3(out))
+        out = self.relu(self.conv4(out))
+        out = out.view(out.size(0), -1)
+        return self.relu(self.fc1(out))
+
+
+class ConvDecoder(nn.Module):
+    def __init__(self, input_shape, bottleneck_size=64):
+        super(ConvDecoder, self).__init__()
+        self.input_shape = input_shape
+        self.fc4 = nn.Linear(bottleneck_size, 8192)
+        self.deconv1 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.deconv2 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.deconv3 = nn.ConvTranspose2d(32, 32, kernel_size=2, stride=2, padding=0)
+        self.conv5 = nn.Conv2d(32, self.input_shape[0], kernel_size=3, stride=1, padding=1)
+        self.relu = nn.ReLU()
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        out = self.relu(self.fc4(x))
+        out = out.view(out.size(0), 32, 16, 16)
+        out = self.relu(self.deconv1(out))
+        out = self.relu(self.deconv2(out))
+        out = self.relu(self.deconv3(out))
+        return self.sigmoid(self.conv5(out))
+
+
 class DenseEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(DenseEncoder, self).__init__()
@@ -16,6 +58,7 @@ class DenseEncoder(nn.Module):
 
     def forward(self, x):
         return torch.sigmoid(self.fc1(x.view(-1, np.prod(self.input_shape))))
+
 
 class DenseDecoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
@@ -33,8 +76,8 @@ class AutoEncoderModel(nn.Module):
     def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64):
         super(AutoEncoderModel, self).__init__()
         self.input_shape = input_shape
-        self.encode = DenseEncoder(input_shape, bottleneck_size)
-        self.decode = DenseDecoder(input_shape, bottleneck_size)
+        self.encode = ConvEncoder(input_shape, bottleneck_size)
+        self.decode = ConvDecoder(input_shape, bottleneck_size)
 
     def encode_nograd(self, x):
         with torch.no_grad():
@@ -87,13 +130,19 @@ class AE(object):
                 test_loss += self.criterion(Y, X).item()
                 if i == 0:
                     n = min(X.size(0), 8)
-                    comparison = torch.cat([X[:n],
-                                        Y.view(data_loader.batch_size, 1, 28, 28)[:n]])
-                    save_image(comparison.cpu(),
-                            'results/reconstruction.png', nrow=n)
+                    comparison = torch.cat([
+                        X[:n],
+                        Y.view(data_loader.batch_size, 1, 28, 28)[:n]
+                    ])
+                    save_image(
+                        comparison.cpu(),
+                        'results/reconstruction.png',
+                        nrow=n
+                    )
 
         test_loss /= len(test_loader.dataset)
         print('AE test => Test set loss: {:.4f}'.format(test_loss))
+
 
 if __name__ == '__main__':
 
@@ -118,17 +167,24 @@ if __name__ == '__main__':
     kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
     train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=True, download=True,
-                       transform=transforms.ToTensor()),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
+        datasets.MNIST(
+            '../data',
+            train=True,
+            download=True,
+            transform=transforms.Compose([
+                transforms.Resize(32),
+                transforms.ToTensor(),
+            ])
+        ),
+        batch_size=args.batch_size, shuffle=True, **kwargs
+    )
     test_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     autoencoder = AE(
         train_loader.dataset[0][0].shape,
-        device=device,
-        nb_epochs=args.epochs,
+        device=device
     )
     autoencoder.train(train_loader)
     autoencoder.test(test_loader)
