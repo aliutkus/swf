@@ -231,6 +231,12 @@ if __name__ == "__main__":
     # prepare AE
     ae_encode = True
     if ae_encode:
+        train_loader = torch.utils.data.DataLoader(
+            data_loader.dataset,
+            batch_size=32,
+            shuffle=True
+        )
+
         autoencoder = AE(
             data_loader.dataset[0][0].shape,
             device=device,
@@ -269,7 +275,7 @@ if __name__ == "__main__":
                         num_quantiles=args.num_quantiles)
 
     # generates the train particles
-    print('using', device)
+    print('using ', device)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
 
     # generate test particles

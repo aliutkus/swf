@@ -50,9 +50,9 @@ def load_data(dataset, data_dir="data", img_size=None,
 
         # first define the transforms
         transform = transforms.Compose([
-                transforms.Resize(img_size),
-                transforms.ToTensor(),
-                    ])
+            transforms.Resize(img_size),
+            transforms.ToTensor(),
+        ])
 
         # If it's a dir and is celebA, then we have a special loader
         if os.path.isdir(dataset):
