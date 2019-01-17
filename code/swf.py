@@ -254,9 +254,9 @@ if __name__ == "__main__":
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), args.ae_model)
         else:
+            print("Model loaded")
             state = torch.load(args.ae_model, map_location='cpu')
-            autoencoder.model = \
-                autoencoder.model.to('cpu').load_state_dict(state)
+            autoencoder.model.to('cpu').load_state_dict(state)
 
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
         data_loader.dataset.transform.transforms.append(t)
