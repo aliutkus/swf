@@ -96,7 +96,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                                            y=target_qf,
                                            xnew=interp_q[task],
                                            out=transported[task])
-
+            import numpy as np
+            pnp = projector.cpu().numpy()
             particles[task] += (
                 stepsize/num_thetas *
                 torch.mm(
@@ -112,7 +113,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                 particles[task].shape[0],
                 data_dim, device=device)
             noise /= sqrt(data_dim)
-            particles[task] += sqrt(stepsize*data_dim) * regularization * noise
+            particles[task] += regularization * noise #sqrt(stepsize*data_dim) * regularization * noise
 
         index += 1
 
@@ -249,7 +250,7 @@ if __name__ == "__main__":
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=10)
+            autoencoder.train(train_loader, nb_epochs=30)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), args.ae_model)
