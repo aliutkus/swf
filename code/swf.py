@@ -65,6 +65,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
         (num_thetas, data_dim) = projector.shape
 
+        stepsize *= (index+1)/(index+2)
         for task in particles:  # will include the test particles if provided
             # project the particles
             projections[task] = torch.mm(projector,
@@ -96,8 +97,6 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                                            y=target_qf,
                                            xnew=interp_q[task],
                                            out=transported[task])
-            import numpy as np
-            pnp = projector.cpu().numpy()
             particles[task] += (
                 stepsize/num_thetas *
                 torch.mm(
@@ -179,6 +178,10 @@ if __name__ == "__main__":
                              "generative network",
                         type=int,
                         default=100)
+    parser.add_argument("--bottleneck_size",
+                        help="Dimension of the bottleneck features",
+                        type=int,
+                        default=128)
     parser.add_argument("--num_samples",
                         help="Number of samples to draw per batch to "
                              "compute the sketch of that batch",
@@ -241,7 +244,7 @@ if __name__ == "__main__":
         autoencoder = AE(
             data_loader.dataset[0][0].shape,
             device=device,
-            bottleneck_size=args.input_dim
+            bottleneck_size=args.bottleneck_size
         )
         if not os.path.exists(args.ae_model) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
@@ -280,17 +283,20 @@ if __name__ == "__main__":
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
 
     # generate test particles
-    nb_interp_test = 8
-    nb_test_pic = 100
-    interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
-    test_particles = torch.zeros(nb_interp_test * nb_test_pic,
-                                 args.input_dim).to(device)
 
-    for id in range(nb_test_pic):
-        for id_in_q, q in enumerate(interpolation):
-            test_particles[id*nb_interp_test+id_in_q, :] = (
-             q * train_particles[id+1] + (1-q)*train_particles[id])
+    # nb_interp_test = 8
+    # nb_test_pic = 100
+    # interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
+    # test_particles = torch.zeros(nb_interp_test * nb_test_pic,
+    #                              args.input_dim).to(device)
+    #
+    # for id in range(nb_test_pic):
+    #     for id_in_q, q in enumerate(interpolation):
+    #         test_particles[id*nb_interp_test+id_in_q, :] = (
+    #          q * train_particles[id+1] + (1-q)*train_particles[id])
 
+    #test_particles = torch.randn(*train_particles.shape).to(device)
+    test_particles = None
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:
         print('Using a dimension augmentation matrix')
@@ -298,7 +304,8 @@ if __name__ == "__main__":
         input_linear = torch.randn(args.input_dim,
                                    projectors.data_dim).to(device)
         train_particles = torch.mm(train_particles, input_linear)
-        test_particles = torch.mm(test_particles, input_linear)
+        if test_particles is not None:
+            test_particles = torch.mm(test_particles, input_linear)
 
     # create the logger
     if args.log:

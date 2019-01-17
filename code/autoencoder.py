@@ -81,7 +81,7 @@ class AutoEncoderModel(nn.Module):
 
     def encode_nograd(self, x):
         with torch.no_grad():
-            return self.encode(x)
+            return self.encode(x[None,...])
 
     def decode_nograd(self, x):
         with torch.no_grad():
