@@ -1,6 +1,6 @@
 # parameters for sketching
 NUM_QUANTILES=200
-NUM_THETAS=15000
+NUM_THETAS=5000
 CLIPTO=5000
 
 # parameters for SWF

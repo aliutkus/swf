@@ -31,8 +31,8 @@ def swmin(train_particles, target_queue, num_quantiles, device_str, logger):
     # prepare stuff
     criterion = nn.MSELoss()
 
-    particles = torch.nn.Parameter(train_particles)
-    optimizer = optim.Adam(particles, lr=1e-3)
+    particles = torch.nn.Parameter(train_particles.to(device))
+    optimizer = optim.Adam([particles], lr=1e-3)
 
     data_dim = train_particles.shape[-1]
 
