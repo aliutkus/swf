@@ -100,8 +100,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='AE MNIST Example')
     parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                         help='input batch size for training (default: 128)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
-                        help='number of epochs to train (default: 10)')
+    parser.add_argument('--epochs', type=int, default=20, metavar='N',
+                        help='number of epochs to train (default: 20)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='enables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -133,9 +133,9 @@ if __name__ == '__main__':
     autoencoder.train(train_loader)
     autoencoder.test(test_loader)
     with torch.no_grad():
-        sample = torch.randn(64, 64).to(device)
+        sample = torch.randn(32, 32).to(device)
         sample = autoencoder.model.decode(sample).cpu()
         save_image(
-            sample.view(64, 1, 28, 28),
+            sample.view(32, 1, 28, 28),
             'results/sample.png'
         )

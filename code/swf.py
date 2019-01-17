@@ -225,9 +225,18 @@ if __name__ == "__main__":
     # prepare AE
     ae_encode = True
     if ae_encode:
-        autoencoder = AE(data_loader.dataset[0][0].shape, device=device,
-                         nb_epochs=10)
-        autoencoder.train(data_loader)
+        train_loader = torch.utils.data.DataLoader(
+            data_loader.dataset, 
+            batch_size=32, 
+            shuffle=True
+        )
+
+        autoencoder = AE(
+            data_loader.dataset[0][0].shape, 
+            device=device,
+            nb_epochs=10
+        )
+        autoencoder.train(train_loader)
         autoencoder.model = autoencoder.model.to('cpu')
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
         data_loader.dataset.transform.transforms.append(t)
