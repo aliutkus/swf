@@ -21,7 +21,6 @@ from interp1d import Interp1d
 from torchvision import transforms
 from autoencoder import AE
 
-
 def swf(train_particles, test_particles, target_queue, num_quantiles,
         stepsize, regularization,
         device_str, logger):
@@ -119,12 +118,12 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
-        else particles['train'])
+        else particles['train'])git
 
 
 def logger_function(particles, index, loss,
                     plot_dir, log_writer,
-                    plot_every, img_shape):
+                    plot_every, img_shape, ae=None):
     """ Logging function."""
 
     if log_writer is not None:
@@ -141,7 +140,12 @@ def logger_function(particles, index, loss,
 
     # displays generated images
     for task in particles:
-        pic = make_grid(particles[task][:104, ...].view(-1, *img_shape),
+        if ae is not None:
+            cur_task = ae.model.decode_nograd(particles[task])
+            img_shape = ae.model.input_shape
+        else:
+            cur_task = particles[task]
+        pic = make_grid(cur_task[:104, ...].view(-1, *img_shape),
                         nrow=8, padding=2, normalize=True, scale_each=True)
         if log_writer is not None:
             log_writer.add_image('%s Image' % task, pic, index)
@@ -209,18 +213,16 @@ if __name__ == "__main__":
         args.root_data_dir = 'data/'+args.dataset
     data_loader = data.load_data(args.dataset, args.root_data_dir,
                                  args.img_size, args.clip_to)
-    data_shape = data_loader.dataset[0][0].shape
 
     # prepare AE
     ae_encode = True
     if ae_encode:
-        autoencoder = AE(data_loader.dataset[0][0].shape, device=device, nb_epochs=20)
+        autoencoder = AE(data_loader.dataset[0][0].shape, device=device, nb_epochs=10)
         autoencoder.train(data_loader)
-        # TODO: adding encoder as transform gets differention error... 
-        # TODO: lets add it to the sketcher than
-        # t = transforms.Lambda(lambda x: autoencoder.model.encode(x))
-        # data_loader.dataset.transform.transforms.append(t)
+        t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
+        data_loader.dataset.transform.transforms.append(t)
 
+    data_shape = data_loader.dataset[0][0].shape
     # prepare the projectors
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
@@ -275,4 +277,5 @@ if __name__ == "__main__":
                                       plot_dir=args.plot_dir,
                                       log_writer=log_writer,
                                       plot_every=args.plot_every,
-                                      img_shape=data_shape))
+                                      img_shape=data_shape,
+                                      ae=autoencoder))

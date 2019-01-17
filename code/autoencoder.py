@@ -31,8 +31,17 @@ class DenseDecoder(nn.Module):
 class AutoEncoderModel(nn.Module):
     def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64):
         super(AutoEncoderModel, self).__init__()
+        self.input_shape = input_shape
         self.encode = DenseEncoder(input_shape, bottleneck_size)
         self.decode = DenseDecoder(input_shape, bottleneck_size)
+
+    def encode_nograd(self, x):
+        with torch.no_grad():
+            return self.encode(x)
+
+    def decode_nograd(self, x):
+        with torch.no_grad():
+            return self.decode(x)
 
     def forward(self, x):
         return self.decode(self.encode(x))

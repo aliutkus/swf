@@ -102,8 +102,8 @@ class Sketcher(Dataset):
             imgs = imgs.to(device)
 
             # if required, flatten each sample
-            if imgs.shape[-1] != self.projectors.data_dim:
-                imgs = imgs.view([-1, self.projectors.data_dim])
+            # if imgs.shape[-1] != self.projectors.data_dim:
+            imgs = imgs.view([-1, self.projectors.data_dim])
 
             # aggregate the projections
             projections[:, pos:pos+len(imgs)] = \
