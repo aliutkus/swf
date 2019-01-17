@@ -73,11 +73,19 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             percentile_fn = Percentile(num_quantiles, device)
             particles_qf[task] = percentile_fn(projections[task])
 
+
+            #import matplotlib.pylab as plt
+            # plt.clf()
+            # plt.plot(target_qf.cpu().numpy().T,'b')
+            # plt.plot(particles_qf[task].cpu().numpy().T,'r')
+            # plt.show()
+
+            import ipdb; ipdb.set_trace()
             # compute the loss: squared error over the quantiles
             loss[task] = criterion(particles_qf[task], target_qf)
 
             # transort the marginals
-            interp_q[task] = Interp1d()(x=particles_qf[task],
+            interp_q[task] = Interp1d()(x=particles_qf['train'],
                                         y=quantiles,
                                         xnew=projections[task],
                                         out=interp_q[task])
@@ -118,7 +126,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
-        else particles['train'])git
+        else particles['train'])
 
 
 def logger_function(particles, index, loss,
@@ -132,7 +140,7 @@ def logger_function(particles, index, loss,
                                   loss[task].item(), index)
     loss_str = 'iteration %d: ' % (index + 1)
     for item, value in loss.items():
-        loss_str += item + ': %0.6f ' % value
+        loss_str += item + ': %0.12f ' % value
     print(loss_str)
 
     if plot_every < 0 or index % plot_every:
@@ -141,7 +149,7 @@ def logger_function(particles, index, loss,
     # displays generated images
     for task in particles:
         if ae is not None:
-            cur_task = ae.model.decode_nograd(particles[task])
+            cur_task = ae.model.decode.to(particles[task].device)(particles[task])
             img_shape = ae.model.input_shape
         else:
             cur_task = particles[task]
@@ -217,8 +225,10 @@ if __name__ == "__main__":
     # prepare AE
     ae_encode = True
     if ae_encode:
-        autoencoder = AE(data_loader.dataset[0][0].shape, device=device, nb_epochs=10)
+        autoencoder = AE(data_loader.dataset[0][0].shape, device=device,
+                         nb_epochs=10)
         autoencoder.train(data_loader)
+        autoencoder.model = autoencoder.model.to('cpu')
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
         data_loader.dataset.transform.transforms.append(t)
 
@@ -236,7 +246,7 @@ if __name__ == "__main__":
                         num_quantiles=args.num_quantiles)
 
     # generates the train particles
-    print(device, args.num_samples, args.input_dim)
+    print('using ',device)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
 
     # generate test particles

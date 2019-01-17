@@ -48,7 +48,7 @@ class AutoEncoderModel(nn.Module):
 
 
 class AE(object):
-    def __init__(self, input_shape, device, nb_epochs=10, bottleneck_size=32):
+    def __init__(self, input_shape, device, nb_epochs=10, bottleneck_size=64):
         super(AE, self).__init__()
         self.nb_epochs = nb_epochs
         self.bottleneck_size = bottleneck_size
@@ -62,7 +62,7 @@ class AE(object):
         self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
 
     def train(self, data_loader):
-        for epoch in range(1, self.nb_epochs + 1):        
+        for epoch in range(1, self.nb_epochs + 1):
             self.model.train()
             train_loss = 0
             for batch_idx, (X, _) in enumerate(data_loader):
@@ -126,10 +126,10 @@ if __name__ == '__main__':
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     autoencoder = AE(
-        train_loader.dataset[0][0].shape, 
-        device=device, 
+        train_loader.dataset[0][0].shape,
+        device=device,
         nb_epochs=args.epochs,
-    )        
+    )
     autoencoder.train(train_loader)
     autoencoder.test(test_loader)
     with torch.no_grad():
