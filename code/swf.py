@@ -21,6 +21,7 @@ from interp1d import Interp1d
 from torchvision import transforms
 from autoencoder import AE
 
+
 def swf(train_particles, test_particles, target_queue, num_quantiles,
         stepsize, regularization,
         device_str, logger):
@@ -80,7 +81,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             # plt.plot(particles_qf[task].cpu().numpy().T,'r')
             # plt.show()
 
-            import ipdb; ipdb.set_trace()
+            # import ipdb; ipdb.set_trace()
             # compute the loss: squared error over the quantiles
             loss[task] = criterion(particles_qf[task], target_qf)
 
@@ -209,6 +210,11 @@ if __name__ == "__main__":
                         help="Directory for the logs using tensorboard. If "
                              "not provided, will log to directory `logs`.",
                         default="logs")
+    parser.add_argument("--train_ae",
+                        help="Force training of the AE.",
+                        action="store_true")
+    parser.add_argument("--ae_model",
+                        help="filename for the autoencoder model")
     args = parser.parse_args()
 
     # prepare the torch device (cuda or cpu ?)
@@ -225,19 +231,27 @@ if __name__ == "__main__":
     # prepare AE
     ae_encode = True
     if ae_encode:
-        train_loader = torch.utils.data.DataLoader(
-            data_loader.dataset, 
-            batch_size=32, 
-            shuffle=True
-        )
-
         autoencoder = AE(
-            data_loader.dataset[0][0].shape, 
+            data_loader.dataset[0][0].shape,
             device=device,
-            nb_epochs=10
+            bottleneck_size=args.input_dim
         )
-        autoencoder.train(train_loader)
-        autoencoder.model = autoencoder.model.to('cpu')
+        if not os.path.exists(args.ae_model) or args.train_ae:
+            train_loader = torch.utils.data.DataLoader(
+                data_loader.dataset,
+                batch_size=32,
+                shuffle=True
+            )
+            print('training AE on', device)
+            autoencoder.train(train_loader, nb_epochs=10)
+            autoencoder.model = autoencoder.model.to('cpu')
+            if args.ae_model is not None:
+                torch.save(autoencoder.model.state_dict(), args.ae_model)
+        else:
+            state = torch.load(args.ae_model, map_location='cpu')
+            autoencoder.model = \
+                autoencoder.model.to('cpu').load_state_dict(state)
+
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
         data_loader.dataset.transform.transforms.append(t)
 
@@ -255,7 +269,7 @@ if __name__ == "__main__":
                         num_quantiles=args.num_quantiles)
 
     # generates the train particles
-    print('using ',device)
+    print('using', device)
     train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
 
     # generate test particles
@@ -272,6 +286,7 @@ if __name__ == "__main__":
 
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:
+        print('Using a dimension augmentation matrix')
         torch.manual_seed(0)
         input_linear = torch.randn(args.input_dim,
                                    projectors.data_dim).to(device)

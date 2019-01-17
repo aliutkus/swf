@@ -1,13 +1,13 @@
 # parameters for sketching
-NUM_QUANTILES=1000
-NUM_THETAS=15000
+NUM_QUANTILES=3000
+NUM_THETAS=1000
 CLIPTO=5000
 
 # parameters for SWF
-INPUT_DIM=5
+INPUT_DIM=28
 NUM_SAMPLES=5000
 
-STEPSIZE=100
+STEPSIZE=1
 REG=0
 
 if [ $1 = "toy.npy" ]; then
@@ -22,4 +22,4 @@ if [ $1 = "toy.npy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python swf.py $1 --root_data_dir ~/data/$1 --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1
+python swf.py $1 --root_data_dir ~/data/$1 --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --reg $REG --num_thetas $NUM_THETAS --plot_dir ~/samples_$1 --logdir logs/$1 --ae_model ae.model #--train_ae
