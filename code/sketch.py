@@ -31,7 +31,7 @@ class Projectors:
             torch.manual_seed(id)
             result[pos] = torch.randn(self.num_thetas, self.data_dim,
                                       device=device)
-            result[pos][torch.abs(result[pos]) < 0.3] = 0
+            #result[pos][torch.abs(result[pos]) < 0.3] = 0
             result[pos] /= (torch.norm(result[pos], dim=1, keepdim=True))
         return torch.squeeze(result)
 
