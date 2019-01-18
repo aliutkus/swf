@@ -1,6 +1,6 @@
 # parameters for sketching
 NUM_QUANTILES=200
-NUM_THETAS=15000
+NUM_THETAS=500
 CLIPTO=5000
 
 # parameters for SWF
@@ -9,7 +9,7 @@ BOTTLENECK_SIZE=32
 AE_STRING="--ae"
 NUM_SAMPLES=5000
 NUM_SKETCHES=-1
-STEPSIZE=100
+STEPSIZE=50
 REG=0
 
 if [ $1 = "toy.npy" ]; then

@@ -9,7 +9,8 @@ BOTTLENECK_SIZE=32
 NUM_SAMPLES=5000
 NUM_SKETCHES=200
 STEPSIZE=0.01
-AE_STRING="--ae"
+AE_STRING=""
+#"--ae"
 
 if [ $1 = "toy.npy" ]; then
   echo "generating toy data, and then SWF on it"

@@ -6,8 +6,18 @@ from percentile import Percentile
 import atexit
 import queue
 import torch.multiprocessing as mp
+from torch import nn
 from contextlib import contextmanager
 from functools import partial
+
+
+class LinearWithBackward(nn.Linear):
+    def forward(self, input):
+        return super(LinearWithBackward, self).forward(
+            input.view(input.shape[0], -1))
+
+    def backward(self, grad):
+        return torch.mm(grad.view(grad.shape[0], -1), self.weight)
 
 
 class Projectors:
@@ -20,20 +30,26 @@ class Projectors:
         # for now, always use the CPU for generating projectors
         self.device = "cpu"
 
-    def __getitem__(self, idx):
+    def __getitem__(self, indexes):
         device = torch.device(self.device)
 
-        if isinstance(idx, int):
-            idx = [idx]
-        result = torch.empty((len(idx), self.num_thetas, self.data_dim),
-                             device=device)
+        if isinstance(indexes, int):
+            idx = [indexes]
+        else:
+            idx = indexes
+
+        result = []
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
-            result[pos] = torch.randn(self.num_thetas, self.data_dim,
-                                      device=device)
-            #result[pos][torch.abs(result[pos]) < 0.3] = 0
-            result[pos] /= (torch.norm(result[pos], dim=1, keepdim=True))
-        return torch.squeeze(result)
+            new_projector = LinearWithBackward(in_features=self.data_dim,
+                                      out_features=self.num_thetas,
+                                      bias=False).to(device)
+            new_projector.weight = nn.Parameter(
+                                    new_projector.weight
+                                    / torch.norm(new_projector.weight,
+                                                 dim=1, keepdim=True))
+            result += [new_projector]
+        return result[0] if isinstance(indexes, int) else result
 
 
 class RandomCoders:
@@ -46,18 +62,20 @@ class RandomCoders:
         # for now, always use the CPU for generating projectors
         self.device = "cpu"
 
-    def __getitem__(self, idx):
+    def __getitem__(self, indexes):
         from autoencoder import ConvEncoder
 
-        if isinstance(idx, int):
-            idx = [idx]
+        if isinstance(indexes, int):
+            idx = [indexes]
+        else:
+            idx = indexes
 
         result = []
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
             result += [ConvEncoder(input_shape=self.data_shape,
                                    bottleneck_size=self.num_thetas)]
-        return result
+        return result[0] if isinstance(indexes, int) else result
 
 
 class Sketcher(Dataset):
@@ -107,37 +125,44 @@ class Sketcher(Dataset):
         # finally get the sketch
         return self.__getitem__(next_id)
 
-    def __getitem__(self, index):
+    def __getitem__(self, indexes):
+        if isinstance(indexes, int):
+            index = [indexes]
+        else:
+            index = indexes
+
         # get the device
         device = torch.device(self.device)
 
         # get the projector
-        projector = self.projectors[index].view([-1, self.projectors.data_dim])
-        projector = projector.to(device)
+        sketches = []
+        for id in index:
+            projector = self.projectors[id].to(device)
 
-        # allocate the projectons variable
-        projections = torch.empty((projector.shape[0],
-                                   len(self.data_source.sampler)),
-                                  device=device)
+            # allocate the projectons variable
+            projections = torch.empty((len(self.data_source.sampler),
+                                       self.projectors.num_thetas),
+                                      device=device)
 
-        # compute the projections by a loop over the data
-        pos = 0
-        for imgs, labels in self.data_source:
-            # get a batch of images and send it to device
-            imgs = imgs.to(device)
+            # compute the projections by a loop over the data
+            pos = 0
+            for imgs, labels in self.data_source:
+                # get a batch of images and send it to device
+                imgs = imgs.to(device)
 
-            # if required, flatten each sample
-            # if imgs.shape[-1] != self.projectors.data_dim:
-            imgs = imgs.view([-1, self.projectors.data_dim])
+                # if required, flatten each sample
+                #imgs = imgs.view([-1, self.projectors.data_dim])
+                # aggregate the projections
+                projections[pos:pos+len(imgs)] = projector(imgs)
+                pos += len(imgs)
 
-            # aggregate the projections
-            projections[:, pos:pos+len(imgs)] = \
-                torch.mm(projector, imgs.transpose(0, 1))
-            pos += len(imgs)
-
-        # compute the quantiles for these projections
-        return (Percentile(self.num_quantiles, device)(projections).float(),
-                projector, index)
+            # compute the quantiles for these projections
+            sketches += [
+                (Percentile(
+                    self.num_quantiles, device)(projections).float(),
+                 projector,
+                 index)]
+        return sketches[0] if isinstance(indexes, int) else sketches
 
 
 class SketchStream:
@@ -205,8 +230,9 @@ class SketchStream:
         self.lock = self.ctx.Lock()
         if num_workers < 0:
             num_workers = np.inf
-        num_workers = max(1, min(num_workers,
-                                 int((mp.cpu_count()-2)/2)))
+        num_workers = 1
+        # num_workers = max(1, min(num_workers,
+        #                          int((mp.cpu_count()-2)/2)))
 
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
