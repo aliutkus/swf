@@ -14,11 +14,9 @@ import argparse
 from time import strftime, gmtime
 import socket
 import functools
-from math import sqrt
 import torch.multiprocessing as mp
 import queue
 from math import floor
-from interp1d import Interp1d
 from torchvision import transforms
 from autoencoder import AE
 
@@ -131,6 +129,71 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         else particles['train'])
 
 
+def swmin(train_particles, test_particles, target_queue, num_quantiles,
+          stepsize, regularization,
+          device_str, logger):
+    """Minimizes the Sliced Wasserstein distance between a population
+    and some target distribution described by a stream of marginal
+    distributions over random projections."""
+    # get the device
+    device = torch.device(device_str)
+
+    # prepare stuff
+    criterion = nn.MSELoss()
+
+    particles = torch.nn.Parameter(train_particles.to(device))
+    optimizer = optim.Adam([particles], lr=stepsize)
+
+    data_dim = train_particles.shape[-1]
+
+    # batch index init
+    index = 0
+
+    while True:
+        # get the data from the sketching queue
+        target_qf, projector, id = target_queue.get()
+        target_qf = target_qf.to(device)
+        projector = projector.to(device)
+
+        (num_thetas, data_dim) = projector.shape
+
+        optimizer.zero_grad()
+
+        # project the particles
+        #projections = projector(particles)
+        projections = torch.mm(projector, particles.transpose(0, 1))
+
+        # compute the corresponding quantiles
+        percentile_fn = Percentile(num_quantiles, device)
+        particles_qf = percentile_fn(projections)
+
+        # import numpy as np
+        #
+        # qf_np = np.percentile(projections.detach().cpu().numpy(), np.linspace(0,100,num_quantiles), axis=1)
+        # qf_cu = particles_qf.detach().cpu().numpy()
+        #
+        # import ipdb; ipdb.set_trace()
+        loss = criterion(particles_qf, target_qf)
+        loss.backward()
+        optimizer.step()
+
+        # call the logger with the transported train and test particles
+        logger({'train': particles}, index, {'train': loss})
+
+        index += 1
+
+        # puts back the data into the Queue if it's not full already
+        if not target_queue.full():
+            try:
+                target_queue.put((target_qf.detach().to('cpu'),
+                                  projector.detach().to('cpu'), id),
+                                 block=False)
+            except queue.Full:
+                pass
+
+    return particles
+
+
 def logger_function(particles, index, loss,
                     plot_dir, log_writer,
                     plot_every, img_shape, ae=None):
@@ -182,7 +245,7 @@ if __name__ == "__main__":
     parser.add_argument("--bottleneck_size",
                         help="Dimension of the bottleneck features",
                         type=int,
-                        default=128)
+                        default=64)
     parser.add_argument("--num_samples",
                         help="Number of samples to draw per batch to "
                              "compute the sketch of that batch",
@@ -191,7 +254,7 @@ if __name__ == "__main__":
     parser.add_argument("--stepsize",
                         help="Stepsize for the SWF",
                         type=float,
-                        default=1)
+                        default=1e-3)
     parser.add_argument("--regularization",
                         help="Regularization term for the additive noise",
                         type=float,
@@ -215,11 +278,18 @@ if __name__ == "__main__":
                         help="Directory for the logs using tensorboard. If "
                              "not provided, will log to directory `logs`.",
                         default="logs")
+    parser.add_argument("--ae",
+                        help="Activate reduction dimension through auto-"
+                             "encoding.",
+                        action="store_true")
     parser.add_argument("--train_ae",
                         help="Force training of the AE.",
                         action="store_true")
     parser.add_argument("--ae_model",
                         help="filename for the autoencoder model")
+    parser.add_argument("--swmin",
+                        help="Activate direct minimization of SW distance",
+                        action="store_true")
     args = parser.parse_args()
 
     # prepare the torch device (cuda or cpu ?)
@@ -234,8 +304,7 @@ if __name__ == "__main__":
                                  args.img_size, args.clip_to)
 
     # prepare AE
-    ae_encode = True
-    if ae_encode:
+    if args.ae:
         train_loader = torch.utils.data.DataLoader(
             data_loader.dataset,
             batch_size=32,
@@ -247,7 +316,11 @@ if __name__ == "__main__":
             device=device,
             bottleneck_size=args.bottleneck_size
         )
-        if not os.path.exists(args.ae_model) or args.train_ae:
+        ae_filename = (args.ae_model
+                       + '%d' % args.bottleneck_size
+                       + args.dataset
+                       + '.model')
+        if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
                 data_loader.dataset,
                 batch_size=32,
@@ -257,10 +330,10 @@ if __name__ == "__main__":
             autoencoder.train(train_loader, nb_epochs=30)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
-                torch.save(autoencoder.model.state_dict(), args.ae_model)
+                torch.save(autoencoder.model.state_dict(), ae_filename)
         else:
             print("Model loaded")
-            state = torch.load(args.ae_model, map_location='cpu')
+            state = torch.load(ae_filename, map_location='cpu')
             autoencoder.model.to('cpu').load_state_dict(state)
 
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
@@ -268,6 +341,7 @@ if __name__ == "__main__":
 
     data_shape = data_loader.dataset[0][0].shape
     # prepare the projectors
+    #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
@@ -296,7 +370,7 @@ if __name__ == "__main__":
     #         test_particles[id*nb_interp_test+id_in_q, :] = (
     #          q * train_particles[id+1] + (1-q)*train_particles[id])
 
-    #test_particles = torch.randn(*train_particles.shape).to(device)
+    # test_particles = torch.randn(*train_particles.shape).to(device)
     test_particles = None
     # multiply them by a random matrix if not of the appropriate size
     if args.input_dim != projectors.data_dim:
@@ -318,13 +392,19 @@ if __name__ == "__main__":
         log_writer = None
 
     # launch the sliced wasserstein flow
-    particles = swf(train_particles, test_particles, target_stream.queue,
-                    args.num_quantiles, args.stepsize,
-                    args.regularization,
-                    device_str,
-                    functools.partial(logger_function,
-                                      plot_dir=args.plot_dir,
-                                      log_writer=log_writer,
-                                      plot_every=args.plot_every,
-                                      img_shape=data_shape,
-                                      ae=autoencoder))
+    if args.swmin:
+        func = swmin
+    else:
+        func = swf
+
+    particles = func(train_particles, test_particles, target_stream.queue,
+                     args.num_quantiles, args.stepsize,
+                     args.regularization,
+                     device_str,
+                     functools.partial(logger_function,
+                                       plot_dir=args.plot_dir,
+                                       log_writer=log_writer,
+                                       plot_every=args.plot_every,
+                                       img_shape=data_shape,
+                                       ae=(None if not args.ae
+                                           else autoencoder)))

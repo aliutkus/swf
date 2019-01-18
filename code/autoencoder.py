@@ -13,7 +13,8 @@ class ConvEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvEncoder, self).__init__()
         self.input_shape = input_shape
-        self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1,
+                               padding=1)
         self.conv2 = nn.Conv2d(3, 32, kernel_size=2, stride=2, padding=0)
         self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
@@ -34,10 +35,14 @@ class ConvDecoder(nn.Module):
         super(ConvDecoder, self).__init__()
         self.input_shape = input_shape
         self.fc4 = nn.Linear(bottleneck_size, 8192)
-        self.deconv1 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
-        self.deconv2 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
-        self.deconv3 = nn.ConvTranspose2d(32, 32, kernel_size=2, stride=2, padding=0)
-        self.conv5 = nn.Conv2d(32, self.input_shape[0], kernel_size=3, stride=1, padding=1)
+        self.deconv1 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1,
+                                          padding=1)
+        self.deconv2 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1,
+                                          padding=1)
+        self.deconv3 = nn.ConvTranspose2d(32, 32, kernel_size=2, stride=2,
+                                          padding=0)
+        self.conv5 = nn.Conv2d(32, self.input_shape[0], kernel_size=3,
+                               stride=1, padding=1)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
@@ -81,7 +86,7 @@ class AutoEncoderModel(nn.Module):
 
     def encode_nograd(self, x):
         with torch.no_grad():
-            return self.encode(x[None,...])
+            return self.encode(x[None, ...])
 
     def decode_nograd(self, x):
         with torch.no_grad():
@@ -156,7 +161,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
+                        help='how many batches to wait before logging '
+                             'training status')
     args = parser.parse_args()
     args.cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -179,7 +185,8 @@ if __name__ == '__main__':
         batch_size=args.batch_size, shuffle=True, **kwargs
     )
     test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
+        datasets.MNIST('../data', train=False,
+                       transform=transforms.ToTensor()),
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     autoencoder = AE(
