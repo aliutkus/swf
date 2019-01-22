@@ -6,7 +6,7 @@ NUM_THETAS=1000
 CLIPTO=30000
 
 # parameters for auto encoder
-BOTTLENECK_SIZE=16
+BOTTLENECK_SIZE=48
 AE_STRING="--ae"
 CONV_AE_STRING="--conv_ae"
 
