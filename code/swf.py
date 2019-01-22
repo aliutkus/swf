@@ -217,24 +217,38 @@ def logger_function(particles, index, loss,
 
     # displays generated images and display closest match in dataset
     for task in particles:
+        # if we use the autoencoder deocde the particles to visualize them
         if ae is not None:
             decoder = ae.model.decode.to(particles[task].device)
             cur_task = decoder(particles[task])
             img_shape = ae.model.input_shape
+        # otherwise just use the particles
         else:
             cur_task = particles[task]
 
+        # set the number of images we want to plot in the grid
+        # for each image we add the closest match (so nb_of_images * 2)
         nb_of_images = 8
+        
+        # get the number of images = nb_particles
         img_viewport = particles[task][:nb_of_images, ...]
+        # create empty grid
         output_viewport = torch.zeros((nb_of_images * 2,) + cur_task.shape[1:])
 
+        print("Finding closest matches in dataset")
+        # iterate over the number of images/particles
         for k in range(img_viewport.shape[0]):
+            # find closest match between image_k and sketched dataset
             ind, mse = utils.compare_image(
                 img_viewport[k], data_loader.dataset, 1
             )
+            # load closest match
             best_match = data_loader.dataset[int(ind)][0]
+            # decode closest match
             best_match_decoded = decoder(best_match)[0][0]
+            # decode image_k
             img_viewport_decoded = decoder(img_viewport[k])
+            # add images to output grid
             output_viewport[k + nb_of_images] = best_match_decoded
             output_viewport[k] = img_viewport_decoded
 
