@@ -14,7 +14,7 @@ class ConvEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvEncoder, self).__init__()
         self.input_shape = input_shape
-        self.conv1 = nn.Conv2d(self.input_shape[0], 1, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(self.input_shape[0], input_shape[0], kernel_size=3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(3, 32, kernel_size=2, stride=2, padding=0)
         self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
@@ -112,6 +112,7 @@ class AE(object):
             for batch_idx, (X, _) in enumerate(data_loader):
                 X = X.to(self.device)
                 self.optimizer.zero_grad()
+                import ipdb; ipdb.set_trace()
                 Y = self.model(X)
                 loss = self.criterion(Y, X)
                 loss.backward()
