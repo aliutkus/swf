@@ -2,25 +2,25 @@
 NUM_SKETCHES=1
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
-NUM_THETAS=1000
+NUM_THETAS=[500 * BOTTLENECK_SIZE]
 CLIPTO=30000
 
 # parameters for auto encoder
-BOTTLENECK_SIZE=16
+BOTTLENECK_SIZE=[16, 32, 48, 64, 80]
 AE_STRING="--ae"
-CONV_AE_STRING="--conv_ae"
+CONV_AE_STRING=["--conv_ae", ""]
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=250
+STEPSIZE=250 [NUM_THETAS / 4]
 REG=0
 
 # parameters for particles
-NUM_SAMPLES=5000
+NUM_SAMPLES=3000
 # particles type is either TESTSET or RANDOM. If RANDOM, the RANDOM_INPUT_DIM
 # controls the dimension of the input
 PARTICLES_TYPE='RANDOM'
-INPUT_DIM=16
+INPUT_DIM=BOTTLENECK_SIZE
 
 # number of test
 NUM_TEST=100
