@@ -178,7 +178,7 @@ if __name__ == '__main__':
     args.cuda = not args.no_cuda and torch.cuda.is_available()
 
     torch.manual_seed(args.seed)
-
+    bottleneck_size = 16
     device = torch.device("cuda" if args.cuda else "cpu")
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     autoencoder = AE(
         train_loader.dataset[0][0].shape,
         device=device,
-        bottleneck_size=64
+        bottleneck_size=bottleneck_size
     )
 
     if args.train_ae:
@@ -222,9 +222,9 @@ if __name__ == '__main__':
         state = torch.load(args.ae_model, map_location='cpu')
         autoencoder.model.to('cpu').load_state_dict(state)
 
-    autoencoder.test(test_loader)
+    autoencoder.test(train_loader)
     with torch.no_grad():
-        sample = torch.randn(32, 64).to(device)
+        sample = torch.randn(32, bottleneck_size).to(device)
         sample = autoencoder.model.decode(sample).cpu()
         save_image(
             sample.view(32, 1, 32, 32),
