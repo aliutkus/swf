@@ -21,6 +21,7 @@ from torchvision import transforms
 from autoencoder import AE
 from interp1d import Interp1d
 from math import sqrt
+import utils
 import numpy as np
 
 
@@ -114,7 +115,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                 particles[task].shape[0],
                 data_dim, device=device)
             noise /= sqrt(data_dim)
-            particles[task] += regularization * noise #sqrt(stepsize*data_dim) * regularization * noise
+            particles[task] += regularization * noise  # sqrt(stepsize * data_dim) * regularization * noise
 
         index += 1
 
@@ -163,7 +164,7 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
         optimizer.zero_grad()
 
         # project the particles
-        #projections = projector(particles)
+        # projections = projector(particles)
         projections = torch.mm(projector, particles.transpose(0, 1))
 
         # compute the corresponding quantiles
@@ -199,7 +200,7 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
 
 def logger_function(particles, index, loss,
                     plot_dir, log_writer,
-                    plot_every, img_shape, ae=None):
+                    plot_every, img_shape, data_loader, ae=None):
     """ Logging function."""
 
     if log_writer is not None:
@@ -214,14 +215,30 @@ def logger_function(particles, index, loss,
     if plot_every < 0 or index % plot_every:
         return
 
-    # displays generated images
+    # displays generated images and display closest match in dataset
     for task in particles:
         if ae is not None:
-            cur_task = ae.model.decode.to(particles[task].device)(particles[task])
+            decoder = ae.model.decode.to(particles[task].device)
+            cur_task = decoder(particles[task])
             img_shape = ae.model.input_shape
         else:
             cur_task = particles[task]
-        pic = make_grid(cur_task[:104, ...].view(-1, *img_shape),
+
+        nb_of_images = 8
+        img_viewport = particles[task][:nb_of_images, ...]
+        output_viewport = torch.zeros((nb_of_images * 2,) + cur_task.shape[1:])
+
+        for k in range(img_viewport.shape[0]):
+            ind, mse = utils.compare_image(
+                img_viewport[k], data_loader.dataset, 1
+            )
+            best_match = data_loader.dataset[int(ind)][0]
+            best_match_decoded = decoder(best_match)[0][0]
+            img_viewport_decoded = decoder(img_viewport[k])
+            output_viewport[k + nb_of_images] = best_match_decoded
+            output_viewport[k] = img_viewport_decoded
+
+        pic = make_grid(output_viewport.view(-1, *img_shape),
                         nrow=8, padding=2, normalize=True, scale_each=True)
         if log_writer is not None:
             log_writer.add_image('%s Image' % task, pic, index)
@@ -269,7 +286,7 @@ if __name__ == "__main__":
                         default=50)
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
-                        default="./samples")
+                        default="samples")
     parser.add_argument("--model_file",
                         help="Output file for the model",
                         default="./model.pth")
@@ -315,11 +332,21 @@ if __name__ == "__main__":
     # load the data
     if args.root_data_dir is None:
         args.root_data_dir = 'data/'+args.dataset
-    train_data_loader = data.load_data(args.dataset, args.root_data_dir,
-                                       args.img_size, args.clip_to)
-    test_data_loader = data.load_data(args.dataset, args.root_data_dir,
-                                      args.img_size, clipto=-1,
-                                      mode='test', batch_size=args.num_samples)
+    train_data_loader = data.load_data(
+        args.dataset,
+        args.root_data_dir,
+        args.img_size,
+        args.clip_to
+    )
+    test_data_loader = data.load_data(
+        args.dataset,
+        args.root_data_dir,
+        args.img_size,
+        clipto=-1,
+        mode='test',
+        batch_size=args.num_samples,
+        digits=None
+    )
 
     # prepare AE
     if args.ae:
@@ -338,6 +365,9 @@ if __name__ == "__main__":
                        + '%d' % args.bottleneck_size
                        + args.dataset
                        + '.model')
+
+        print(args.bottleneck_size)
+
         if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
                 train_data_loader.dataset,
@@ -361,6 +391,7 @@ if __name__ == "__main__":
     data_shape = train_data_loader.dataset[0][0].shape
 
     # prepare the projectors
+    # projectors = sketch.RandomCoders(args.num_thetas, data_shape)
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
@@ -441,5 +472,6 @@ if __name__ == "__main__":
                                        log_writer=log_writer,
                                        plot_every=args.plot_every,
                                        img_shape=data_shape,
+                                       data_loader=train_data_loader,
                                        ae=(None if not args.ae
                                            else autoencoder)))
