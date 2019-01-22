@@ -14,7 +14,7 @@ class ConvEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvEncoder, self).__init__()
         self.input_shape = input_shape
-        self.conv1 = nn.Conv2d(self.input_shape[0], input_shape[0], kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(3, 32, kernel_size=2, stride=2, padding=0)
         self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
@@ -22,6 +22,9 @@ class ConvEncoder(nn.Module):
         self.fc1 = nn.Linear(16 * 16 * 32, bottleneck_size)
 
     def forward(self, x):
+        if len(x.shape) == 3:
+            x = x[None, ...]
+
         out = self.relu(self.conv1(x))
         out = self.relu(self.conv2(out))
         out = self.relu(self.conv3(out))
@@ -77,8 +80,8 @@ class AutoEncoderModel(nn.Module):
     def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64):
         super(AutoEncoderModel, self).__init__()
         self.input_shape = input_shape
-        self.encode = DenseEncoder(input_shape, bottleneck_size)
-        self.decode = DenseDecoder(input_shape, bottleneck_size)
+        self.encode = ConvEncoder(input_shape, bottleneck_size)
+        self.decode = ConvDecoder(input_shape, bottleneck_size)
 
     def encode_nograd(self, x):
         with torch.no_grad():
@@ -112,7 +115,6 @@ class AE(object):
             for batch_idx, (X, _) in enumerate(data_loader):
                 X = X.to(self.device)
                 self.optimizer.zero_grad()
-                import ipdb; ipdb.set_trace()
                 Y = self.model(X)
                 loss = self.criterion(Y, X)
                 loss.backward()
