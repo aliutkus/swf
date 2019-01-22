@@ -171,12 +171,6 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
         percentile_fn = Percentile(num_quantiles, device)
         particles_qf = percentile_fn(projections)
 
-        # import numpy as np
-        #
-        # qf_np = np.percentile(projections.detach().cpu().numpy(), np.linspace(0,100,num_quantiles), axis=1)
-        # qf_cu = particles_qf.detach().cpu().numpy()
-        #
-        # import ipdb; ipdb.set_trace()
         loss = criterion(particles_qf, target_qf)
         loss.backward()
         optimizer.step()
@@ -229,7 +223,7 @@ def logger_function(particles, index, loss,
         # set the number of images we want to plot in the grid
         # for each image we add the closest match (so nb_of_images * 2)
         nb_of_images = 8
-        
+
         # get the number of images = nb_particles
         img_viewport = particles[task][:nb_of_images, ...]
         # create empty grid
@@ -292,18 +286,15 @@ if __name__ == "__main__":
     parser.add_argument("--regularization",
                         help="Regularization term for the additive noise",
                         type=float,
-                        default=1e-5)
+                        default=0)
     parser.add_argument("--plot_every",
                         help="Number of iterations between each plot."
                              " Negative value means no plot",
                         type=int,
-                        default=50)
+                        default=100)
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
                         default="samples")
-    parser.add_argument("--model_file",
-                        help="Output file for the model",
-                        default="./model.pth")
     parser.add_argument("--log",
                         help="Flag indicating whether or not to log the "
                              "sliced Wasserstein error along iterations.",
