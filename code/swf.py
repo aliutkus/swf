@@ -206,7 +206,9 @@ def logger_function(particles, index, loss,
         loss_str += item + ': %0.12f ' % value
     print(loss_str)
 
-    if plot_every < 0 or index % plot_every:
+    match = match_every > 0 and index > 0 and not index % match_every
+    plot = plot_every > 0 and not index % plot_every
+    if not plot and not match:
         return
 
     # displays generated images and display closest match in dataset
@@ -220,31 +222,35 @@ def logger_function(particles, index, loss,
         else:
             cur_task = particles[task]
 
-        # set the number of images we want to plot in the grid
-        # for each image we add the closest match (so nb_of_images * 2)
-        nb_of_images = 8
+        if match:
+            # set the number of images we want to plot in the grid
+            # for each image we add the closest match (so nb_of_images * 2)
+            nb_of_images = 8
 
-        # get the number of images = nb_particles
-        img_viewport = particles[task][:nb_of_images, ...]
-        # create empty grid
-        output_viewport = torch.zeros((nb_of_images * 2,) + cur_task.shape[1:])
+            # get the number of images = nb_particles
+            img_viewport = particles[task][:nb_of_images, ...]
+            # create empty grid
+            output_viewport = torch.zeros((nb_of_images * 2,)
+                                          + cur_task.shape[1:])
 
-        print("Finding closest matches in dataset")
-        # iterate over the number of images/particles
-        for k in range(img_viewport.shape[0]):
-            # find closest match between image_k and sketched dataset
-            ind, mse = utils.compare_image(
-                img_viewport[k], data_loader.dataset, 1
-            )
-            # load closest match
-            best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
-            # decode closest match
-            best_match_decoded = decoder(best_match)[0][0]
-            # decode image_k
-            img_viewport_decoded = decoder(img_viewport[k])
-            # add images to output grid
-            output_viewport[k + nb_of_images] = best_match_decoded
-            output_viewport[k] = img_viewport_decoded.cpu()
+            print("Finding closest matches in dataset")
+            # iterate over the number of images/particles
+            for k in range(img_viewport.shape[0]):
+                # find closest match between image_k and sketched dataset
+                ind, mse = utils.compare_image(
+                    img_viewport[k], data_loader.dataset, 1
+                )
+                # load closest match
+                best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
+                # decode closest match
+                best_match_decoded = decoder(best_match)[0][0]
+                # decode image_k
+                img_viewport_decoded = decoder(img_viewport[k])
+                # add images to output grid
+                output_viewport[k + nb_of_images] = best_match_decoded
+                output_viewport[k] = img_viewport_decoded.cpu()
+        else:
+            output_viewport = cur_task[:104, ...]
 
         pic = make_grid(output_viewport.view(-1, *img_shape),
                         nrow=8, padding=2, normalize=True, scale_each=True)
@@ -294,9 +300,10 @@ if __name__ == "__main__":
                         default=100)
     parser.add_argument("--match_every",
                         help="number of iteration between match with the "
-                             "items in the database",
+                             "items in the database. Negative means this "
+                             "is never checked.",
                         type=int,
-                        default=5000)
+                        default=-1)
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
                         default="samples")
@@ -486,6 +493,7 @@ if __name__ == "__main__":
                                        plot_dir=args.plot_dir,
                                        log_writer=log_writer,
                                        plot_every=args.plot_every,
+                                       match_every=args.match_every,
                                        img_shape=data_shape,
                                        data_loader=train_data_loader,
                                        ae=(None if not args.ae
