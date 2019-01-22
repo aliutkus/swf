@@ -6,7 +6,7 @@ NUM_THETAS=16000
 CLIPTO=3000
 
 # parameters for auto encoder
-BOTTLENECK_SIZE=16
+BOTTLENECK_SIZE=32
 AE_STRING="--ae"
 CONV_AE_STRING="--conv_ae"
 
@@ -27,8 +27,8 @@ NUM_TEST=3000
 TEST_TYPE='RANDOM'
 
 # plot every
-PLOT_EVERY=100
-MATCH_EVERY=5000
+PLOT_EVERY=-1
+MATCH_EVERY=-1
 
 if [ $1 = "toy.npy" ]; then
   echo "generating toy data, and then SWF on it"
@@ -42,4 +42,4 @@ if [ $1 = "toy.npy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python swf.py $1 --root_data_dir ~/data/$1 --img_size 32 --num_sketches $NUM_SKETCHES --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --particles_type=$PARTICLES_TYPE --stepsize $STEPSIZE --num_thetas $NUM_THETAS --plot_dir ~/swf_samples_$1 --logdir logs/$1 --plot_every $PLOT_EVERY --match_every $MATCH_EVERY $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE
+echo python swf.py $1 --root_data_dir ~/data/$1 --img_size 32 --num_sketches $NUM_SKETCHES --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --particles_type=$PARTICLES_TYPE --stepsize $STEPSIZE --num_thetas $NUM_THETAS --plot_dir ~/swf_samples_$1 --logdir logs/$1 --plot_every $PLOT_EVERY --match_every $MATCH_EVERY $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE
