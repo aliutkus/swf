@@ -292,7 +292,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--input_dim",
                         help="Dimension of the random input to the "
-                             "generative network",
+                             "generative network. If negative, will "
+                             "match the data dimension inferred from dataset",
                         type=int,
                         default=100)
     parser.add_argument("--num_iter",
@@ -450,10 +451,13 @@ if __name__ == "__main__":
 
     # generates the train particles
     print('using ', device)
+    if args.input_dim < 0:
+        input_dim = projectors.data_dim
+
     if args.particles_type.upper() == "RANDOM":
         train_particles = torch.rand(
             args.num_samples,
-            args.input_dim).to(device)
+            input_dim).to(device)
     elif args.particles_type.upper() == "TESTSET":
         for train_particles in test_data_loader:
             break
@@ -487,7 +491,7 @@ if __name__ == "__main__":
     if train_particles_dim != projectors.data_dim:
         print('Using a dimension augmentation matrix')
         torch.manual_seed(0)
-        input_linear = torch.randn(args.input_dim,
+        input_linear = torch.randn(input_dim,
                                    projectors.data_dim).to(device)
         train_particles = torch.mm(train_particles, input_linear)
         if test_particles is not None:
