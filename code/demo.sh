@@ -1,15 +1,17 @@
 # parameters for sketching
 NUM_SKETCHES=1
-NUM_QUANTILES=1000
-NUM_THETAS=2000
+NUM_QUANTILES=100
+# pick something related to bottleneck size for num_thetas
+NUM_THETAS=1000 
 CLIPTO=30000
 
 # parameters for auto encoder
-BOTTLENECK_SIZE=32
+BOTTLENECK_SIZE=16
 AE_STRING="--ae"
 
 # parameters for SWF
-STEPSIZE=50
+# pick something like num_thetas/4
+STEPSIZE=250
 REG=0
 
 # parameters for particles
