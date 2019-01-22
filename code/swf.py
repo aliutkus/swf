@@ -194,7 +194,7 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
 
 def logger_function(particles, index, loss,
                     plot_dir, log_writer,
-                    plot_every, img_shape, data_loader, ae=None):
+                    plot_every, match_every, img_shape, data_loader, ae=None):
     """ Logging function."""
 
     if log_writer is not None:
@@ -292,6 +292,11 @@ if __name__ == "__main__":
                              " Negative value means no plot",
                         type=int,
                         default=100)
+    parser.add_argument("--match_every",
+                        help="number of iteration between match with the "
+                             "items in the database",
+                        type=int,
+                        default=5000)
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
                         default="samples")

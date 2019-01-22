@@ -47,7 +47,7 @@ class ConvDecoder(nn.Module):
 
     def forward(self, x):
         out = self.relu(self.fc4(x))
-        out = out.view(out.size(0), 32, 16, 16)
+        out = out.view(-1, 32, 16, 16)
         out = self.relu(self.deconv1(out))
         out = self.relu(self.deconv2(out))
         out = self.relu(self.deconv3(out))
