@@ -23,11 +23,14 @@ from interp1d import Interp1d
 from math import sqrt
 import utils
 import numpy as np
+import json
+from pathlib import Path
+import uuid
 
 
 def swf(train_particles, test_particles, target_queue, num_quantiles,
         stepsize, regularization, num_iter,
-        device_str, logger):
+        device_str, logger, logging_path="."):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
     the distribution whose sketches are given by the target queue.
 
@@ -78,7 +81,6 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             percentile_fn = Percentile(num_quantiles, device)
             particles_qf[task] = percentile_fn(projections[task])
 
-
             # import matplotlib.pylab as plt
             # plt.clf()
             # plt.plot(target_qf.cpu().numpy().T,'b')
@@ -107,7 +109,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                     projector))
 
         # call the logger with the transported train and test particles
-        logger(particles, index, loss)
+        loss = logger(particles, index, loss)
 
         # now add the noise for the SWF step
         for task in particles:
@@ -128,6 +130,18 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                                  block=False)
             except queue.Full:
                 pass
+
+    # save params
+    params = {
+        'train_loss': float(loss['train']),
+        'test_loss': float(loss['test']),
+        'args': vars(args),
+    }
+
+    uuids = uuid.uuid4().hex[:6]
+
+    with open(Path(logging_path,  uuids + ".json"), 'w') as outfile:
+        outfile.write(json.dumps(params, indent=4, sort_keys=True))
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
@@ -210,7 +224,7 @@ def logger_function(particles, index, loss,
     match = match_every > 0 and index > 0 and not index % match_every
     plot = plot_every > 0 and not index % plot_every
     if not plot and not match:
-        return
+        return loss
 
     # displays generated images and display closest match in dataset
     for task in particles:
@@ -264,6 +278,7 @@ def logger_function(particles, index, loss,
                 os.mkdir(plot_dir)
             save_image(pic,
                        '{}/{}_image_{}.png'.format(plot_dir, task, index))
+    return loss
 
 
 if __name__ == "__main__":
@@ -280,7 +295,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_iter",
                         help="Number of iterations",
                         type=int,
-                        default=100000)
+                        default=5000)
     parser.add_argument("--bottleneck_size",
                         help="Dimension of the bottleneck features",
                         type=int,
@@ -402,7 +417,7 @@ if __name__ == "__main__":
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=30)
+            autoencoder.train(train_loader, nb_epochs=1)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
