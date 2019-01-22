@@ -77,11 +77,16 @@ class DenseDecoder(nn.Module):
 
 
 class AutoEncoderModel(nn.Module):
-    def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64):
+    def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64,
+                 convolutive=False):
         super(AutoEncoderModel, self).__init__()
         self.input_shape = input_shape
-        self.encode = DenseEncoder(input_shape, bottleneck_size)
-        self.decode = DenseDecoder(input_shape, bottleneck_size)
+        self.encode = (ConvEncoder(input_shape, bottleneck_size)
+                       if convolutive
+                       else DenseEncoder(input_shape, bottleneck_size))
+        self.decode = (ConvDecoder(input_shape, bottleneck_size)
+                       if convolutive
+                       else DenseDecoder(input_shape, bottleneck_size))
 
     def encode_nograd(self, x):
         with torch.no_grad():
@@ -96,7 +101,8 @@ class AutoEncoderModel(nn.Module):
 
 
 class AE(object):
-    def __init__(self, input_shape, device, bottleneck_size=64):
+    def __init__(self, input_shape, device, bottleneck_size=64,
+                 convolutive=False):
         super(AE, self).__init__()
         self.bottleneck_size = bottleneck_size
         self.device = device
@@ -104,7 +110,8 @@ class AE(object):
         self.input_shape = input_shape
         self.model = AutoEncoderModel(
             input_shape=self.input_shape,
-            bottleneck_size=self.bottleneck_size
+            bottleneck_size=self.bottleneck_size,
+            convolutive=convolutive
         ).to(device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
 

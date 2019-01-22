@@ -302,6 +302,9 @@ if __name__ == "__main__":
                         help="Activate reduction dimension through auto-"
                              "encoding.",
                         action="store_true")
+    parser.add_argument("--conv_ae",
+                        help="Activate convolutive AE",
+                        action="store_true")
     parser.add_argument("--train_ae",
                         help="Force training of the AE.",
                         action="store_true")
@@ -359,10 +362,12 @@ if __name__ == "__main__":
         autoencoder = AE(
             train_data_loader.dataset[0][0].shape,
             device=device,
-            bottleneck_size=args.bottleneck_size
+            bottleneck_size=args.bottleneck_size,
+            convolutive=args.conv_ae
         )
         ae_filename = (args.ae_model
                        + '%d' % args.bottleneck_size
+                       + 'conv' if args.conv_ae else 'dense'
                        + args.dataset
                        + '.model')
 
