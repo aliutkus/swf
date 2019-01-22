@@ -381,8 +381,8 @@ if __name__ == "__main__":
     elif args.particles_type.upper() == "TESTSET":
         for train_particles in test_data_loader:
             break
-        train_particles = train_particles[0].view(args.num_samples, -1)
-        import ipdb; ipdb.set_trace()
+        train_particles = train_particles[0].to(device)
+        train_particles = train_particles.view(args.num_samples, -1)
 
     # get the initial dimension for the train particles
     train_particles_dim = np.prod(train_particles.shape[1:])
