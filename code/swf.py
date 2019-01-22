@@ -26,7 +26,7 @@ import numpy as np
 
 
 def swf(train_particles, test_particles, target_queue, num_quantiles,
-        stepsize, regularization,
+        stepsize, regularization, num_iter,
         device_str, logger):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
     the distribution whose sketches are given by the target queue.
@@ -118,7 +118,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             particles[task] += regularization * noise  # sqrt(stepsize * data_dim) * regularization * noise
 
         index += 1
-
+        if index >= num_iter:
+            break
         # puts back the data into the Queue if it's not full already
         if not target_queue.full():
             try:
@@ -134,7 +135,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
 
 def swmin(train_particles, test_particles, target_queue, num_quantiles,
-          stepsize, regularization,
+          stepsize, regularization, num_iter,
           device_str, logger):
     """Minimizes the Sliced Wasserstein distance between a population
     and some target distribution described by a stream of marginal
@@ -276,6 +277,10 @@ if __name__ == "__main__":
                              "generative network",
                         type=int,
                         default=100)
+    parser.add_argument("--num_iter",
+                        help="Number of iterations",
+                        type=int,
+                        default=100000)
     parser.add_argument("--bottleneck_size",
                         help="Dimension of the bottleneck features",
                         type=int,
@@ -487,7 +492,7 @@ if __name__ == "__main__":
 
     particles = func(train_particles, test_particles, target_stream.queue,
                      args.num_quantiles, args.stepsize,
-                     args.regularization,
+                     args.regularization, args.num_iter,
                      device_str,
                      functools.partial(logger_function,
                                        plot_dir=args.plot_dir,
