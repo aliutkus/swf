@@ -52,8 +52,8 @@ class Percentile(torch.autograd.Function):
         # the argsort in the flattened in vector
 
         cols_offsets = (
-            torch.range(
-                    0, input_shape[1]-1, device=in_argsort.device)
+            torch.arange(
+                    0, input_shape[1], device=in_argsort.device)
             )[None, :].long()
         in_argsort = (in_argsort*input_shape[1] + cols_offsets).view(-1).long()
         floored = (floored[:, None]*input_shape[1] + cols_offsets).view(-1).long()

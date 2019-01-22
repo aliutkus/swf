@@ -331,8 +331,8 @@ if __name__ == "__main__":
     data_shape = data_loader.dataset[0][0].shape
 
     # prepare the projectors
-    #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
-    projectors = sketch.Projectors(args.num_thetas, data_shape)
+    projectors = sketch.RandomCoders(args.num_thetas, data_shape)
+    #projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
     num_workers = max(1, floor((mp.cpu_count()-2)/2))

@@ -73,6 +73,7 @@ class RandomCoders:
         result = []
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
+            print(id)
             result += [ConvEncoder(input_shape=self.data_shape,
                                    bottleneck_size=self.num_thetas)]
         return result[0] if isinstance(indexes, int) else result
