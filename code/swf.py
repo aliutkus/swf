@@ -30,7 +30,7 @@ import uuid
 
 def swf(train_particles, test_particles, target_queue, num_quantiles,
         stepsize, regularization, num_iter,
-        device_str, logger, logging_path="."):
+        device_str, logger, results_path="results"):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
     the distribution whose sketches are given by the target queue.
 
@@ -140,7 +140,10 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
     uuids = uuid.uuid4().hex[:6]
 
-    with open(Path(logging_path,  uuids + ".json"), 'w') as outfile:
+    if not os.path.exists(results_path):
+        os.mkdir(results_path)
+
+    with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
         outfile.write(json.dumps(params, indent=4, sort_keys=True))
 
     return (
