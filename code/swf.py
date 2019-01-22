@@ -237,14 +237,14 @@ def logger_function(particles, index, loss,
                 img_viewport[k], data_loader.dataset, 1
             )
             # load closest match
-            best_match = data_loader.dataset[int(ind)][0]
+            best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
             # decode closest match
             best_match_decoded = decoder(best_match)[0][0]
             # decode image_k
             img_viewport_decoded = decoder(img_viewport[k])
             # add images to output grid
             output_viewport[k + nb_of_images] = best_match_decoded
-            output_viewport[k] = img_viewport_decoded
+            output_viewport[k] = img_viewport_decoded.cpu()
 
         pic = make_grid(output_viewport.view(-1, *img_shape),
                         nrow=8, padding=2, normalize=True, scale_each=True)
@@ -372,11 +372,11 @@ if __name__ == "__main__":
         )
         ae_filename = (args.ae_model
                        + '%d' % args.bottleneck_size
-                       + 'conv' if args.conv_ae else 'dense'
+                       + ('conv' if args.conv_ae else 'dense')
                        + args.dataset
                        + '.model')
 
-        print(args.bottleneck_size)
+        print(ae_filename, 'number of bottleneck features:', args.bottleneck_size)
 
         if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(

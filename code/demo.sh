@@ -2,8 +2,8 @@
 NUM_SKETCHES=1
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
-NUM_THETAS=10000
-CLIPTO=30000
+NUM_THETAS=24000
+CLIPTO=3000
 
 # parameters for auto encoder
 BOTTLENECK_SIZE=48
@@ -20,7 +20,7 @@ NUM_SAMPLES=3000
 # particles type is either TESTSET or RANDOM. If RANDOM, the RANDOM_INPUT_DIM
 # controls the dimension of the input
 PARTICLES_TYPE='RANDOM'
-INPUT_DIM=BOTTLENECK_SIZE
+INPUT_DIM=16
 
 # number of test
 NUM_TEST=3000
