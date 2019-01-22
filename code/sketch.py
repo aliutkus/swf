@@ -36,30 +36,6 @@ class Projectors:
         return torch.squeeze(result)
 
 
-class RandomCoders:
-    """Each coder has random weights"""
-
-    def __init__(self, num_thetas, data_shape):
-        self.num_thetas = num_thetas
-        self.data_shape = data_shape
-        self.data_dim = np.prod(np.array(data_shape))
-        # for now, always use the CPU for generating projectors
-        self.device = "cpu"
-
-    def __getitem__(self, idx):
-        from autoencoder import ConvEncoder
-
-        if isinstance(idx, int):
-            idx = [idx]
-
-        result = []
-        for pos, id in enumerate(idx):
-            torch.manual_seed(id)
-            result += [ConvEncoder(input_shape=self.data_shape,
-                                   bottleneck_size=self.num_thetas)]
-        return result
-
-
 class Sketcher(Dataset):
     """Sketcher class: takes a source of data, a dataset of projectors, and
     construct sketches.

@@ -32,7 +32,8 @@ class DynamicSubsetRandomSampler(Sampler):
 
 
 def load_data(dataset, data_dir="data", img_size=None,
-              clipto=None, batch_size=640, use_cuda=False):
+              clipto=None, batch_size=640, use_cuda=False,
+              mode='train'):
     if use_cuda:
         kwargs = {'num_workers': 1, 'pin_memory': True}
     else:
@@ -42,6 +43,9 @@ def load_data(dataset, data_dir="data", img_size=None,
     # First load the DataSet
     if os.path.isfile(dataset):
         # this is a file, and hence should be a ndarray saved by numpy.save
+        if mode == "test":
+            print('WARNING: unless you specified another file, this dataset '
+                  'will be the same in train and test mode')
         imgs = torch.tensor(np.load(dataset))
         data = TensorDataset(imgs, torch.zeros(imgs.shape[0]))
     else:
@@ -57,11 +61,12 @@ def load_data(dataset, data_dir="data", img_size=None,
         # If it's a dir and is celebA, then we have a special loader
         if os.path.isdir(dataset):
             if os.path.basename(dataset).upper() == "CELEBA":
-                data = CelebA(dataset, transform, mode="train")
+                data = CelebA(dataset, transform, mode=mode)
         else:
             # Just assume it's a torchvision dataset
             DATASET = getattr(datasets, dataset)
-            data = DATASET(data_dir, train=True, download=True,
+            data = DATASET(data_dir, train=(mode == 'train'),
+                           download=True,
                            transform=transform)
 
     # Now get a dataloader

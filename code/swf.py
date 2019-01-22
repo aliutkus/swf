@@ -21,6 +21,7 @@ from torchvision import transforms
 from autoencoder import AE
 from interp1d import Interp1d
 from math import sqrt
+import numpy as np
 
 
 def swf(train_particles, test_particles, target_queue, num_quantiles,
@@ -292,6 +293,18 @@ if __name__ == "__main__":
     parser.add_argument("--swmin",
                         help="Activate direct minimization of SW distance",
                         action="store_true")
+    parser.add_argument("--particles_type",
+                        help="different kinds of particles. should be "
+                             "either RANDOM for random particles "
+                             "or TESTSET for particles drawn from the test "
+                             "set.")
+    parser.add_argument("--num_test",
+                        help="number of test samples",
+                        type=int,
+                        default=0)
+    parser.add_argument("--test_type",
+                        help="different kinds of test options. should be "
+                             "either RANDOM or INTERPOLATE.")
     args = parser.parse_args()
 
     # prepare the torch device (cuda or cpu ?)
@@ -302,19 +315,22 @@ if __name__ == "__main__":
     # load the data
     if args.root_data_dir is None:
         args.root_data_dir = 'data/'+args.dataset
-    data_loader = data.load_data(args.dataset, args.root_data_dir,
-                                 args.img_size, args.clip_to)
+    train_data_loader = data.load_data(args.dataset, args.root_data_dir,
+                                       args.img_size, args.clip_to)
+    test_data_loader = data.load_data(args.dataset, args.root_data_dir,
+                                      args.img_size, clipto=-1,
+                                      mode='test', batch_size=args.num_samples)
 
     # prepare AE
     if args.ae:
         train_loader = torch.utils.data.DataLoader(
-            data_loader.dataset,
+            train_data_loader.dataset,
             batch_size=32,
             shuffle=True
         )
 
         autoencoder = AE(
-            data_loader.dataset[0][0].shape,
+            train_data_loader.dataset[0][0].shape,
             device=device,
             bottleneck_size=args.bottleneck_size
         )
@@ -324,7 +340,7 @@ if __name__ == "__main__":
                        + '.model')
         if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
-                data_loader.dataset,
+                train_data_loader.dataset,
                 batch_size=32,
                 shuffle=True
             )
@@ -339,11 +355,12 @@ if __name__ == "__main__":
             autoencoder.model.to('cpu').load_state_dict(state)
 
         t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
-        data_loader.dataset.transform.transforms.append(t)
+        train_data_loader.dataset.transform.transforms.append(t)
+        test_data_loader.dataset.transform.transforms.append(t)
 
-    data_shape = data_loader.dataset[0][0].shape
+    data_shape = train_data_loader.dataset[0][0].shape
+
     # prepare the projectors
-    #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
@@ -351,31 +368,47 @@ if __name__ == "__main__":
     target_stream = SketchStream()
     target_stream.start(num_workers,
                         num_sketches=args.num_sketches,
-                        dataloader=data_loader,
+                        dataloader=train_data_loader,
                         projectors=projectors,
                         num_quantiles=args.num_quantiles)
 
     # generates the train particles
     print('using ', device)
-    train_particles = torch.rand(args.num_samples, args.input_dim).to(device)
+    if args.particles_type.upper() == "RANDOM":
+        train_particles = torch.rand(
+            args.num_samples,
+            args.input_dim).to(device)
+    elif args.particles_type.upper() == "TESTSET":
+        for train_particles in test_data_loader:
+            break
+        train_particles = train_particles[0].view(args.num_samples, -1)
+        import ipdb; ipdb.set_trace()
+
+    # get the initial dimension for the train particles
+    train_particles_dim = np.prod(train_particles.shape[1:])
 
     # generate test particles
+    if not args.num_test:
+        test_particles = None
+    elif args.test_type.upper() == "INTERPOLATE":
+        # Create an interpolation between training particles
+        nb_interp_test = 8
+        nb_test_pic = 100
+        interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
+        test_particles = torch.zeros(nb_interp_test * nb_test_pic,
+                                     train_particles_dim).to(device)
+        for id in range(nb_test_pic):
+            for id_in_q, q in enumerate(interpolation):
+                test_particles[id*nb_interp_test+id_in_q, :] = (
+                 q * train_particles[2*id+1] + (1-q)*train_particles[2*id])
+    elif args.test_type.upper() == "RANDOM":
+        test_particles = torch.randn(args.num_test,
+                                     train_particles_dim).to(device)
+    else:
+        raise Exception('test type must be either INTERPOLATE or RANDOM')
 
-    # nb_interp_test = 8
-    # nb_test_pic = 100
-    # interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
-    # test_particles = torch.zeros(nb_interp_test * nb_test_pic,
-    #                              args.input_dim).to(device)
-    #
-    # for id in range(nb_test_pic):
-    #     for id_in_q, q in enumerate(interpolation):
-    #         test_particles[id*nb_interp_test+id_in_q, :] = (
-    #          q * train_particles[id+1] + (1-q)*train_particles[id])
-
-    # test_particles = torch.randn(*train_particles.shape).to(device)
-    test_particles = None
     # multiply them by a random matrix if not of the appropriate size
-    if args.input_dim != projectors.data_dim:
+    if train_particles_dim != projectors.data_dim:
         print('Using a dimension augmentation matrix')
         torch.manual_seed(0)
         input_linear = torch.randn(args.input_dim,
