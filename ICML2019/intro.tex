@@ -12,11 +12,11 @@ Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be indep
 
 
 
-Learning generative networks has witnessed several groundbreaking contributions in the recent years. Motivated by this fact, there has been an interest in illuminating the theoretical foundations of VAEs and GANs \cite{bousquet2017optimal,liu2017approximation}.
+Learning generative networks have witnessed several groundbreaking contributions in recent years. Motivated by this fact, there has been an interest in illuminating the theoretical foundations of VAEs and GANs \cite{bousquet2017optimal,liu2017approximation}.
 %
 It has been shown that these implicit models have close connections with the theory of Optimal Transport (OT) \cite{villani2008optimal}.
 %
-As it turns out, OT brings new light on the generative modeling problem: there have been several extensions of VAEs \cite{tolstikhin2017wasserstein,kolouri2018sliced} and GANs \cite{arjovsky2017wasserstein,gulrajani2017improved,guo2017relaxed,lei2017geometric}, which exploit the links betwen OT and IGM.
+As it turns out, OT brings new light on the generative modeling problem: there have been several extensions of VAEs \cite{tolstikhin2017wasserstein,kolouri2018sliced} and GANs \cite{arjovsky2017wasserstein,gulrajani2017improved,guo2017relaxed,lei2017geometric}, which exploit the links between OT and IGM.
 
 
 OT studies whether it is possible to transform samples from a source distribution $\mu$ to a target distribution $\nu$. From this perspective, an ideal generative model is simply a transport map from $\mu$ to $\nu$.
@@ -44,7 +44,7 @@ We first show that, with the choice of $\SW$ and the negative-entropy functional
 
 
 
-To the best of our knowledge, the proposed algorithm is the first nonparametric IGM algorithm that has explicit theoretical guarantees. In addition to its nice theoretical properties, the proposed algorithm has also significant practical importance: it has low computationally requirements and can be easily run on an everyday laptop CPU.
+To the best of our knowledge, the proposed algorithm is the first nonparametric IGM algorithm that has explicit theoretical guarantees. In addition to its nice theoretical properties, the proposed algorithm has also significant practical importance: it has low computational requirements and can be easily run on an everyday laptop CPU.
  % On the other hand, it might have interesting implications in other domains, such as differential-privacy \cite{dwork2014algorithmic}, since it only requires random projections of the data, rather than the data itself.
 Our experiments on both synthetic and real datasets support our theory and illustrate the advantages of the algorithm in several scenarios.
 

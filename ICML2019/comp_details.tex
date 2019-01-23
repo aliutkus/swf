@@ -16,7 +16,11 @@
 \section{Additional Experimental Results}
 
 \subsection{The Sliced Wasserstein Flow}
+<<<<<<< HEAD
 The whole code for the Sliced Wasserstein Flow was implemented in Python, for use with Pytorch\footnote{\url{www.pytorch.org}.}. The code was written so as to run efficiently on GPU, and is available on the publicly available repository related to this paper on Github\footnote{\url{github.com/removed_for_double_blind}.}.
+=======
+The whole code for the Sliced Wasserstein Flow was implemented in Python, for use with Pytorch\footnote{\url{http://www.pytorch.org}.}. The code was written so as to run efficiently on GPU, and is available on the publicly available repository related to this paper\footnote{\url{github.com/removed_for_double_blind}.}.
+>>>>>>> 04348af4181f67141861ff266e78ca3178a583a0
 
 In practice, the SWF involves relatively simple operations, the most important being:
 \begin{itemize}
@@ -29,9 +33,9 @@ Given these operations, putting a SWF implementation together is straightforward
 
 \subsection{The need for dimension reduction through autoencoders}
 
-In this study, we used an autoencoder trained on the dataset as a dimension reduction technique, so that the SWF is applied to transport particles in a latent space of dimension $d\approx 50$, instead of the orginial $d>1000$ of image data.
+In this study, we used an autoencoder trained on the dataset as a dimension reduction technique, so that the SWF is applied to transport particles in a latent space of dimension $d\approx 50$, instead of the original $d>1000$ of image data.
 
-The curious reader may wonder why SWF is not applied directly on this original space, and what performances should be expected there. We have done this experiment, and we found out that SWF has much trouble rapidly converging to satisfying samples. In figure~\ref{fig:suppnoae}, we show the progressive evolution of particles undergoing SWF when the target is directly taken as the uncompressed dataset.
+The curious reader may wonder why SWF is not applied directly to this original space, and what performances should be expected there. We have done this experiment, and we found out that SWF has much trouble rapidly converging to satisfying samples. In figure~\ref{fig:suppnoae}, we show the progressive evolution of particles undergoing SWF when the target is directly taken as the uncompressed dataset.
 
 \begin{figure}
 \centering
@@ -41,14 +45,14 @@ The curious reader may wonder why SWF is not applied directly on this original s
 \label{fig:suppnoae}
 \end{figure}
 
-In this experiment, the strategy was to change the projections $\theta$ at each iterations, so that we ended up with a set of projections being $\{\theta_{n,k}\}_{n=1\dots N_\theta}^{k=1\dots K}$ instead of the fixed set of $N_\theta$ we now consider in the main document. This strategy is motivated by the complete failure we observed whenever we picked such fixed projections throughout iterations.
+In this experiment, the strategy was to change the projections $\theta$ at each iteration, so that we ended up with a set of projections being $\{\theta_{n,k}\}_{n=1\dots N_\theta}^{k=1\dots K}$ instead of the fixed set of $N_\theta$ we now consider in the main document. This strategy is motivated by the complete failure we observed whenever we picked such fixed projections throughout iterations.
 
 As may be seen on Figure~\ref{fig:suppnoae}, the particles definitely converge to samples from the desired datasets, and this is encouraging. However, we feel that the extreme number of iterations required to achieve such convergence comes from the fact that theory needs an integral over the $d-$dimensional sphere at each step of the SWF, which is clearly an issue whenever $d$ gets too large.
 Although our solution of picking new samples from the sphere at each iteration alleviated this issue to some extent, the curse of dimensionality prevents us from doing much better with just thousands of \emph{random} projections at a time.
 
 This being said, we are confident that good performance would be obtained if millions of random projections could be considered for transporting such high dimensional data because i/ theory suggests it and ii/ we observed excellent performance on reduced dimensions.
 
-However, we unfortunately did not have the computing power it takes for such large scale experiments and this is what motivated us in the first place to introduce some dimension-reduction technique through AE.
+However, we, unfortunately, did not have the computing power it takes for such large scale experiments and this is what motivated us in the first place to introduce some dimension-reduction technique through AE.
 
 \subsection{Structure of our autoencoders for reducing data dimension}
 
@@ -62,8 +66,7 @@ As mentioned in the text, we used autoencoders to reduce the dimensionality of t
 
 Once these networks defined, these autoencoders are trained in a very simple manner by minimizing the squared difference between input and output over the training set of the considered dataset (here MNIST or FashionMNIST). This training was achieved with the Adam algorithm \cite{kingma2014adam} with learning rate $1e-3$.
 
-No additional training trick was involved as in Variational Autoencoder \cite{kingma2013VAE} to make sure the distribution of the bottleneck features matches some prior.
-On the contrary, the core advantage of the proposed method is indeed to turn any previously learned AE as a generative model, by automatically and non-parameterically transporting particles drawn from an arbitrary prior distribution $\mu$ to the observed empirical distribution $\nu$ of the bottleneck features.
+No additional training trick was involved as in Variational Autoencoder \cite{kingma2013VAE} to make sure the distribution of the bottleneck features matches some prior. The core advantage of the proposed method in this respect is indeed to turn any previously learned AE as a generative model, by automatically and non-parameterically transporting particles drawn from an arbitrary prior distribution $\mu$ to the observed empirical distribution $\nu$ of the bottleneck features over the training set.
 
 \subsection{Convergence plots of SWF}
 
