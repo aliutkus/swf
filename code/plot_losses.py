@@ -36,6 +36,7 @@ def load_models(results_dir):
             results = json.load(stream)
 
         losses.append(results['train_losses'])
+        print(len(results['train_losses']))
         labels.append(str(results['args']['bottleneck_size']))
 
     return losses, labels
@@ -55,18 +56,18 @@ if __name__ == '__main__':
 
     losses, labels = load_models(args.results_dir)
     sns.set_style("whitegrid")
-    sns.set_context("talk", font_scale=1.5)
+    sns.set_context("paper", font_scale=1.5)
 
     losses = np.array(losses)
     # ax = plt.subplot(111)
     handles = plt.plot(losses.T)
-    plt.legend(handles, labels, loc=1)
-    # plt.ylim((0, 0.5))
+    plt.legend(handles, labels, loc=1, title="d")
+    plt.xlabel("Number of Iterations (k)")
+    plt.ylabel("Sliced-Wasserstein Loss")
     ax = plt.gca()
     ax.set_yscale("log")
-    plt.show()
-    # g.fig.savefig(
-    #     "5_train.svg",
-    #     bbox_inches='tight',
-    #     dpi=300
-    # )
+    plt.savefig(
+        "iterations.pdf",
+        bbox_inches='tight',
+        dpi=300
+    )
