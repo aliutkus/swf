@@ -15,9 +15,7 @@
 
 \section{Additional Experimental Results}
 
-\subsection{Implementation details}
-
-\paragraph{The Sliced Wasserstein Flow}
+\subsection{The Sliced Wasserstein Flow}
 The whole code for the Sliced Wasserstein Flow was implemented in Python, for use with Pytorch\footnote{\url{www.pytorch.org}.}. The code was written so as to run efficiently on GPU, and is available on the publicly available repository related to this paper\footnote{\url{github.com/removed_for_double_blind}.}.
 
 In practice, the SWF involves relatively simple operations, the most important being:
@@ -29,24 +27,30 @@ Even if such steps are conceptually simple, the quantile and required linear int
 
 Given these operations, putting a SWF implementation together is straightforward, and the online code is able to apply it on any dataset.
 
-\paragraph{The need for dimension reduction through autoencoders}
+\subsection{The need for dimension reduction through autoencoders}
 
 In this study, we used an autoencoder trained on the dataset as a dimension reduction technique, so that the SWF is applied to transport particles in a latent space of dimension $d\approx 50$, instead of the orginial $d>1000$ of image data.
 
-The curious reader may wonder why SWF is not applied directly on this original space, and what performances should be expected there.
-
+The curious reader may wonder why SWF is not applied directly on this original space, and what performances should be expected there. We have done this experiment, and we found out that SWF has much trouble rapidly converging to satisfying samples. In figure~\ref{fig:suppnoae}, we show the progressive evolution of particles undergoing SWF when the target is directly taken as the uncompressed dataset.
 
 \begin{figure}
 \centering
-\includegraphics[width=\picwidth\columnwidth]{figures/supplementary/fmnist_noae.pdf}
-\includegraphics[width=\picwidth\columnwidth]{figures/supplementary/mnist_noae.pdf}
-\caption{The evolution of SWF through 200 iterations on the FashionMNIST dataset. Plots are for $1$, $11$, $21$, $31$, $41$, $51$, $101$ and $201$ iterations}
+\includegraphics[width=\columnwidth]{figures/supplementary/fmnist_noae.pdf}
+\includegraphics[width=\columnwidth]{figures/supplementary/mnist_noae.pdf}
+\caption{The evolution of SWF through 15000 iterations, when the original high-dimensional data is kept instead of working on reduced bottleneck features as done in the main document. Showing results on the MNIST and FashionMNIST datasets.}
 \label{fig:suppnoae}
 \end{figure}
 
-We have done this experiment, and we found out that SWF has much trouble rapidly converging to satisfying samples. In
+In this experiment, the strategy was to change the projections $\theta$ at each iterations, so that we ended up with a set of projections being $\{\theta_{n,k}\}_{n=1\dots N_\theta}^{k=1\dots K}$ instead of the fixed set of $N_\theta$ we now consider in the main document. This strategy is motivated by the complete failure we observed whenever we picked such fixed projections throughout iterations.
 
-\paragraph{Vanilla autoencoders for reducing data dimension}
+As may be seen on Figure~\ref{fig:suppnoae}, the particles definitely converge to samples from the desired datasets, and this is encouraging. However, we feel that the extreme number of iterations required to achieve such convergence comes from the fact that theory needs an integral over the $d-$dimensional sphere at each step of the SWF, which is clearly an issue whenever $d$ gets too large.
+Although our solution of picking new samples from the sphere at each iteration alleviated this issue to some extent, the curse of dimensionality prevents us from doing much better with just thousands of projections at a time.
+
+This being said, we are confident that good performance would be obtained if millions of projections could be considered for transporting such high dimensional data because i/ theory suggests it and ii/ we observed excellent performance on reduced dimensions.
+
+However, we unfortunately did not have the computing power it takes for such large scale experiments and this is what motivated us in the first place to introduce some dimension-reduction technique through AE.
+
+\subsection{Structure of our autoencoders for reducing data dimension}
 
 As mentioned in the text, we used autoencoders to reduce the dimensionality of the transport problem. The structure of these networks is the following:
 
@@ -60,12 +64,27 @@ Once these networks defined, these autoencoders are trained in a very simple man
 
 No additional training trick was involved as in Variational Autoencoder \cite{kingma2013VAE} to make sure the distribution of the bottleneck features match some prior. The core advantage of the proposed method in this respect is indeed to turn any previously learned AE as a generative model, by automatically and non-parameterically transporting particles drawn from an arbitrary prior distribution $\mu$ to the observed empirical distribution $\nu$ of the bottleneck features over the training set.
 
-\subsection{Additional results}
+\subsection{Convergence plots of SWF}
 
-In Figures~\ref{fig:suppmnist} and \ref{fig:suppfmnist} below, we provide the evolution of the SWF algorithm on the Fashion MNIST and the MNIST datasets in higher resolution.
+\begin{figure}
+\begin{centering}
+\includegraphics[width=0.5\columnwidth]{figures/iterations.pdf}
+\par\end{centering}
+\caption{Approximately computed $\SW$ between the output $\bar{\mu}_{k}^{N}$ and data distribution $\nu$ in the MNIST experiment for different dimensions $d$ for the bottleneck features (and the corresponding pre-trained AE).
+\label{fig:supptoy_sw}}
+\end{figure}
+
+In the same experimental setting as in the main document, we also illustrate the behavior of the algorithm for varying dimensionality $d$ for the bottleneck-features. To monitor the convergence of SWF as predicted by theory, we display the approximately computed $\SW$ distance between the distribution of the particles and the data distribution. Even though minimizing this distance is not the real objective of our method, arguably, it is still a good proxy for understanding the convergence behavior.
+
+Figure~\ref{fig:supptoy_sw} illustrates the results. We observe that, for all choices of $d$, we see a steady and smooth decrease in the cost for all runs, which is in line with our theory. The absolute value of the cost for varying dimensions remains hard to interpret at this stage of our investigations.
+
+\section{Additional samples}
+
+\subsection{Evolution throughout iterations}
+
+In Figures~\ref{fig:suppmnist} and \ref{fig:suppfmnist} below, we provide the evolution of the SWF algorithm on the Fashion MNIST and the MNIST datasets in higher resolution, for an AE with $d=48$ bottleneck features.
 
 \newcommand{\picwidth}{0.15}%originally 0.24
-
 \begin{figure}
 \centering
 \includegraphics[width=\picwidth\columnwidth]{supplementary/mnist/train_image_0.png}
@@ -92,6 +111,38 @@ In Figures~\ref{fig:suppmnist} and \ref{fig:suppfmnist} below, we provide the ev
 \includegraphics[width=\picwidth\columnwidth]{supplementary/alternative_fmnist/train_image_200.png}
 \caption{The evolution of SWF through 200 iterations on the FashionMNIST dataset. Plots are for $1$, $11$, $21$, $31$, $41$, $51$, $101$ and $201$ iterations}
 \label{fig:suppfmnist}
+\end{figure}
+
+\subsection{Training samples, interpolation and extrapolation}
+
+In Figures~\ref{fig:suppmnistsamples} and \ref{fig:suppfmnistsamples} below, we provide the evolution of the SWF algorithm on the Fashion MNIST and the MNIST datasets in higher resolution, for an AE with $d=48$ bottleneck features.
+
+\renewcommand{\picwidth}{0.3}%originally 0.24
+
+
+\begin{figure}
+\centering
+\subfigure[particles undergoing SWF]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/MNIST_train_image_1000.png}}
+\subfigure[After SWF is done: applying learned map on linear combinations of train particles]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/MNIST_interp_image_1000.png}}
+\subfigure[After SWF is done: applying learned map on random inputs.]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/MNIST_randomtest_image_1000.png}}
+\caption{SWF on MNIST: training samples, interpolation in learned mapping, extrapolation.}
+\label{fig:suppmnistsamples}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\subfigure[particles undergoing SWF]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/FashionMNIST_train_image_1000.png}}
+\subfigure[After SWF is done: applying learned map on linear combinations of train particles]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/FashionMNIST_interp_image_1000.png}}
+\subfigure[After SWF is done: applying learned map on random inputs.]{
+\includegraphics[width=\picwidth\columnwidth]{supplementary/FashionMNIST_randomtest_image_1000.png}}
+\caption{SWF on FashionMNIST: training samples, interpolation in learned mapping, extrapolation.}
+\label{fig:suppfmnistsamples}
 \end{figure}
 
 
