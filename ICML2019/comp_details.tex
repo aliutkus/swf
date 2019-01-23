@@ -55,9 +55,9 @@ However, we, unfortunately, did not have the computing power it takes for such l
 As mentioned in the text, we used autoencoders to reduce the dimensionality of the transport problem. The structure of these networks is the following:
 
 \begin{itemize}
-  \item $\textbf{Encoder}$ Four 2d convolution layers with \(num\_chan\_out, kernel size, stride, padding\) being $(3,3,1,1)$, $(32,2,2,0)$, $(32,3,1,1)$, $(32, 3,1,1)$, each one followed by a ReLU activation. At the output, a linear layer gets the desired bottleneck size.
+  \item $\textbf{Encoder}$ Four 2d convolution layers with (num\_chan\_out, kernel\_size, stride, padding) being $(3,3,1,1)$, $(32,2,2,0)$, $(32,3,1,1)$, $(32, 3,1,1)$, each one followed by a ReLU activation. At the output, a linear layer gets the desired bottleneck size.
 
-  \item $\textbf{Decoder}$ A linear layer gets from the bottleneck features to a vector of dimension $8192$, which is reshaped as $(32, 16,16)$. Then, three convolution layers are applied, all with $32$ output channels and \(kernel size, stride, panning\) being respectively $(3,1,1)$, $(3,1,1)$, $(2,2,0)$. A 2d convolution layer is then applied with an output number of channels being that of the data \($1$ for black and white, $3$ for color\), and a \(kernel size, stride, panning\) as $(3,1,1)$. In any case, all layers are followed by a ReLU activation, and a sigmoid activation is applied a the very output.
+  \item $\textbf{Decoder}$ A linear layer gets from the bottleneck features to a vector of dimension $8192$, which is reshaped as $(32, 16,16)$. Then, three convolution layers are applied, all with $32$ output channels and (kernel\_size, stride, panning) being respectively $(3,1,1)$, $(3,1,1)$, $(2,2,0)$. A 2d convolution layer is then applied with an output number of channels being that of the data ($1$ for black and white, $3$ for color), and a (kernel\_size, stride, panning) as $(3,1,1)$. In any case, all layers are followed by a ReLU activation, and a sigmoid activation is applied a the very output.
 \end{itemize}
 
 Once these networks defined, these autoencoders are trained in a very simple manner by minimizing the squared difference between input and output over the training set of the considered dataset (here MNIST or FashionMNIST). This training was achieved with the Adam algorithm \cite{kingma2014adam} with learning rate $1e-3$.
