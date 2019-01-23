@@ -3,18 +3,18 @@ NUM_SKETCHES=1
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
 NUM_THETAS=16000
-CLIPTO=30000
+CLIPTO=5000
 
 # parameters for auto encoder
-BOTTLENECK_SIZE=80
+BOTTLENECK_SIZE=48
 AE_STRING="--ae"
 CONV_AE_STRING="--conv_ae"
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=1000
+STEPSIZE=500
 REG=0
-NUM_ITER=500
+NUM_ITER=200
 
 # parameters for particles
 NUM_SAMPLES=3000
@@ -24,12 +24,12 @@ PARTICLES_TYPE='RANDOM'
 INPUT_DIM=-1
 
 # number of test
-NUM_TEST=3000
-TEST_TYPE='INTERPOLATE'
+NUM_TEST=0
+TEST_TYPE='RANDOM'
 
 # plot every
-PLOT_EVERY=100
-MATCH_EVERY=5000
+PLOT_EVERY=10
+MATCH_EVERY=200
 
 if [ $1 = "toy.npy" ]; then
   echo "generating toy data, and then SWF on it"
