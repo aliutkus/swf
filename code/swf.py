@@ -58,6 +58,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
     particles_qf = {}
     projections = {}
     loss = {}
+    train_losses = []
+    test_losses = []
     interp_q['train'] = None
     transported['train'] = None
     if test_particles is not None:
@@ -110,7 +112,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
 
         # call the logger with the transported train and test particles
         loss = logger(particles, index, loss)
-
+        train_losses.append(float(loss['train']))
+        test_losses.append(float(loss['test']))
         # now add the noise for the SWF step
         for task in particles:
             noise = torch.randn(
@@ -134,8 +137,11 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
     # save params
     params = {
         'train_loss': float(loss['train']),
+        'train_losses': map(float, train_losses),
         'test_loss': float(loss['test']),
+        'test_losses': map(float, test_losses),
         'args': vars(args),
+        'iterations': int(index)
     }
 
     uuids = uuid.uuid4().hex[:6]
