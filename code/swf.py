@@ -65,6 +65,10 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
     if test_particles is not None:
         interp_q['test'] = None
         transported['test'] = None
+
+    # call the logger with the transported train and test particles
+    logger(particles, -1, loss)
+
     while True:
         # get the data from the sketching queue
         target_qf, projector, id = target_queue.get()
@@ -231,7 +235,7 @@ def logger_function(particles, index, loss,
     print(loss_str)
 
     match = match_every > 0 and index > 0 and not index % match_every
-    plot = plot_every > 0 and not index % plot_every
+    plot = index < 0 or (plot_every > 0 and not index % plot_every)
     if not plot and not match:
         return loss
 
