@@ -29,29 +29,16 @@ class DF_writer(object):
 
 
 def load_models(results_dir):
-    columns = [
-        'iteration',
-        'loss',
-        'dataset',
-        'subset',
-        'bottleneck_size'
-    ]
-
-    data = DF_writer(columns)
-
+    losses = []
+    labels = []
     for json_file in pathlib.Path(results_dir).glob('*.json'):
         with open(json_file, 'r') as stream:
             results = json.load(stream)
 
-        data.append(
-            loss=float(results['train_loss']),
-            subset="train",
-            iteration=len(results['train_losses']),
-            dataset=results['args']['dataset'],
-            bottleneck_size=int(results['args']['bottleneck_size'])
-        )
+        losses.append(results['train_losses'])
+        labels.append(str(results['args']['bottleneck_size']))
 
-    return data.df
+    return losses, labels
 
 
 if __name__ == '__main__':
@@ -66,16 +53,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    df = load_models(args.results_dir)
+    losses, labels = load_models(args.results_dir)
     sns.set_style("whitegrid")
     sns.set_context("talk", font_scale=1.5)
 
-    print(df)
-    g = (sns.catplot(
-        x="bottleneck_size", y="loss", sharey=False,
-        col="dataset", data=df
-    ).add_legend())
-
+    losses = np.array(losses)
+    # ax = plt.subplot(111)
+    handles = plt.plot(losses.T)
+    plt.legend(handles, labels, loc=1)
+    # plt.ylim((0, 0.5))
+    ax = plt.gca()
+    ax.set_yscale("log")
     plt.show()
     # g.fig.savefig(
     #     "5_train.svg",
