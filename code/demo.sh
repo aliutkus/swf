@@ -14,14 +14,14 @@ CONV_AE_STRING="--conv_ae"
 # pick something like num_thetas/4
 STEPSIZE=1000
 REG=0
-NUM_ITER=10000
+NUM_ITER=500
 
 # parameters for particles
 NUM_SAMPLES=3000
 # particles type is either TESTSET or RANDOM. If RANDOM, the RANDOM_INPUT_DIM
 # controls the dimension of the input
 PARTICLES_TYPE='RANDOM'
-INPUT_DIM=80
+INPUT_DIM=-1
 
 # number of test
 NUM_TEST=3000

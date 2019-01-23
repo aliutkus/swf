@@ -453,6 +453,8 @@ if __name__ == "__main__":
     print('using ', device)
     if args.input_dim < 0:
         input_dim = projectors.data_dim
+    else:
+        input_dim = args.input_dim
 
     if args.particles_type.upper() == "RANDOM":
         train_particles = torch.rand(
@@ -486,6 +488,8 @@ if __name__ == "__main__":
                                      train_particles_dim).to(device)
     else:
         raise Exception('test type must be either INTERPOLATE or RANDOM')
+
+    print('Train particles dimension:', train_particles_dim)
 
     # multiply them by a random matrix if not of the appropriate size
     if train_particles_dim != projectors.data_dim:
