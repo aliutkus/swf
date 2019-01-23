@@ -3,9 +3,6 @@
 \section{Regularized Sliced-Wasserstein Flows for Generative Modeling}
 
 
-
-
-
 \subsection{Construction of the gradient flow}
 
 % \vspace{-5pt}
@@ -93,7 +90,7 @@ This is done by first drawing $N_\theta$ uniform i.i.d.\ samples from the sphere
 %
 where for any $\theta$, $\psi_{k, \theta}'$ is the derivative of the Kantorovich potential (cf.\ Section~\ref{sec:techbg}) that is applied to the OT problem from $\theta^*_\#\bar{\mu}_{kh}^{N}$ to $\theta^*_\#\nu$: i.e.\,
 \begin{align}
-   \psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\nu} \circ F_{\theta^*_\#\bar{\mu}_{kh}^{N}}) (z)  \bigr] .%, \qquad \forall z \in \R$.
+   \psi_{k, \theta}'(z) = \bigl[ z - (F^{-1}_{\theta^*_\#\nu} \circ F_{\theta^*_\#\bar{\mu}_{kh}^{N}}) (z)  \bigr] \label{eq:psiprime}.%, \qquad \forall z \in \R$.
  \end{align}
 %where $\{\theta_n\}_{n=1}^{N_\theta}$ denotes a collection of i.i.d.\ samples that are drawn uniformly on $\Sp^{d-1}$, $F_{\theta^*_{n\#}\mu}$ and $F_{\theta^*_{n\#}\nu}$ denote the (one-dimensional) CDFs of the distributions $\theta^*_{n\#}\mu$ and $\theta^*_{n\#}\nu$, respectively. In \eqref{eqn:approxdrift} we used the definition of the derivative of the one-dimensional Kantorovich potential, which was defined in Section~\ref{sec:sw}.
 
@@ -144,33 +141,18 @@ Similarly, $F_{\theta^*_\#\bar{\mu}_{kh}^{N}}$, the CDF of the particles at iter
 
 In both cases, the true CDF and quantile functions are approximated as a linear interpolation between a set of the computed $Q\in\mathbb{N}_+$ empirical quantiles.
 Another source of approximation here comes from the fact that the target $\nu$ will in practice be a collection of Dirac measures on the observations $y_i$. Since it is currently common to have a very large datasets, we believe this approximation to be accurate in practice for the target.
-Finally, yet another source of approximation comes from the error induced by using a finite number of $\theta_n$ instead of a sum over $\Sp^{d-1}$.
+Finally, yet another source of approximation comes from the error induced by using a finite number of $\theta_n$ instead of a sum over $\Sp^{d-1}$ in~\eqref{eq:psiprime}.
 
 Even though the error induced by these approximation schemes can be incorporated into our current analysis framework, we choose to neglect it for now, because (i) all of these one-dimensional computations can be done very accurately and (ii) the quantization of the empirical CDF and QF can be modeled as additive Gaussian noise that enters our discretization scheme \eqref{eqn:euler_particle} \cite{van1998asymptotic}.
 Therefore, we will assume that $\hat{v}_k$ is an \emph{unbiased} estimator of $v$, i.e.\ $\E[\hat{v}(x,\mu)] = v(x,\mu)$, for any $x$ and $\mu$, where the expectation is taken over $\theta_{n}$.
 
 
 
-The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDFs of its projections on the many $\theta_{n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed beforehand in a massively distributed manner that is independent of the sliced Wasserstein flow. This aspect is reminiscent of the \textit{compressive learning} methodology \cite{gribonval2017compressive}, except we exploit quantiles of random projections here, instead of random moments as done there.
+The overall algorithm is illustrated in Algorithm~\ref{algo:flow}. It is remarkable that the updates of the particles only involves the learning data $\{y_i\}$ through the CDFs of its projections on the many $\theta_{n}\in\Sp^{d-1}$. This has a fundamental consequence of high practical interest: these CDF may be computed beforehand in a massively distributed manner that is independent of the sliced Wasserstein flow. This aspect is reminiscent of the \textit{compressive learning} methodology \cite{gribonval2017compressive}, except we exploit quantiles of random projections here, instead of random generalized moments as done there.
 
+Besides, we can obtain further reductions in the computing time if the CDF, $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure might also have some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for each data point $y_i$, we may guarantee that $y_i$ cannot be recovered via these projections, by picking fewer  than necessary for reconstruction using, e.g. compressed sensing~\cite{donoho2009observed}.
 
-
-Besides, we can obtain further reductions in the computing time if the CDF, $F_{\theta^*_\#\nu}$ for the target is computed on random mini-batches of the data, instead of the whole dataset of size $P$. This simplified procedure might also have some interesting consequences in privacy-preserving settings: since we can vary the number of projection directions $N_\theta$ for each data point $y_i$, by using the compressed sensing theory \cite{donoho2009observed}, we may guarantee that $y_i$ cannot be recovered via these projections, by simply picking fewer projections than necessary for reconstruction.
-
-
-
-We also note that, even though the proposed algorithm assumes that $\mu$ and $\nu$ have the same dimensionality, the theory in fact allows us to use a lower dimensional $\mu$ by using a simple procedure: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d \times d'$, and then use this sample as the input to the algorithm. We have the same theoretical guarantees with this procedure.
-
-
-%
-%
-% \umut{True. Don't we discuss this in the conclusion?}
-%
-% \ubul{8} In fact, theory allows us to use a lower dimensional $\mu$ by using
-% % the only requirement on $\mu$ is that it has finite second-order moments and is non-atomic.
-% a simple trick: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d' \times d$, using this output in the algorithm. We did not notice any difference in performance between using this trick for small input dimensions and directly taking $\mu$ as high dimensional, hence we omitted this development, but will include it again.
-% \end{remark}
-
+% We also note that, even though the proposed algorithm assumes that $\mu$ and $\nu$ have the same dimensionality, the theory in fact allows us to use a lower dimensional $\mu$ by using a simple procedure: if $\mu$ is $d' \ll d$ dimensional, we can generate a random sample from $\mu$ and multiply it by any full-rank matrix of size $d \times d'$, and then use this sample as the input to the algorithm. We have the same theoretical guarantees with this procedure.
 
 
 %%% Local Variables:

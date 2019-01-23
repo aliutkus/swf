@@ -2,12 +2,12 @@
 
 \section{Conclusion and Future Directions}
 
-In this study, we proposed SWF, an efficient, nonparametric IGM algorithm. 
-SWF is based on formulating IGM as a functional optimization problem in Wasserstein spaces, where the aim is to find a probability measure that is close to the data distribution as much as possible while maintaining the expressiveness at a certain level. 
-SWF lies in the intersection of OT, Wasserstein gradient flows, and SDEs, which allowed us to convert the IGM problem to an SDE simulation problem. We provided finite-time error bounds for the infinite-particle regime and established explicit links between the algorithm parameters and the overall error. 
-%We believe that the proposed algorithm is the first nonparametric IGM algorithm with explicit theoretical guarantees. 
+In this study, we proposed SWF, an efficient, nonparametric IGM algorithm.
+SWF is based on formulating IGM as a functional optimization problem in Wasserstein spaces, where the aim is to find a probability measure that is close to the data distribution as much as possible while maintaining the expressiveness at a certain level.
+SWF lies in the intersection of OT, Wasserstein gradient flows, and SDEs, which allowed us to convert the IGM problem to an SDE simulation problem. We provided finite-time error bounds for the infinite-particle regime and established explicit links between the algorithm parameters and the overall error.
+%We believe that the proposed algorithm is the first nonparametric IGM algorithm with explicit theoretical guarantees.
 %
-We conducted several experiments, where we showed that the results support our theory: SWF is able to generate samples from non-trivial distributions with low computational requirements. 
+We conducted several experiments, where we showed that the results support our theory: SWF is able to generate samples from non-trivial distributions with low computational requirements.
 
-The SWF algorithm opens up interesting future directions: (i) extension of the algorithm to differentially private settings \cite{dwork2014algorithmic} by exploiting the fact that it only requires random projections of the data, (ii) showing the convergence scheme of the particle system \eqref{eqn:sde_particle} to the original SDE \eqref{eqn:sde}, (iii) providing error bounds directly for the particle scheme \eqref{eqn:euler_particle}, (iv) combining SWF with existing IGM approaches in order to be able to simulate the particles in a lower dimensional space.  
- 
+The SWF algorithm opens up interesting future directions: (i) extension of the algorithm to differentially private settings \cite{dwork2014algorithmic} by exploiting the fact that it only requires random projections of the data, (ii) showing the convergence scheme of the particle system \eqref{eqn:sde_particle} to the original SDE \eqref{eqn:sde}, (iii) providing error bounds directly for the particle scheme \eqref{eqn:euler_particle}.
+% (iv) combining SWF with existing IGM approaches in order to be able to simulate the particles in a lower dimensional space.

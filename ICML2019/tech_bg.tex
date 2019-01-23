@@ -23,14 +23,14 @@ In the case where $\Omega$ is finite, computing the Wasserstein distance between
 \begin{align}
 \W(\mu,\nu) \hspace{-1pt} = \hspace{-6pt} \sup_{\psi \in \mathrm{L}^1(\mu)} \Bigl\{ \int_\Omega \psi(x) \mu(dx) + \int_\Omega \psi^c(x) \nu(dx) \Bigr\}^{1/2} \label{eqn:w2dual}
 \end{align}
-where $\mathrm{L}^1(\mu)$ denotes the class of functions that are absolutely integrable under $\mu$ and $\psi^c$ denotes the c-conjugate of $\psi$ and it is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
+where $\mathrm{L}^1(\mu)$ denotes the class of functions that are absolutely integrable under $\mu$ and $\psi^c$ denotes the c-conjugate of $\psi$ and is defined as follows: $\psi^c(y) \triangleq \{ \inf_{x\in \Omega} \| x-y\|^2 - \psi(x)\}$. The functions $\psi$ that realize the supremum in \eqref{eqn:w2dual} are called the Kantorovich potentials between $\mu$ and $\nu$.
 %
 Provided that $\mu$ satisfies a mild condition, we have the following  uniqueness result.
 \begin{thm}[\protect{\cite{santambrogio2010introduction}[Theorem 1.4]}]
 \label{thm:unqmap}
 Assume that  $\mu\in \PS_2(\Omega)$ is absolutely continuous with respect to the Lebesgue measure. Then, there exists a unique optimal transport plan $\gamma^\star$ that realizes the infimum in \eqref{eqn:w2} and it is of the form $(\text{Id} \times T)_\# \mu$, for a measurable function $T : \Omega \to \Omega$. Furthermore, there exists at least a Kantorovich potential $\psi$ whose gradient $\nabla \psi$ is uniquely determined $\mu$-almost everywhere. The function $T$ and the potential $\psi$ are linked by $T(x) = x- \nabla \psi(x)$.
 \end{thm}
-The measurable function $T : \Omega \to \Omega$ is referred to as the optimal transport map from $\mu$ to $\nu$. 
+The measurable function $T : \Omega \to \Omega$ is referred to as the optimal transport map from $\mu$ to $\nu$.
 This result implies that there exists a solution for transporting samples from $\mu$ to samples from $\nu$ and this solution is optimal in the sense that it minimizes the $\ell_2$ displacement. However, identifying this solution is highly non-trivial. In the discrete case, effective solutions have been proposed \cite{cuturi2013sinkhorn}. However, for continuous and high-dimensional probability measures, constructing an actual transport plan remains a challenge. Even if recent contributions \cite{genevay2016stochastic} have made it possible to rapidly compute $\W$, they do so without constructing the optimal map $T$, which is our objective here.
 
 
@@ -67,7 +67,7 @@ where $F_\mu$ and $F_\nu$ denote the cumulative distribution functions (CDF) of 
 %
 In this case, the optimal transport map from $\mu$ to $\nu$  has a closed-form formula as well, given as follows: $T(x) = (F_\nu^{-1} \circ F_\mu) (x)$ \cite{villani2008optimal}. The optimal map $T$ is also known as the \emph{increasing arrangement}, which maps each quantile of $\mu$ to the same quantile of $\nu$, e.g. minimum to minimum, median to median, maximum to maximum \cite{villani2008optimal}.
 %
-Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich potential is given as: 
+Due to Theorem~\ref{thm:unqmap}, the derivative of the corresponding Kantorovich potential is given as:
 \begin{align*}
 \psi'(x) \triangleq \partial_x \psi(x) = x- (F_\nu^{-1} \circ F_\mu) (x).
 \end{align*}
@@ -78,7 +78,7 @@ In the multidimensional case $d > 1$, building a transport map is much more diff
 \end{align}
 where $d\theta$ represents the uniform probability measure on $\Sp^{d-1}$. As shown in \cite{bonnotte2013unidimensional}, $\SW$ is indeed a distance metric and induces the same topology as $\W$ for compact domains.
 
-The $\SW$ distance has important practical implications: provided that the projected distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed (since the projected measures are one-dimensional). Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replace the integral in \eqref{eqn:sw} with a finite-sample average. Thanks to its computational benefits, $\SW$ was very recently considered for OT-based VAEs and GANs \cite{deshpande2018generative,autotranspoter,kolouri2018sliced}, appearing as a stable alternative to the adversarial methods. 
+The $\SW$ distance has important practical implications: provided that the projected distributions $\theta^*_\#\mu$ and $\theta^*_\#\nu$ can be computed, then for any $\theta \in \Sp^{d-1}$, the distance $\W (\theta^*_\#\mu, \theta^*_\#\nu)$, as well as its optimal transport map and the corresponding Kantorovich potential can be analytically computed (since the projected measures are one-dimensional). Therefore, one can easily approximate \eqref{eqn:sw} by using a simple Monte Carlo scheme that draws uniform random samples from $\Sp^{d-1}$ and replace the integral in \eqref{eqn:sw} with a finite-sample average. Thanks to its computational benefits, $\SW$ was very recently considered for OT-based VAEs and GANs \cite{deshpande2018generative,autotranspoter,kolouri2018sliced}, appearing as a stable alternative to the adversarial methods.
 
 
 

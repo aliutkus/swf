@@ -7,7 +7,7 @@ Implicit generative modeling (IGM) \cite{diggle1984monte, mohamed2016learning} h
 successful in various fields; variational auto-encoders (VAE) \cite{kingma2013VAE} and generative adversarial networks (GAN) \cite{goodfellow2014generative} being its two well-known examples. The goal in IGM can be briefly described as learning the
 underlying probability measure of a given dataset, denoted as $\nu \in \PS(\Omega)$, where $\PS$ is the space of probability measures on the measurable space $(\Omega,\mca)$, $\Omega \subset \rset^d$ is a domain and $\mca$ is the associated Borel $\sigma$-field.
 
-Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models the data points as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$.
+Given a set of data points $\{y_1 , \dots , y_P \}$ that are assumed to be independent and identically distributed (i.i.d.) samples drawn from $\nu$, the implicit generative framework models them as the output of a measurable map, i.e.\ $y = T(x)$, with $T: \Omega_\mu \mapsto \Omega$. Here, the inputs $x$ are generated from a known and easy to sample source measure $\mu$ on $\Omega_\mu$ (e.g.\ Gaussian or uniform measures), and the outputs $T(x)$ should match the unknown target measure $\nu$ on $\Omega$.
 
 
 
@@ -45,7 +45,7 @@ We first show that, with the choice of $\SW$ and the negative-entropy functional
 
 
 To the best of our knowledge, the proposed algorithm is the first nonparametric IGM algorithm that has explicit theoretical guarantees. In addition to its nice theoretical properties, the proposed algorithm has also significant practical importance: it has low computationally requirements and can be easily run on an everyday laptop CPU.
- % On the other hand, it might have interesting implications in other domains, such as differential-privacy \cite{dwork2014algorithmic}, since it only requires random projections of the data, rather than the data itself. 
+ % On the other hand, it might have interesting implications in other domains, such as differential-privacy \cite{dwork2014algorithmic}, since it only requires random projections of the data, rather than the data itself.
 Our experiments on both synthetic and real datasets support our theory and illustrate the advantages of the algorithm in several scenarios.
 
 

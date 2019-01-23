@@ -29,6 +29,23 @@ Even if such steps are conceptually simple, the quantile and required linear int
 
 Given these operations, putting a SWF implementation together is straightforward, and the online code is able to apply it on any dataset.
 
+\paragraph{The need for dimension reduction through autoencoders}
+
+In this study, we used an autoencoder trained on the dataset as a dimension reduction technique, so that the SWF is applied to transport particles in a latent space of dimension $d\approx 50$, instead of the orginial $d>1000$ of image data.
+
+The curious reader may wonder why SWF is not applied directly on this original space, and what performances should be expected there.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\picwidth\columnwidth]{figures/supplementary/fmnist_noae.pdf}
+\includegraphics[width=\picwidth\columnwidth]{figures/supplementary/mnist_noae.pdf}
+\caption{The evolution of SWF through 200 iterations on the FashionMNIST dataset. Plots are for $1$, $11$, $21$, $31$, $41$, $51$, $101$ and $201$ iterations}
+\label{fig:suppnoae}
+\end{figure}
+
+We have done this experiment, and we found out that SWF has much trouble rapidly converging to satisfying samples. In
+
 \paragraph{Vanilla autoencoders for reducing data dimension}
 
 As mentioned in the text, we used autoencoders to reduce the dimensionality of the transport problem. The structure of these networks is the following:
