@@ -115,8 +115,13 @@ In Figures~\ref{fig:suppmnist} and \ref{fig:suppfmnist} below, we provide the ev
 
 \subsection{Training samples, interpolation and extrapolation}
 
-In Figures~\ref{fig:suppmnistsamples} and \ref{fig:suppfmnistsamples} below, we provide the evolution of the SWF algorithm on the Fashion MNIST and the MNIST datasets in higher resolution, for an AE with $d=48$ bottleneck features.
+In Figures~\ref{fig:suppmnistsamples} and \ref{fig:suppfmnistsamples} below, we provide other examples of outcome from SWF, both for the MNIST and the FashionMNIST datasets, still with $d=48$ bottleneck features.
 
+The most noticeable fact we may see on these figures is that while the actual particles that went through SWF and linear combinations of them do yield very satisfying results, this is not the case for particles that are drawn randomly and then brought through a pre-learned SWF.
+
+Once again, we interpret this fact through the curse of dimensionality: while we saw that using a pre-trained SWF was totally working for small dimensions as in our toy example, it is already not so for $d=48$ and only $3000$ training samples. We expect new training samples to be satisfying if SWF is trained with an adequate and higher number of particles.
+
+This noticed, we highlight that this generalization weakness of SWF for high dimensions is not really an issue, since it is always possible to run the algorithm again for a set of new particles. Remember indeed that this does not require passing through the data again, since target projected distributions 
 \renewcommand{\picwidth}{0.3}%originally 0.24
 
 
