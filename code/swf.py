@@ -246,15 +246,16 @@ def logger_function(particles, index, loss,
         else:
             cur_task = particles[task]
 
-        if match:
-            # set the number of images we want to plot in the grid
-            # for each image we add the closest match (so nb_of_images * 2)
-            nb_of_images = 8
+        # set the number of images we want to plot in the grid
+        # for each image we add the closest match (so nb_of_images * 2)
+        nb_of_images = 8
 
+        if match:
             # get the number of images = nb_particles
             img_viewport = particles[task][:nb_of_images, ...]
+
             # create empty grid
-            output_viewport = torch.zeros((nb_of_images * 2,)
+            output_viewport = torch.zeros((nb_of_images,)
                                           + cur_task.shape[1:])
 
             print("Finding closest matches in dataset")
@@ -268,16 +269,32 @@ def logger_function(particles, index, loss,
                 best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
                 # decode closest match
                 best_match_decoded = decoder(best_match)[0][0]
-                # decode image_k
-                img_viewport_decoded = decoder(img_viewport[k])
                 # add images to output grid
-                output_viewport[k + nb_of_images] = best_match_decoded
-                output_viewport[k] = img_viewport_decoded.cpu()
-        else:
-            output_viewport = cur_task[:104, ...]
+                output_viewport[k] = best_match_decoded
 
-        pic = make_grid(output_viewport.view(-1, *img_shape),
-                        nrow=8, padding=2, normalize=True, scale_each=True)
+            pic = make_grid(
+                1 - output_viewport.view(-1, *img_shape),
+                nrow=1, padding=2, normalize=True, scale_each=True
+            )
+
+            if plot_dir is not None:
+                # create the temporary folder for plotting generated samp
+                if not os.path.exists(plot_dir):
+                    os.mkdir(plot_dir)
+                save_image(
+                    pic,
+                    '{}/{}_image_match_{}.png'.format(
+                        plot_dir, task, index
+                    )
+                )
+
+        output_viewport = cur_task[:nb_of_images, ...]
+
+        pic = make_grid(
+            1 - output_viewport.view(-1, *img_shape),
+            nrow=1, padding=2, normalize=True, scale_each=True
+        )
+
         if log_writer is not None:
             log_writer.add_image('%s Image' % task, pic, index)
 
