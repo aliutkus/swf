@@ -79,38 +79,88 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 \begin{figure}[]
 \centering
 \subfigure{
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_-1.png}
-\hspace{0.1cm}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_0.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_2.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_4.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_6.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_8.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_10.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_20.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_50.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_100.png}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_200.png}
-\hspace{0.1cm}
-\includegraphics[width=0.06\columnwidth]{figures/MNIST_evolution/train_image_match_200.png}
+\begin{tikzpicture}[font=\small]
+
+	\begin{axis}[%
+		/pgf/number format/.cd,
+				use comma,
+				1000 sep={},
+	width=.9\columnwidth,
+	axis line style={draw=none},
+	height=3.5cm,
+	axis on top,
+	trim axis left,
+	scale only axis,
+	ymajorticks=false,
+	xtick={4,12,20,28,36,44,52,60,68,76},
+	xticklabels={0,2,4,6,8,10,20,50,100,200},
+	xtick align=center,
+	ticklabel style = {font=\tiny},
+	xmin=-20,
+	xmax=99,
+	ymin=0,
+	ymax=8
+	]
+	\addplot [forget plot] graphics [xmin=-10,xmax=-2,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_-1.png};
+
+	\addplot [forget plot] graphics [xmin=0.0,xmax=8,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_0.png};
+	\addplot [forget plot] graphics [xmin=7.5,xmax=16,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_2.png};
+	\addplot [forget plot] graphics [xmin=15.5,xmax=24,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_4.png};
+	\addplot [forget plot] graphics [xmin=23.5,xmax=32,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_6.png};
+	\addplot [forget plot] graphics [xmin=31.5,xmax=40,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_8.png};
+	\addplot [forget plot] graphics [xmin=39.5,xmax=48,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_10.png};
+	\addplot [forget plot] graphics [xmin=47.5,xmax=56,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_20.png};
+	\addplot [forget plot] graphics [xmin=55.5,xmax=64,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_50.png};
+	\addplot [forget plot] graphics [xmin=63.5,xmax=72,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_100.png};
+	\addplot [forget plot] graphics [xmin=71.5,xmax=80,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_200.png};
+
+	\addplot [forget plot] graphics [xmin=82.0,xmax=90,ymin=0,ymax=8] {figures/MNIST_evolution/train_image_match_200.png};
+
+	\end{axis}
+\end{tikzpicture}%
 \label{fig:mnist}
 }
 \hfill
 \subfigure{
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_-1.png}
-\hspace{0.1cm}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_0.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_2.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_4.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_6.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_8.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_10.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_20.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_50.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_100.png}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_100.png}
-\hspace{0.1cm}
-\includegraphics[width=0.06\columnwidth]{figures/FashionMNIST_evolution/train_image_match_200.png}
+\begin{tikzpicture}[font=\small]
+
+	\begin{axis}[%
+		/pgf/number format/.cd,
+				use comma,
+				1000 sep={},
+	width=.9\columnwidth,
+	axis line style={draw=none},
+	height=3.5cm,
+	axis on top,
+	trim axis left,
+	scale only axis,
+	ymajorticks=false,
+	xtick={4,12,20,28,36,44,52,60,68,76},
+	xticklabels={0,2,4,6,8,10,20,50,100,200},
+	xtick align=center,
+	ticklabel style = {font=\tiny},
+	xmin=-20,
+	xmax=99,
+	ymin=0,
+	ymax=8
+	]
+	\addplot [forget plot] graphics [xmin=-10,xmax=-2,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_-1.png};
+
+	\addplot [forget plot] graphics [xmin=0.0,xmax=8,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_0.png};
+	\addplot [forget plot] graphics [xmin=7.5,xmax=16,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_2.png};
+	\addplot [forget plot] graphics [xmin=15.5,xmax=24,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_4.png};
+	\addplot [forget plot] graphics [xmin=23.5,xmax=32,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_6.png};
+	\addplot [forget plot] graphics [xmin=31.5,xmax=40,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_8.png};
+	\addplot [forget plot] graphics [xmin=39.5,xmax=48,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_10.png};
+	\addplot [forget plot] graphics [xmin=47.5,xmax=56,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_20.png};
+	\addplot [forget plot] graphics [xmin=55.5,xmax=64,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_50.png};
+	\addplot [forget plot] graphics [xmin=63.5,xmax=72,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_100.png};
+	\addplot [forget plot] graphics [xmin=71.5,xmax=80,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_200.png};
+
+	\addplot [forget plot] graphics [xmin=82.0,xmax=90,ymin=0,ymax=8] {figures/FashionMNIST_evolution/train_image_match_200.png};
+
+	\end{axis}
+\end{tikzpicture}%
 \label{fig:fashionmnist}
 }
 % \vspace{-10pt}
