@@ -439,10 +439,11 @@ if __name__ == "__main__":
         ae_filename = (args.ae_model
                        + '%d' % args.bottleneck_size
                        + ('conv' if args.conv_ae else 'dense')
-                       + args.dataset
+                       + ''.join(e for e in args.dataset if e.isalnum())
                        + '.model')
 
-        print(ae_filename, 'number of bottleneck features:', args.bottleneck_size)
+        print(ae_filename, 'number of bottleneck features:',
+              args.bottleneck_size)
 
         if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
