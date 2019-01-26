@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
+import torch.multiprocessing as mp
+from math import floor
 
 
 def compare_image(image, collection, return_amount):
@@ -26,8 +28,10 @@ def find_closest(items, dataset):
     # initialize the losses to infinite
     mindist = torch.ones(num)*float('inf')
     closest = torch.zeros_like(items)
-    dataloader = DataLoader(dataset, batch_size=500)
-    for batch_indexes, (candidates, _) in enumerate(dataloader):
+    num_workers = max(1, floor((mp.cpu_count()-2)/2))
+    dataloader = DataLoader(dataset, batch_size=5000, num_workers=num_workers)
+    for (candidates, _) in dataloader:
+        print('pouet')
         candidates = candidates.view(candidates.shape[0], -1).cpu()
         distances = torch.norm(
                         items[:, None, :] - candidates[None, ...],
@@ -35,5 +39,4 @@ def find_closest(items, dataset):
         mindist_in_batch, closest_in_batch = torch.min(distances, dim=1)
         replace = torch.nonzero(mindist_in_batch < mindist)
         closest[replace] = candidates[closest_in_batch[replace]]
-    import ipdb; ipdb.set_trace()
     return closest

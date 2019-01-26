@@ -15,11 +15,11 @@ class ConvEncoder(nn.Module):
         super(ConvEncoder, self).__init__()
         self.input_shape = input_shape
         self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(3, 32, kernel_size=2, stride=2, padding=0)
-        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
-        self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(3, input_shape[-1], kernel_size=2, stride=2, padding=0)
+        self.conv3 = nn.Conv2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
         self.relu = nn.ReLU()
-        self.fc1 = nn.Linear(16 * 16 * 32, bottleneck_size)
+        self.fc1 = nn.Linear(int(input_shape[-1]**3/4), bottleneck_size)
 
     def forward(self, x):
         if len(x.shape) == 3:
@@ -37,17 +37,17 @@ class ConvDecoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvDecoder, self).__init__()
         self.input_shape = input_shape
-        self.fc4 = nn.Linear(bottleneck_size, 8192)
-        self.deconv1 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
-        self.deconv2 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
-        self.deconv3 = nn.ConvTranspose2d(32, 32, kernel_size=2, stride=2, padding=0)
-        self.conv5 = nn.Conv2d(32, self.input_shape[0], kernel_size=3, stride=1, padding=1)
+        self.fc4 = nn.Linear(bottleneck_size, int(input_shape[-1]**3/4))
+        self.deconv1 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
+        self.deconv2 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
+        self.deconv3 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=2, stride=2, padding=0)
+        self.conv5 = nn.Conv2d(input_shape[-1], self.input_shape[0], kernel_size=3, stride=1, padding=1)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         out = self.relu(self.fc4(x))
-        out = out.view(-1, 32, 16, 16)
+        out = out.view(-1, self.input_shape[-1], int(self.input_shape[-1]/2), int(self.input_shape[-1]/2))
         out = self.relu(self.deconv1(out))
         out = self.relu(self.deconv2(out))
         out = self.relu(self.deconv3(out))

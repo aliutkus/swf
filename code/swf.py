@@ -264,7 +264,7 @@ def logger_function(particles, index, loss,
 
             print("Finding closest matches in dataset")
             closest = utils.find_closest(img_viewport, data_loader.dataset)
-            output_viewport = decoder(closest)
+            output_viewport = decoder(closest.to(device))
 
             # # iterate over the number of images/particles
             # for k in range(img_viewport.shape[0]):
@@ -280,8 +280,8 @@ def logger_function(particles, index, loss,
             #     output_viewport[k] = best_match_decoded
 
             pic = make_grid(
-                1 - output_viewport.view(-1, *img_shape),
-                nrow=1, padding=2, normalize=True, scale_each=True
+                output_viewport.view(-1, *img_shape),
+                nrow=16, padding=2, normalize=True, scale_each=True
             )
 
             if plot_dir is not None:
@@ -298,8 +298,8 @@ def logger_function(particles, index, loss,
         output_viewport = cur_task[:nb_of_images, ...]
 
         pic = make_grid(
-            1 - output_viewport.view(-1, *img_shape),
-            nrow=1, padding=2, normalize=True, scale_each=True
+            output_viewport.view(-1, *img_shape),
+            nrow=16, padding=2, normalize=True, scale_each=True
         )
 
         if log_writer is not None:

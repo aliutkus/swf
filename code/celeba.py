@@ -15,7 +15,7 @@ class CelebA(data.Dataset):
         self.image_dir = os.path.join(data_dir,'images')
         self.attr_path = os.path.join(data_dir, 'list_attr_celeba.txt')
 
-        self.transform = T.Compose((T.CenterCrop(178), transform))
+        self.transform = T.Compose([T.CenterCrop(178), transform])
         self.mode = mode
         self.train_dataset = []
         self.test_dataset = []
