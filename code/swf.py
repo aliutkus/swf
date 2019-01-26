@@ -252,7 +252,7 @@ def logger_function(particles, index, loss,
 
         # set the number of images we want to plot in the grid
         # for each image we add the closest match (so nb_of_images * 2)
-        nb_of_images = 8
+        nb_of_images = 320
 
         if match:
             # get the number of images = nb_particles
@@ -263,18 +263,21 @@ def logger_function(particles, index, loss,
                                           + cur_task.shape[1:])
 
             print("Finding closest matches in dataset")
-            # iterate over the number of images/particles
-            for k in range(img_viewport.shape[0]):
-                # find closest match between image_k and sketched dataset
-                ind, mse = utils.compare_image(
-                    img_viewport[k], data_loader.dataset, 1
-                )
-                # load closest match
-                best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
-                # decode closest match
-                best_match_decoded = decoder(best_match)[0][0]
-                # add images to output grid
-                output_viewport[k] = best_match_decoded
+            closest = utils.find_closest(img_viewport, data_loader.dataset)
+            output_viewport = decoder(closest)
+
+            # # iterate over the number of images/particles
+            # for k in range(img_viewport.shape[0]):
+            #     # find closest match between image_k and sketched dataset
+            #     ind, mse = utils.compare_image(
+            #         img_viewport[k], data_loader.dataset, 1
+            #     )
+            #     # load closest match
+            #     best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
+            #     # decode closest match
+            #     best_match_decoded = decoder(best_match)[0][0]
+            #     # add images to output grid
+            #     output_viewport[k] = best_match_decoded
 
             pic = make_grid(
                 1 - output_viewport.view(-1, *img_shape),
