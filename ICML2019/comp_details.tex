@@ -41,7 +41,7 @@ The curious reader may wonder why SWF is not applied directly to this original s
 \label{fig:suppnoae}
 \end{figure}
 
-In this experiment, the strategy was to change the projections $\theta$ at each iteration, so that we ended up with a set of projections being $\{\theta_{n,k}\}_{n=1\dots N_\theta}^{k=1\dots K}$ instead of the fixed set of $N_\theta$ we now consider in the main document. This strategy is motivated by the complete failure we observed whenever we picked such fixed projections throughout iterations.
+In this experiment, the strategy was to change the projections $\theta$ at each iteration, so that we ended up with a set of projections being $\{\theta_{n,k}\}_{n=1\dots N_\theta}^{k=1\dots K}$ instead of the fixed set of $N_\theta$ we now consider in the main document (for this, we picked $N_\theta=200$). This strategy is motivated by the complete failure we observed whenever we picked such fixed projections throughout iterations, even for a relatively large number as $N_\theta=16000$.
 
 As may be seen on Figure~\ref{fig:suppnoae}, the particles definitely converge to samples from the desired datasets, and this is encouraging. However, we feel that the extreme number of iterations required to achieve such convergence comes from the fact that theory needs an integral over the $d-$dimensional sphere at each step of the SWF, which is clearly an issue whenever $d$ gets too large.
 Although our solution of picking new samples from the sphere at each iteration alleviated this issue to some extent, the curse of dimensionality prevents us from doing much better with just thousands of \emph{random} projections at a time.
