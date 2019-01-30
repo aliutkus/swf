@@ -3,10 +3,11 @@ NUM_SKETCHES=1
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
 NUM_THETAS=16000
-CLIPTO=180000
+CLIPTO=10000
 
+IMG_SIZE=32
 # parameters for auto encoder
-BOTTLENECK_SIZE=64
+BOTTLENECK_SIZE=32
 AE_STRING="--ae"
 CONV_AE_STRING="--conv_ae"
 
@@ -14,10 +15,10 @@ CONV_AE_STRING="--conv_ae"
 # pick something like num_thetas/4
 STEPSIZE=500
 REG=0
-NUM_ITER=6001
+NUM_ITER=1001
 
 # parameters for particles
-NUM_SAMPLES=2000
+NUM_SAMPLES=3000
 # particles type is either TESTSET or RANDOM. If RANDOM, the RANDOM_INPUT_DIM
 # controls the dimension of the input
 PARTICLES_TYPE='RANDOM'
@@ -43,4 +44,4 @@ if [ $1 = "toy.npy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python swf.py $1 --root_data_dir ~/data/$1 --img_size 64 --num_sketches $NUM_SKETCHES --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --particles_type=$PARTICLES_TYPE --stepsize $STEPSIZE --num_thetas $NUM_THETAS --plot_dir ~/swf_samples_celeba --logdir logs/$1 --plot_every $PLOT_EVERY --num_iter $NUM_ITER --match_every $MATCH_EVERY $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE
+python -m cProfile -o 100_percent_gpu_utilization.prof swf.py $1 --root_data_dir ~/data/$1 --img_size $IMG_SIZE --num_sketches $NUM_SKETCHES --clip $CLIPTO --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --particles_type=$PARTICLES_TYPE --stepsize $STEPSIZE --num_thetas $NUM_THETAS --plot_dir ~/swf_samples_$1 --logdir logs/$1 --plot_every $PLOT_EVERY --num_iter $NUM_ITER --match_every $MATCH_EVERY $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE
