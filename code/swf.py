@@ -461,8 +461,6 @@ if __name__ == "__main__":
 
     data_shape = train_data_loader.dataset[0][0].shape
 
-    data_shape = data_loader.dataset[0][0].shape
-
     # prepare the projectors
     projectors = sketch.RandomCoders(args.num_thetas, data_shape)
     #projectors = sketch.Projectors(args.num_thetas, data_shape)
