@@ -1,15 +1,16 @@
 # parameters for sketching
 NUM_QUANTILES=200
-NUM_THETAS=500
+NUM_THETAS=100
 CLIPTO=5000
 
 # parameters for SWF
 INPUT_DIM=32
 BOTTLENECK_SIZE=32
 NUM_SAMPLES=5000
-NUM_SKETCHES=200
+NUM_SKETCHES=-1
 STEPSIZE=0.01
-AE_STRING="--ae"
+AE_STRING=""
+#"--ae"
 
 if [ $1 = "toy.npy" ]; then
   echo "generating toy data, and then SWF on it"

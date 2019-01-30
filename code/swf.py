@@ -47,7 +47,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
     particles['train'] = train_particles.to(device)
     if test_particles is not None:
         particles['test'] = test_particles.to(device)
-    data_dim = train_particles.shape[-1]
+    data_shape = train_particles[0].shape
 
     # batch index init
     index = 0
@@ -75,44 +75,45 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         target_qf = target_qf.to(device)
         projector = projector.to(device)
 
-        (num_thetas, data_dim) = projector.shape
-
         stepsize *= (index+1)/(index+2)
         for task in particles:  # will include the test particles if provided
             # project the particles
-            projections[task] = torch.mm(projector,
-                                         particles[task].transpose(0, 1))
+            with torch.no_grad():
+                num_particles = particles[task].shape[0]
+                projections[task] = projector(particles[task])
 
-            # compute the corresponding quantiles
-            percentile_fn = Percentile(num_quantiles, device)
-            particles_qf[task] = percentile_fn(projections[task])
+                # compute the corresponding quantiles
+                percentile_fn = Percentile(num_quantiles, device)
+                particles_qf[task] = percentile_fn(projections[task])
 
-            # import matplotlib.pylab as plt
-            # plt.clf()
-            # plt.plot(target_qf.cpu().numpy().T,'b')
-            # plt.plot(particles_qf[task].cpu().numpy().T,'r')
-            # plt.show()
 
-            # import ipdb; ipdb.set_trace()
-            # compute the loss: squared error over the quantiles
-            loss[task] = criterion(particles_qf[task], target_qf)
+                # import matplotlib.pylab as plt
+                # plt.clf()
+                # plt.plot(target_qf.cpu().numpy().T,'b')
+                # plt.plot(particles_qf[task].cpu().numpy().T,'r')
+                # plt.show()
 
-            # transort the marginals
-            interp_q[task] = Interp1d()(x=particles_qf['train'],
-                                        y=quantiles,
-                                        xnew=projections[task],
-                                        out=interp_q[task])
+                # import ipdb; ipdb.set_trace()
+                # compute the loss: squared error over the quantiles
+                loss[task] = criterion(particles_qf[task], target_qf)
 
-            interp_q[task] = torch.clamp(interp_q[task], 0, 100)
-            transported[task] = Interp1d()(x=quantiles,
-                                           y=target_qf,
-                                           xnew=interp_q[task],
-                                           out=transported[task])
-            particles[task] += (
-                stepsize/num_thetas *
-                torch.mm(
-                    (transported[task] - projections[task]).transpose(0, 1),
-                    projector))
+                # transort the marginals
+                interp_q[task] = Interp1d()(x=particles_qf['train'].t(),
+                                            y=quantiles,
+                                            xnew=projections[task].t(),
+                                            out=interp_q[task])
+
+                interp_q[task] = torch.clamp(interp_q[task], 0, 100)
+                transported[task] = Interp1d()(x=quantiles,
+                                               y=target_qf.t(),
+                                               xnew=interp_q[task],
+                                               out=transported[task])
+                particles[task] += (
+                    stepsize/projections[task].shape[1]
+                    * (
+                       projector.backward(
+                            transported[task].t() - projections[task])
+                       .view(num_particles, *data_shape)))
 
         # call the logger with the transported train and test particles
         loss = logger(particles, index, loss)
@@ -121,11 +122,9 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
             test_losses.append(float(loss['test']))
         # now add the noise for the SWF step
         for task in particles:
-            noise = torch.randn(
-                particles[task].shape[0],
-                data_dim, device=device)
-            noise /= sqrt(data_dim)
-            particles[task] += regularization * noise  # sqrt(stepsize * data_dim) * regularization * noise
+            noise = torch.randn(*particles[task].shape, device=device)
+            noise /= sqrt(particles[task].shape[-1])
+            particles[task] += regularization * noise #sqrt(stepsize*data_dim) * regularization * noise
 
         index += 1
         if index >= num_iter:
@@ -134,7 +133,7 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         if not target_queue.full():
             try:
                 target_queue.put((target_qf.detach().to('cpu'),
-                                  projector.detach().to('cpu'), id),
+                                  projector.to('cpu'), id),
                                  block=False)
             except queue.Full:
                 pass
@@ -176,8 +175,6 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
     particles = torch.nn.Parameter(train_particles.to(device))
     optimizer = optim.Adam([particles], lr=stepsize)
 
-    data_dim = train_particles.shape[-1]
-
     # batch index init
     index = 0
 
@@ -187,13 +184,10 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
         target_qf = target_qf.to(device)
         projector = projector.to(device)
 
-        (num_thetas, data_dim) = projector.shape
-
         optimizer.zero_grad()
 
         # project the particles
-        # projections = projector(particles)
-        projections = torch.mm(projector, particles.transpose(0, 1))
+        projections = projector(particles)
 
         # compute the corresponding quantiles
         percentile_fn = Percentile(num_quantiles, device)
@@ -212,7 +206,7 @@ def swmin(train_particles, test_particles, target_queue, num_quantiles,
         if not target_queue.full():
             try:
                 target_queue.put((target_qf.detach().to('cpu'),
-                                  projector.detach().to('cpu'), id),
+                                  projector.to('cpu'), id),
                                  block=False)
             except queue.Full:
                 pass
@@ -467,9 +461,11 @@ if __name__ == "__main__":
 
     data_shape = train_data_loader.dataset[0][0].shape
 
+    data_shape = data_loader.dataset[0][0].shape
+
     # prepare the projectors
-    # projectors = sketch.RandomCoders(args.num_thetas, data_shape)
-    projectors = sketch.Projectors(args.num_thetas, data_shape)
+    projectors = sketch.RandomCoders(args.num_thetas, data_shape)
+    #projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
     num_workers = max(1, floor((mp.cpu_count()-2)/2))
@@ -531,6 +527,10 @@ if __name__ == "__main__":
         train_particles = torch.mm(train_particles, input_linear)
         if test_particles is not None:
             test_particles = torch.mm(test_particles, input_linear)
+
+    train_particles = train_particles.view(-1, *data_shape)
+    if test_particles is not None:
+        test_particles = test_particles.view(-1, *data_shape)
 
     # create the logger
     if args.log:
