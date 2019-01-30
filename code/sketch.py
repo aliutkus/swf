@@ -63,7 +63,7 @@ class RandomCoders:
         self.device = "cpu"
 
     def __getitem__(self, indexes):
-        from autoencoder import ConvEncoder
+        from autoencoder import DenseEncoder
 
         if isinstance(indexes, int):
             idx = [indexes]
@@ -74,8 +74,8 @@ class RandomCoders:
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
             print(id)
-            result += [ConvEncoder(input_shape=self.data_shape,
-                                   bottleneck_size=self.num_thetas)]
+            result += [DenseEncoder(input_shape=self.data_shape,
+                                    bottleneck_size=self.num_thetas)]
         return result[0] if isinstance(indexes, int) else result
 
 
