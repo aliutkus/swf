@@ -55,7 +55,7 @@ class ConvDecoder(nn.Module):
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        d = self.dim
+        d = self.input_shape[-1]
         out = self.relu(self.fc4(x))
         out = out.view(-1, d, int(d/2), int(d/2))
         out = self.relu(self.deconv1(out))
