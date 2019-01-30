@@ -37,7 +37,7 @@ class DynamicSubsetRandomSampler(Sampler):
 
 
 def load_data(dataset, data_dir="data", img_size=None,
-              clipto=None, batch_size=640, use_cuda=False, digits=None, mode='train'):
+              clipto=None, batch_size=6400, use_cuda=False, digits=None, mode='train'):
     if use_cuda:
         kwargs = {'num_workers': 1, 'pin_memory': True}
     else:
@@ -62,10 +62,9 @@ def load_data(dataset, data_dir="data", img_size=None,
             transforms.ToTensor(),
         ])
 
-        # If it's a dir and is celebA, then we have a special loader
-        if os.path.isdir(dataset):
-            if os.path.basename(dataset).upper() == "CELEBA":
-                data = CelebA(dataset, transform, mode=mode)
+        # If it's celebA, then we have a special loader
+        if os.path.basename(dataset).upper() == "CELEBA":
+            data = CelebA(data_dir, transform, mode=mode)
         else:
             # Just assume it's a torchvision dataset
             DATASET = getattr(datasets, dataset)

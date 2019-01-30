@@ -15,7 +15,6 @@ class Percentile(torch.autograd.Function):
         """
         Find the percentile of a list of values.
         """
-
         in_sorted, in_argsort = torch.sort(input, dim=0)
         positions = self.percentiles * (input.shape[0]-1) / 100
         floored = torch.floor(positions)

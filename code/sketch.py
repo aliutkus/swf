@@ -156,6 +156,7 @@ class Sketcher(Dataset):
                 # aggregate the projections
                 projections[pos:pos+len(imgs)] = projector(imgs)
                 pos += len(imgs)
+                print(pos)
 
             # compute the quantiles for these projections
             sketches += [
@@ -163,6 +164,7 @@ class Sketcher(Dataset):
                     self.num_quantiles, device)(projections).float(),
                  projector,
                  index)]
+        print('sketches ', indexes, ' finis')
         return sketches[0] if isinstance(indexes, int) else sketches
 
 
@@ -231,8 +233,8 @@ class SketchStream:
         self.lock = self.ctx.Lock()
         if num_workers < 0:
             num_workers = np.inf
-        num_workers = 1
-        # num_workers = max(1, min(num_workers,
+        num_workers = 3
+        #num_workers = max(1, min(num_workers,
         #                          int((mp.cpu_count()-2)/2)))
 
         self.processes = [self.ctx.Process(target=sketch_worker,
@@ -304,6 +306,7 @@ def sketch_worker(sketcher, stream):
 
         if id_obtained:
             (target_qf, projector, id) = sketcher[id]
+            print('In the worker, I got the data')
             stream.queue.put(((target_qf, projector, id)))
             with stream.lock:
                 stream.data['in_progress'] -= 1

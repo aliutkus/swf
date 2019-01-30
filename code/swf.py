@@ -86,14 +86,6 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
                 percentile_fn = Percentile(num_quantiles, device)
                 particles_qf[task] = percentile_fn(projections[task])
 
-
-                # import matplotlib.pylab as plt
-                # plt.clf()
-                # plt.plot(target_qf.cpu().numpy().T,'b')
-                # plt.plot(particles_qf[task].cpu().numpy().T,'r')
-                # plt.show()
-
-                # import ipdb; ipdb.set_trace()
                 # compute the loss: squared error over the quantiles
                 loss[task] = criterion(particles_qf[task], target_qf)
 
@@ -233,31 +225,30 @@ def logger_function(particles, index, loss,
     if not plot and not match:
         return loss
 
+
+    # set the number of images we want to plot in the grid
+    # for each image we add the closest match (so nb_of_images * 2)
+    nb_of_images = 320
+    
     # displays generated images and display closest match in dataset
     for task in particles:
         # if we use the autoencoder deocde the particles to visualize them
         if ae is not None:
             decoder = ae.model.decode.to(particles[task].device)
-            cur_task = decoder(particles[task])
+            cur_task = decoder(particles[task][:nb_of_images, ...])
             img_shape = ae.model.input_shape
         # otherwise just use the particles
         else:
-            cur_task = particles[task]
-
-        # set the number of images we want to plot in the grid
-        # for each image we add the closest match (so nb_of_images * 2)
-        nb_of_images = 320
+            cur_task = particles[task][:nb_of_images, ...]
 
         if match:
-            # get the number of images = nb_particles
-            img_viewport = particles[task][:nb_of_images, ...]
-
             # create empty grid
             output_viewport = torch.zeros((nb_of_images,)
                                           + cur_task.shape[1:])
 
             print("Finding closest matches in dataset")
-            closest = utils.find_closest(img_viewport, data_loader.dataset)
+            closest = utils.find_closest(particles[task][:nb_of_images],
+                                         data_loader.dataset)
             output_viewport = decoder(closest.to(device))
 
             # # iterate over the number of images/particles
@@ -289,7 +280,7 @@ def logger_function(particles, index, loss,
                     )
                 )
 
-        output_viewport = cur_task[:nb_of_images, ...]
+        output_viewport = cur_task
 
         pic = make_grid(
             output_viewport.view(-1, *img_shape),
@@ -433,6 +424,7 @@ if __name__ == "__main__":
         ae_filename = (args.ae_model
                        + '%d' % args.bottleneck_size
                        + ('conv' if args.conv_ae else 'dense')
+                       + '%d' % args.img_size
                        + ''.join(e for e in args.dataset if e.isalnum())
                        + '.model')
 
@@ -462,8 +454,8 @@ if __name__ == "__main__":
     data_shape = train_data_loader.dataset[0][0].shape
 
     # prepare the projectors
-    projectors = sketch.RandomCoders(args.num_thetas, data_shape)
-    #projectors = sketch.Projectors(args.num_thetas, data_shape)
+    #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
+    projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
     num_workers = max(1, floor((mp.cpu_count()-2)/2))
