@@ -1,0 +1,130 @@
+\documentclass[twoside]{article}
+
+\usepackage{aistats2019_mod}
+% If your paper is accepted, change the options for the package
+% aistats2019 as follows:
+%
+% \usepackage[accepted]{aistats2019}
+%
+% This option will print headings for the title of your paper and
+% headings for the authors names, plus a copyright note at the end of
+% the first column of the first page.
+
+% If you set papersize explicitly, activate the following three lines:
+%\special{papersize = 8.5in, 11in}
+%\setlength{\pdfpageheight}{11in}
+%\setlength{\pdfpagewidth}{8.5in}
+
+% If you use natbib package, activate the following three lines:
+%\usepackage[round]{natbib}
+%\renewcommand{\bibname}{References}
+%\renewcommand{\bibsection}{\subsubsection*{\bibname}}
+
+% If you use BibTeX in apalike style, activate the following line:
+%\bibliographystyle{apalike}
+
+
+% \usepackage[utf8]{inputenc} % allow utf-8 input
+% \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+% \usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+%\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+%\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+%\usepackage{microtype}      % microtypography
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{cleveref}
+\usepackage[active]{srcltx}
+
+\usepackage[algo2e,inoutnumbered,algoruled,vlined]{algorithm2e} %linesnumbered
+\usepackage{wrapfig}
+\usepackage{mathtools}
+
+%\usepackage{float}
+\usepackage{subfigure}
+
+\usepackage{graphicx}
+\graphicspath{{./},{./figures/}}
+
+
+
+\usepackage{xr}
+\externaldocument{aistats_2019_sketchmcmc}
+
+
+
+
+
+%%%
+\usepackage{amsthm}
+\usepackage{natbib}
+\usepackage{dsfont}
+\usepackage{xcolor}
+%\usepackage{ stmaryrd }
+
+% \usepackage{dsfont}
+% \usepackage{txfonts}
+% \usepackage{stackengine}
+\newcommand{\fint}{\int_{\Sp^{d-1}}}
+
+\input{../NIPS2018/defs}
+
+
+\setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{page}{1}
+% %\makeatletter
+ \renewcommand{\theequation}{S\arabic{equation}}
+ \renewcommand{\thefigure}{S\arabic{figure}}
+ \renewcommand{\thelemma}{S\arabic{lemma}}
+\renewcommand{\theassumption}{S\arabic{assumption}}
+ \renewcommand{\thethm}{S\arabic{thm}}
+ \renewcommand{\theprop}{S\arabic{prop}}
+
+\usepackage[shortlabels]{enumitem}
+
+
+\begin{document}
+
+% If your paper is accepted and the title of your paper is very long,
+% the style will print as headings an error message. Use the following
+% command to supply a shorter title of your paper so that it can be
+% used as headings.
+%
+\runningtitle{Sliced-Wasserstein Flows}
+
+% If your paper is accepted and the number of authors is large, the
+% style will print as headings an error message. Use the following
+% command to supply a shorter version of the authors names so that
+% they can be used as headings (for example, use only the surnames)
+%
+%\runningauthor{Surname 1, Surname 2, Surname 3, ...., Surname n}
+
+% \twocolumn[
+
+\onecolumn
+
+\aistatstitle{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions\\ {\large SUPPLEMENTARY DOCUMENT} \vspace{5pt}}
+
+
+
+\aistatsauthor{ Author 1 \And Author 2 \And  Author 3 }
+% 
+\aistatsaddress{ Institution 1 \And  Institution 2 \And Institution 3 } 
+
+\vspace{5pt}
+
+\input{grad_flow}
+\input{euler}
+\input{comp_details}
+
+
+
+\bibliography{./references.bib}
+\bibliographystyle{unsrt}
+
+
+\end{document}

@@ -1,0 +1,257 @@
+\usepackage{xargs}
+
+% \newcommand{\supp}{Appendix}
+\newcommand{\supp}{the supplementary document}
+
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\thb}{\mathbf{x}} 
+\newcommand{\Ths}{{\cal X}} 
+% \newcommand{\thb}{\boldsymbol{\theta}} 
+% \newcommand{\Ths}{{\cal M}} 
+\newcommand{\xe}{\tilde{\mathbf{x}}} 
+
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\q}{\mathbf{q}}
+\newcommand{\qc}{\mathbf{\bar{q}}}
+\newcommand{\p}{\mathbf{p}}
+\newcommand{\tb}{\mathbf{t}} 
+\newcommand{\Ds}{{\cal D}} 
+
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\stl}{l}
+\newcommand{\Lo}{{\cal L}}
+\newcommand{\Oc}{{\cal O}}
+\newcommand{\Lot}{\tilde{\Lo}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\Y}{{ Y}}
+\newcommand{\D}{ {\cal D} }
+\newcommand{\ba}[1]{b(#1,\alpha)}
+\newcommand{\bta}[1]{\tilde{b}_{h,K}(#1,\alpha)}
+\newcommand{\bha}[1]{\hat{b}(#1,\alpha)}
+\newcommand{\rmd}{r}
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pro}{\mathbb{P}}
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\newcommand{\W}{{\cal W}_2}
+\newcommand{\WS}{\mathbb{W}_2}
+\newcommand{\F}{{\cal F}}
+\newcommand{\PS}{{\cal P}}
+\newcommand{\He}{{\cal H}}
+\newcommand{\SW}{{\cal S}{\cal W}_2}
+\newcommand{\TV}{\textnormal{TV}}
+\newcommand{\KL}{\textnormal{KL}}
+\newcommand{\muh}{\hat{\mu}}
+\newcommand{\mub}{\bar{\mu}}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{remark}{Remark}
+\newtheorem{cor}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{prop}{Proposition}
+
+\DeclareMathOperator*{\argmin}{arg\min}
+\DeclareMathOperator*{\argmax}{arg\max}
+
+\DeclareMathOperator{\cB}{\overline{B}}
+\newtheorem{definition}{Definition}
+
+\newcommand\simiid{\stackrel{\mathclap{\normalfont\mbox{\tiny i.i.d.}}}{\sim}}
+
+
+\newcommand{\tmpeqno}{{\color{red} (TEMPEQ) }}
+
+\newcommand{\umut}[1]{{\color{red} (#1)} }
+\newcommand{\alain}[1]{{\color{blue} (#1)} }
+
+\DeclareMathOperator{\sign}{sign}
+\newcommand{\sas}{{\cal S} \alpha {\cal S} }
+
+% \newcommand{\pb}{\bar{{\cal P}}}
+% \newcommand{\pt}{\tilde{{\cal P}}}
+
+\newcommand{\pb}{{\cal P}^\x}
+\newcommand{\pt}{{\cal P}^\y}
+
+% \newcommand{\ab}{\bar{{\cal A}}}
+% \newcommand{\at}{\tilde{{\cal A}}}
+
+\newcommand{\ab}{{\cal A}^\x}
+\newcommand{\at}{{\cal A}^\y}
+
+
+
+
+% \newtheoremstyle{exampstyle}
+%   {\topsep} % Space above
+%   {0} % Space below
+%   {} % Body font
+%   {} % Indent amount
+%   {\bfseries} % Theorem head font
+%   {.} % Punctuation after theorem head
+%   {0pt} % Space after theorem head
+%   {} % Theorem head spec (can be left empty, meaning `normal')
+
+% \theoremstyle{exampstyle} 
+
+
+
+\newcommand{\insertimage}[4]{ % scale, filename, caption, label
+\begin{figure}[t]
+\centering
+\includegraphics[scale=#1, clip=true]{figures/#2}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+\newcommand{\insertimageC}[5]{ % scale, filename, caption, label, location
+\begin{figure}[#5]
+\centering
+\includegraphics[width=#1\linewidth, clip=true]{figures/#2}
+%\vspace{-1.5em}
+\caption{#3}
+%\vspace{-0.5em}
+\label{#4}
+\end{figure}
+}
+
+%\setlength{\belowcaptionskip}{-10pt}
+%\captionsetup[figure]{calcwidth = 0.95\linewidth,skip=10pt}
+% \setlength{\abovecaptionskip}{-10pt}
+
+\newcommand{\insertimageStar}[5]{ % scale, filename, caption, label, location
+\begin{figure*}[#5]
+\centering
+\includegraphics[width=#1\linewidth, clip=true]{figures/#2}
+\caption{#3}
+%\vspace{-0.5em}
+\label{#4}
+\end{figure*}
+}
+
+\newtheorem{assumption}{\textbf{H}\hspace{-3pt}}
+\Crefname{assumption}{\textbf{H}\hspace{-3pt}}{\textbf{H}\hspace{-3pt}}
+\crefname{assumption}{\textbf{H}}{\textbf{H}}
+
+
+\newcommand{\insertimageAsSubfig}[5]{ % scale, filename, caption, label,
+\begin{figure}[#5]
+\begin{center}
+\subfigbottomskip =-4in
+\subfigure{
+\includegraphics[width=#1\columnwidth]{figures/#2}
+\label{#4}
+}
+\end{center}
+\subfigbottomskip =-4in
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+
+\newcommand{\ps}[2]{\left\langle#1,#2 \right\rangle}
+\newcommand{\coint}[1]{\left[#1\right)}
+\newcommand{\ocint}[1]{\left(#1\right]}
+\newcommand{\ooint}[1]{\left(#1\right)}
+\newcommand{\ccint}[1]{\left[#1\right]}
+\def\eg{e.g.}
+
+%%% mathsf
+\def\msi{\mathsf{I}}
+\def\msa{\mathsf{A}}
+\def\msd{\mathsf{D}}
+\def\msk{\mathsf{K}}
+\def\mss{\mathsf{S}}
+\def\msn{\mathsf{N}}
+\def\msat{\tilde{\mathsf{A}}}
+\def\msb{\mathsf{B}} 
+\def\msc{\mathsf{C}}
+\def\mse{\mathsf{E}}
+\def\msf{\mathsf{F}}
+\def\mso{\mathsf{o}}
+\def\msg{\mathsf{G}}
+\def\msh{\mathsf{H}}
+\def\msm{\mathsf{M}}
+\def\msu{\mathsf{U}}
+\def\msv{\mathsf{V}}
+\def\msr{\mathsf{R}}
+\newcommand{\msff}[2]{\mathsf{F}_{#1}^{#2}}
+\def\msp{\mathsf{P}}
+\def\msq{\mathsf{Q}}
+\def\msx{\mathsf{X}}
+\def\msy{\mathsf{Y}}
+
+
+
+%% mathcal
+\def\mca{\mathcal{A}}
+\def\mcat{\tilde{\mathcal{A}}}
+\def\mcab{\bar{\mathcal{A}}}
+\def\mcbb{\mathcal{B}}  %%% \mcb est déjà pris
+\newcommand{\mcb}[1]{\mathcal{B}(#1)}
+\def\mcc{\mathcal{C}}
+\def\mcy{\mathcal{Y}}
+\def\mcx{\mathcal{X}}
+\def\mce{\mathcal{E}}
+\def\mcf{\mathcal{F}}
+\def\mcg{\mathcal{G}}
+\def\mch{\mathcal{H}}
+\def\mcm{\mathcal{M}}
+\def\mcu{\mathcal{U}}
+\def\mcv{\mathcal{V}}
+\def\mcr{\mathcal{R}}
+\newcommand{\mcff}[2]{\mathcal{F}_{#1}^{#2}}
+\def\mcfb{\bar{\mathcal{F}}}
+\def\bmcf{\bar{\mathcal{F}}}
+\def\mcft{\tilde{\mathcal{F}}}
+\def\tmcf{\tilde{\mathcal{F}}}
+\def\mcp{\mathcal{P}}
+\def\mcq{\mathcal{Q}}
+
+%% mathbb
+
+\def\rset{\mathbb{R}}
+\def\rsets{\mathbb{R}^*}
+\def\cset{\mathbb{C}}
+\def\zset{\mathbb{Z}}
+\def\nset{\mathbb{N}}
+\def\nsets{\mathbb{N}^*}
+\def\qset{\mathbb{Q}}
+\def\Rset{\mathbb{R}}
+\def\Cset{\mathbb{C}}
+\def\Zset{\mathbb{Z}}
+\def\Nset{\mathbb{N}}
+\def\Tset{\mathbb{T}}
+
+
+%%%% mathrm 
+
+\def\rmd{\mathrm{d}}
+\def\mrd{\mathrm{d}}
+\def\mrl{\mathrm{L}}
+\def\mre{\mathrm{e}}
+\def\rme{\mathrm{e}}
+\def\rmn{\mathrm{n}}
+\def\mrn{\mathrm{n}}
+\def\mrc{\mathrm{C}}
+\def\mrcc{\mathrm{c}}
+\def\rmc{\mathrm{C}}
+\def\rma{\mathrm{a}}
+\def\mra{\mathrm{a}}
+
+\newcommandx{\norm}[2][1=]{\ifthenelse{\equal{#1}{}}{\left\Vert #2 \right\Vert}{\left\Vert #2 \right\Vert^{#1}}}
+\newcommandx{\normLigne}[2][1=]{\ifthenelse{\equal{#1}{}}{\Vert #2 \Vert}{\Vert #2\Vert^{#1}}}
+
+\def\plusinfty{+\infty}
+\def\ie{\textit{i.e.}}
+
+\def\divop{\operatorname{div}}
