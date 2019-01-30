@@ -3,7 +3,6 @@ import argparse
 import torch.utils.data
 import torch
 from torch import nn, optim
-from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 import numpy as np
@@ -14,10 +13,14 @@ class ConvEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvEncoder, self).__init__()
         self.input_shape = input_shape
-        self.conv1 = nn.Conv2d(self.input_shape[0], 3, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(3, input_shape[-1], kernel_size=2, stride=2, padding=0)
-        self.conv3 = nn.Conv2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
-        self.conv4 = nn.Conv2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(self.input_shape[0], 3,
+                               kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(3, input_shape[-1], kernel_size=2,
+                               stride=2, padding=0)
+        self.conv3 = nn.Conv2d(input_shape[-1], input_shape[-1],
+                               kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(input_shape[-1], input_shape[-1],
+                               kernel_size=3, stride=1, padding=1)
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(int(input_shape[-1]**3/4), bottleneck_size)
 
@@ -37,17 +40,24 @@ class ConvDecoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(ConvDecoder, self).__init__()
         self.input_shape = input_shape
-        self.fc4 = nn.Linear(bottleneck_size, int(input_shape[-1]**3/4))
-        self.deconv1 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
-        self.deconv2 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=3, stride=1, padding=1)
-        self.deconv3 = nn.ConvTranspose2d(input_shape[-1], input_shape[-1], kernel_size=2, stride=2, padding=0)
-        self.conv5 = nn.Conv2d(input_shape[-1], self.input_shape[0], kernel_size=3, stride=1, padding=1)
+        d = input_shape[-1]
+
+        self.fc4 = nn.Linear(bottleneck_size, int(d/2 * d/2 * d))
+        self.deconv1 = nn.ConvTranspose2d(d, d,
+                                          kernel_size=3, stride=1, padding=1)
+        self.deconv2 = nn.ConvTranspose2d(d, d,
+                                          kernel_size=3, stride=1, padding=1)
+        self.deconv3 = nn.ConvTranspose2d(d, d,
+                                          kernel_size=2, stride=2, padding=0)
+        self.conv5 = nn.Conv2d(d, self.input_shape[0],
+                               kernel_size=3, stride=1, padding=1)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
+        d = self.dim
         out = self.relu(self.fc4(x))
-        out = out.view(-1, self.input_shape[-1], int(self.input_shape[-1]/2), int(self.input_shape[-1]/2))
+        out = out.view(-1, d, int(d/2), int(d/2))
         out = self.relu(self.deconv1(out))
         out = self.relu(self.deconv2(out))
         out = self.relu(self.deconv3(out))
@@ -167,7 +177,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
+                        help='how many batches to wait before logging '
+                             'training status')
     parser.add_argument("--train_ae",
                         help="Force training of the AE.",
                         action="store_true")
