@@ -71,7 +71,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     data_queue = target_stream.queue
     # loop over epochs
     for epoch in range(num_epochs):
-        next_queue = stream.ctx.Queue()
+        next_queue = target_stream.ctx.Queue()
 
         # reset the step for both train and test
         step['train'] = 0
@@ -83,7 +83,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
         print('SWF starting epoch', epoch)
         for (target_qf, projector, id) in iter(data_queue.get, None):
-            next_queue.put((target_qf, projector, id))
             #print('SWF got in for id', id)
             # get the data from the sketching queue
             target_qf = target_qf.to(device)
@@ -119,10 +118,11 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                         projector.backward(
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
-            next_queue.put((target_qf, projector, id))
+            next_queue.put((target_qf.to('cpu'), projector.to('cpu'), id))
 
             #print('SWF: finish id', id)
 
+        data_queue = next_queue
         #print('SWF restarting stream')
         # restart the stream
         #target_stream.restart()
