@@ -79,9 +79,9 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         loss['train'] = 0
         loss['test'] = 0
 
-        print('SWF starting epoch', epoch)
+        #print('SWF starting epoch', epoch)
         for (target_qf, projector, id) in iter(target_stream.queue.get, None):
-            print('SWF got in for id', id)
+            #print('SWF got in for id', id)
             # get the data from the sketching queue
             target_qf = target_qf.to(device)
             projector = projector.to(device)
@@ -117,11 +117,11 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
 
-            print('SWF: finish id', id)
+            #print('SWF: finish id', id)
 
-        print('SWF restarting stream')
+        #print('SWF restarting stream')
         # restart the stream
-        target_stream.restart()
+        #target_stream.restart()
 
         print('SWF: updating particles')
         # we got all the updates with the sketches. Now apply the steps
