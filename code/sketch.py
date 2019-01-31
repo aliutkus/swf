@@ -221,7 +221,7 @@ class SketchStream:
             num_workers = np.inf
             num_workers = max(1, min(num_workers,
                               int((mp.cpu_count()-2)/2)))
-
+        print('using ', num_workers,' workers')
         # now create a queue with a maxsize corresponding to a few times
         # the number of workers
         self.queue = self.ctx.Queue(maxsize=2*num_workers)
