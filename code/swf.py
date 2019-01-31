@@ -79,7 +79,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         loss['train'] = 0
         loss['test'] = 0
 
-        print('starting epoch', epoch)
+        print('SWF starting epoch', epoch)
         for (target_qf, projector, id) in iter(target_stream.queue.get, None):
             print('SWF got in for id', id)
             # get the data from the sketching queue
@@ -119,9 +119,11 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
             print('SWF: finish id', id)
 
+        print('SWF restarting stream')
         # restart the stream
         target_stream.restart()
 
+        print('SWF: updating particles')
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
@@ -132,12 +134,14 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
             noise /= sqrt(particles[task].shape[-1])
             particles[task] += regularization * noise
 
+        print('SWF: now plot')
         # Now do some logging / plotting
         loss = logger(particles, epoch, loss)
         train_losses.append(float(loss['train']))
         if test_particles is not None:
             test_losses.append(float(loss['test']))
 
+        """print('SWF writing results')
         # Saving stuff on disk
         params = {
             'train_losses': [float(x) for x in train_losses],
@@ -151,7 +155,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
             os.mkdir(results_path)
 
         with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
-            outfile.write(json.dumps(params, indent=4, sort_keys=True))
+            outfile.write(json.dumps(params, indent=4, sort_keys=True))"""
 
 
     return (
