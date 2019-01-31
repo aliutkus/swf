@@ -293,10 +293,10 @@ def sketch_worker(sketcher, stream):
                 print('Sketch worker back from sleep')
                 pause_displayed = False
 
-            print('sketch: trying to get> lock')
+            # print('sketch: trying to get> lock')
             with getlock():
                 id = stream.data['counter']
-                print('sketch: got lock and id', id)
+                # print('sketch: got lock and id', id)
                 if id == stream.data['max_counter'] - 1:
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
