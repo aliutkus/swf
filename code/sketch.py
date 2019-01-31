@@ -286,6 +286,7 @@ def sketch_worker(sketcher, stream):
     pause_displayed = False
     while True:
         id_obtained = False
+        send_sentinel = False
         if ('pause' not in stream.data) or (not stream.data['pause']):
             if pause_displayed:
                 print('Sketch worker back from sleep')
@@ -299,7 +300,7 @@ def sketch_worker(sketcher, stream):
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
-                    stream.data['pause'] = True
+                    send_sentinel = True
                 if id < stream.data['max_counter']:
                     id_obtained = True
                     stream.data['counter'] += 1
@@ -314,20 +315,26 @@ def sketch_worker(sketcher, stream):
 
             with stream.lock:
                 stream.data['in_progress'] -= 1
-                print('sketch: we decreased the inprogress to',
-                      stream.data['in_progress'],
-                      'pause is set to:',
-                      (
-                       'pause' in stream.data and stream.data['pause']))
+                # print('sketch: we decreased the inprogress to',
+                #       stream.data['in_progress'],
+                #       'pause is set to:',
+                #       (
+                #        'pause' in stream.data and stream.data['pause']))
+                #
+                # if (
+                #  ('pause' in stream.data and stream.data['pause']
+                #   or id == stream.data['max_counter'] - 1)
+                #  and not stream.data['in_progress']):
+                #     print('I just finished my job. Pause has been asked and '
+                #           'everything has been computed. Sending the '
+                #           'None sentinel to terminate this epoch')
+                #     stream.queue.put(None)
 
-                if (
-                 ('pause' in stream.data and stream.data['pause']
-                  or id == stream.data['max_counter'] - 1)
-                 and not stream.data['in_progress']):
-                    print('I just finished my job. Pause has been asked and '
-                          'everything has been computed. Sending the '
-                          'None sentinel to terminate this epoch')
-                    stream.queue.put(None)
+        if send_sentinel:
+            print('Sketch: sending the sentinel')
+            stream.queue.put(None)
+            with stream.lock:
+                stream.data['counter'] = 0
 
         if 'die' in stream.data:
             print('Sketch worker dying')
