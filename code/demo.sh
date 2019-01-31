@@ -1,5 +1,5 @@
 # parameters for sketching
-NUM_SKETCHES=20
+NUM_SKETCHES=10
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
 NUM_THETAS=1000
@@ -13,7 +13,7 @@ CONV_AE_STRING="--conv_ae"
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=500
+STEPSIZE=50
 REG=0
 NUM_EPOCHS=1001
 

@@ -51,6 +51,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
     # pre-allocate variables
     step = {}
+    step_weight = {}
     interp_q = {}
     transported = {}
     particles_qf = {}
@@ -73,6 +74,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         # reset the step for both train and test
         step['train'] = 0
         step['test'] = 0
+        step_weight['train'] = 0
+        step_weight['test'] = 0
         loss['train'] = 0
         loss['test'] = 0
 
@@ -108,12 +111,11 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                                                    y=target_qf.t(),
                                                    xnew=interp_q[task],
                                                    out=transported[task])
+                    step_weight[task] += stepsize/projections[task].shape[1]
                     step[task] += (
-                        stepsize/projections[task].shape[1]
-                        * (
-                           projector.backward(
+                        projector.backward(
                                 transported[task].t() - projections[task])
-                           .view(num_particles, *data_shape)))
+                        .view(num_particles, *data_shape))
 
         # restart the stream
         target_stream.restart()
@@ -121,7 +123,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
-            particles[task] += step[task]
+            particles[task] += step_weight[task]*step[task]
 
             # then possibly add the noise if needed
             noise = torch.randn(*particles[task].shape, device=device)

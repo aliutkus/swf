@@ -216,10 +216,15 @@ class SketchStream:
         # first stop if it was started before
         self.stop()
 
-        # now create the queue. If infinite, then set an arbitrary maxsize
-        self.queue = self.ctx.Queue(maxsize=10 if num_sketches < 0
-                                    else num_sketches)
+        # get the number of workers
+        if num_workers < 0:
+            num_workers = np.inf
+            num_workers = max(1, min(num_workers,
+                              int((mp.cpu_count()-2)/2)))
 
+        # now create a queue with a maxsize corresponding to a few times
+        # the number of workers
+        self.queue = self.ctx.Queue(maxsize=2*num_workers)
         self.manager = self.ctx.Manager()
         self.data = self.manager.dict()
         self.data['in_progress'] = 0
@@ -227,10 +232,6 @@ class SketchStream:
                                     else np.inf)
         self.data['counter'] = 0
         self.lock = self.ctx.Lock()
-        if num_workers < 0:
-            num_workers = np.inf
-        num_workers = max(1, min(num_workers,
-                                 int((mp.cpu_count()-2)/2)))
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
                                                    Sketcher(dataloader,
