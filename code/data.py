@@ -37,7 +37,7 @@ class DynamicSubsetRandomSampler(Sampler):
 
 
 def load_data(dataset, data_dir="data", img_size=None,
-              clipto=None, batch_size=6400, use_cuda=False, digits=None, mode='train'):
+              clipto=None, batch_size=600, use_cuda=False, digits=None, mode='train'):
     if use_cuda:
         kwargs = {'num_workers': 1, 'pin_memory': True}
     else:

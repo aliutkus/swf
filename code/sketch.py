@@ -151,12 +151,9 @@ class Sketcher(Dataset):
                 # get a batch of images and send it to device
                 imgs = imgs.to(device)
 
-                # if required, flatten each sample
-                #imgs = imgs.view([-1, self.projectors.data_dim])
                 # aggregate the projections
                 projections[pos:pos+len(imgs)] = projector(imgs)
                 pos += len(imgs)
-                print(pos)
 
             # compute the quantiles for these projections
             sketches += [
@@ -164,7 +161,6 @@ class Sketcher(Dataset):
                     self.num_quantiles, device)(projections).float(),
                  projector,
                  index)]
-        print('sketches ', indexes, ' finis')
         return sketches[0] if isinstance(indexes, int) else sketches
 
 
@@ -233,10 +229,8 @@ class SketchStream:
         self.lock = self.ctx.Lock()
         if num_workers < 0:
             num_workers = np.inf
-        num_workers = 3
-        #num_workers = max(1, min(num_workers,
-        #                          int((mp.cpu_count()-2)/2)))
-
+        num_workers = max(1, min(num_workers,
+                                 int((mp.cpu_count()-2)/2)))
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
                                                    Sketcher(dataloader,
@@ -256,6 +250,10 @@ class SketchStream:
         self.data['pause'] = True
         while self.data['in_progress'] > 0:
             pass
+
+    def restart(self):
+        self.data['counter'] = 0
+        self.resume()
 
     def resume(self):
         if self.data is not None:
@@ -298,6 +296,7 @@ def sketch_worker(sketcher, stream):
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
+                    stream.queue.put(None)
                     stream.data['pause'] = True
                 else:
                     id_obtained = True
@@ -306,7 +305,6 @@ def sketch_worker(sketcher, stream):
 
         if id_obtained:
             (target_qf, projector, id) = sketcher[id]
-            print('In the worker, I got the data')
             stream.queue.put(((target_qf, projector, id)))
             with stream.lock:
                 stream.data['in_progress'] -= 1
@@ -338,13 +336,13 @@ def add_sketch_arguments(parser):
                         type=int,
                         default=3000)
     parser.add_argument("--num_sketches",
-                        help="Number of sketches to compute. If negative, "
+                        help="Number of sketches per epoch. If negative, "
                              "take an infinite number of them.",
                         type=int,
                         default=-1)
     parser.add_argument("--num_workers",
-                        help="Number of workers. If not provided, use"
-                        " all CPUs",
+                        help="Number of workers for computing the sketches. "
+                        "If not provided, use all CPUs",
                         type=int,
                         default=-1)
 

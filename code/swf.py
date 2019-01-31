@@ -28,8 +28,8 @@ from pathlib import Path
 import uuid
 
 
-def swf(train_particles, test_particles, target_queue, num_quantiles,
-        stepsize, regularization, num_iter,
+def swf(train_particles, test_particles, target_stream, num_quantiles,
+        stepsize, regularization, num_epochs,
         device_str, logger, results_path="results"):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
     the distribution whose sketches are given by the target queue.
@@ -49,10 +49,8 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
         particles['test'] = test_particles.to(device)
     data_shape = train_particles[0].shape
 
-    # batch index init
-    index = 0
-
-    # pre-allocate variables, for speedup
+    # pre-allocate variables
+    step = {}
     interp_q = {}
     transported = {}
     particles_qf = {}
@@ -69,141 +67,92 @@ def swf(train_particles, test_particles, target_queue, num_quantiles,
     # call the logger with the transported train and test particles
     logger(particles, -1, loss)
 
-    while True:
-        # get the data from the sketching queue
-        target_qf, projector, id = target_queue.get()
-        target_qf = target_qf.to(device)
-        projector = projector.to(device)
+    # loop over epochs
+    for epoch in range(num_epochs):
 
-        stepsize *= (index+1)/(index+2)
-        for task in particles:  # will include the test particles if provided
-            # project the particles
-            with torch.no_grad():
-                num_particles = particles[task].shape[0]
-                projections[task] = projector(particles[task])
+        # reset the step for both train and test
+        step['train'] = 0
+        step['test'] = 0
+        loss['train'] = 0
+        loss['test'] = 0
 
-                # compute the corresponding quantiles
-                percentile_fn = Percentile(num_quantiles, device)
-                particles_qf[task] = percentile_fn(projections[task])
+        print('starting epoch %d', epoch)
+        for (target_qf, projector, id) in iter(target_stream.queue.get, None):
+            print('got in for id', id)
+            # get the data from the sketching queue
+            target_qf = target_qf.to(device)
+            projector = projector.to(device)
 
-                # compute the loss: squared error over the quantiles
-                loss[task] = criterion(particles_qf[task], target_qf)
+            # stepsize *= (index+1)/(index+2)
+            for task in particles:  # will include test if provided
+                # project the particles
+                with torch.no_grad():
+                    num_particles = particles[task].shape[0]
+                    projections[task] = projector(particles[task])
 
-                # transort the marginals
-                interp_q[task] = Interp1d()(x=particles_qf['train'].t(),
-                                            y=quantiles,
-                                            xnew=projections[task].t(),
-                                            out=interp_q[task])
+                    # compute the corresponding quantiles
+                    percentile_fn = Percentile(num_quantiles, device)
+                    particles_qf[task] = percentile_fn(projections[task])
 
-                interp_q[task] = torch.clamp(interp_q[task], 0, 100)
-                transported[task] = Interp1d()(x=quantiles,
-                                               y=target_qf.t(),
-                                               xnew=interp_q[task],
-                                               out=transported[task])
-                particles[task] += (
-                    stepsize/projections[task].shape[1]
-                    * (
-                       projector.backward(
-                            transported[task].t() - projections[task])
-                       .view(num_particles, *data_shape)))
+                    # compute the loss: squared error over the quantiles
+                    loss[task] += criterion(particles_qf[task], target_qf)
 
-        # call the logger with the transported train and test particles
-        loss = logger(particles, index, loss)
+                    # transort the marginals
+                    interp_q[task] = Interp1d()(x=particles_qf['train'].t(),
+                                                y=quantiles,
+                                                xnew=projections[task].t(),
+                                                out=interp_q[task])
+
+                    interp_q[task] = torch.clamp(interp_q[task], 0, 100)
+                    transported[task] = Interp1d()(x=quantiles,
+                                                   y=target_qf.t(),
+                                                   xnew=interp_q[task],
+                                                   out=transported[task])
+                    step[task] += (
+                        stepsize/projections[task].shape[1]
+                        * (
+                           projector.backward(
+                                transported[task].t() - projections[task])
+                           .view(num_particles, *data_shape)))
+
+        # restart the stream
+        target_stream.restart()
+
+        # we got all the updates with the sketches. Now apply the steps
+        for task in particles:
+            # first apply the step
+            particles[task] += step[task]
+
+            # then possibly add the noise if needed
+            noise = torch.randn(*particles[task].shape, device=device)
+            noise /= sqrt(particles[task].shape[-1])
+            particles[task] += regularization * noise
+
+        # Now do some logging / plotting
+        loss = logger(particles, epoch, loss)
         train_losses.append(float(loss['train']))
         if test_particles is not None:
             test_losses.append(float(loss['test']))
-        # now add the noise for the SWF step
-        for task in particles:
-            noise = torch.randn(*particles[task].shape, device=device)
-            noise /= sqrt(particles[task].shape[-1])
-            particles[task] += regularization * noise #sqrt(stepsize*data_dim) * regularization * noise
 
-        index += 1
-        if index >= num_iter:
-            break
-        # puts back the data into the Queue if it's not full already
-        if not target_queue.full():
-            try:
-                target_queue.put((target_qf.detach().to('cpu'),
-                                  projector.to('cpu'), id),
-                                 block=False)
-            except queue.Full:
-                pass
+        # Saving stuff on disk
+        params = {
+            'train_losses': [float(x) for x in train_losses],
+            'test_losses': [float(x) for x in test_losses],
+            'args': vars(args),
+            'epochs': int(epoch)
+        }
+        uuids = uuid.uuid4().hex[:6]
 
-    # save params
-    params = {
-        'train_loss': float(loss['train']),
-        'train_losses': [float(x) for x in train_losses],
-        'test_loss': (None if test_particles is None else float(loss['test'])),
-        'test_losses': [float(x) for x in test_losses],
-        'args': vars(args),
-        'iterations': int(index)
-    }
-    uuids = uuid.uuid4().hex[:6]
+        if not os.path.exists(results_path):
+            os.mkdir(results_path)
 
-    if not os.path.exists(results_path):
-        os.mkdir(results_path)
+        with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
+            outfile.write(json.dumps(params, indent=4, sort_keys=True))
 
-    with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
-        outfile.write(json.dumps(params, indent=4, sort_keys=True))
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
         else particles['train'])
-
-
-def swmin(train_particles, test_particles, target_queue, num_quantiles,
-          stepsize, regularization, num_iter,
-          device_str, logger):
-    """Minimizes the Sliced Wasserstein distance between a population
-    and some target distribution described by a stream of marginal
-    distributions over random projections."""
-    # get the device
-    device = torch.device(device_str)
-
-    # prepare stuff
-    criterion = nn.MSELoss()
-
-    particles = torch.nn.Parameter(train_particles.to(device))
-    optimizer = optim.Adam([particles], lr=stepsize)
-
-    # batch index init
-    index = 0
-
-    while True:
-        # get the data from the sketching queue
-        target_qf, projector, id = target_queue.get()
-        target_qf = target_qf.to(device)
-        projector = projector.to(device)
-
-        optimizer.zero_grad()
-
-        # project the particles
-        projections = projector(particles)
-
-        # compute the corresponding quantiles
-        percentile_fn = Percentile(num_quantiles, device)
-        particles_qf = percentile_fn(projections)
-
-        loss = criterion(particles_qf, target_qf)
-        loss.backward()
-        optimizer.step()
-
-        # call the logger with the transported train and test particles
-        logger({'train': particles}, index, {'train': loss})
-
-        index += 1
-
-        # puts back the data into the Queue if it's not full already
-        if not target_queue.full():
-            try:
-                target_queue.put((target_qf.detach().to('cpu'),
-                                  projector.to('cpu'), id),
-                                 block=False)
-            except queue.Full:
-                pass
-
-    return particles
 
 
 def logger_function(particles, index, loss,
@@ -225,11 +174,10 @@ def logger_function(particles, index, loss,
     if not plot and not match:
         return loss
 
-
     # set the number of images we want to plot in the grid
     # for each image we add the closest match (so nb_of_images * 2)
     nb_of_images = 320
-    
+
     # displays generated images and display closest match in dataset
     for task in particles:
         # if we use the autoencoder deocde the particles to visualize them
@@ -311,8 +259,8 @@ if __name__ == "__main__":
                              "match the data dimension inferred from dataset",
                         type=int,
                         default=100)
-    parser.add_argument("--num_iter",
-                        help="Number of iterations",
+    parser.add_argument("--num_epochs",
+                        help="Number of epochs",
                         type=int,
                         default=5000)
     parser.add_argument("--bottleneck_size",
@@ -366,9 +314,6 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("--ae_model",
                         help="filename for the autoencoder model")
-    parser.add_argument("--swmin",
-                        help="Activate direct minimization of SW distance",
-                        action="store_true")
     parser.add_argument("--particles_type",
                         help="different kinds of particles. should be "
                              "either RANDOM for random particles "
@@ -532,14 +477,9 @@ if __name__ == "__main__":
         log_writer = None
 
     # launch the sliced wasserstein flow
-    if args.swmin:
-        func = swmin
-    else:
-        func = swf
-
-    particles = func(train_particles, test_particles, target_stream.queue,
+    particles = swf(train_particles, test_particles, target_stream,
                      args.num_quantiles, args.stepsize,
-                     args.regularization, args.num_iter,
+                     args.regularization, args.num_epochs,
                      device_str,
                      functools.partial(logger_function,
                                        plot_dir=args.plot_dir,
