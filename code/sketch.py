@@ -300,8 +300,9 @@ def sketch_worker(sketcher, stream):
                 if id == stream.data['max_counter'] - 1:
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
-                          "sketches. Pausing sketching " % id)
+                          "sketches. need to send sentinel " % id)
                     stream.data['sentinel_required'] = True
+                    stream.data['counter'] = -1
                     send_sentinel = True
                 if id < stream.data['max_counter']:
                     id_obtained = True
@@ -309,13 +310,13 @@ def sketch_worker(sketcher, stream):
                     stream.data['in_progress'] += 1
 
         if id_obtained:
-            print('sketch: now trying to compute id', id)
+            #print('sketch: now trying to compute id', id)
             (target_qf, projector, id) = sketcher[id]
-            print('sketch: we computed the sketch with id', id)
+            #print('sketch: we computed the sketch with id', id)
             while (stream.data['sentinel_required'] and not send_sentinel):
                 pass
             stream.queue.put(((target_qf, projector, id)))
-            print('sketch: we put id', id)
+            #print('sketch: we put id', id)
 
             with stream.lock:
                 stream.data['in_progress'] -= 1
@@ -338,7 +339,6 @@ def sketch_worker(sketcher, stream):
             print('Sketch: sending the sentinel')
             stream.queue.put(None)
             with stream.lock:
-                stream.data['counter'] = 0
                 stream.data['sentinel_required'] = False
 
         if 'die' in stream.data:
