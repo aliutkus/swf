@@ -337,6 +337,7 @@ def sketch_worker(sketcher, stream):
 
         if send_sentinel:
             print('Sketch: sending the sentinel')
+            XXX I must make sure that theitems from this epoch are put
             stream.queue.put(None)
             with stream.lock:
                 stream.data['sentinel_required'] = False
