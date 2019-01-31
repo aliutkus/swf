@@ -118,9 +118,9 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                         projector.backward(
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
-            next_queue.put((target_qf.to('cpu'), projector.to('cpu'), id))
 
-            #print('SWF: finish id', id)
+            next_queue.put((target_qf.to('cpu'), projector.to('cpu'), id))
+            print('SWF: finish id', id)
 
         data_queue = next_queue
         #print('SWF restarting stream')
