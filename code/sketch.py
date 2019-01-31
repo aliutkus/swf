@@ -220,8 +220,9 @@ class SketchStream:
         if num_workers < 0:
             num_workers = np.inf
             num_workers = max(1, min(num_workers,
-                              int((mp.cpu_count()-2)/2)))
-        print('using ', num_workers,' workers')
+                              int((mp.cpu_count()-1)/2)))
+
+        print('using ', num_workers, 'workers')
         # now create a queue with a maxsize corresponding to a few times
         # the number of workers
         self.queue = self.ctx.Queue(maxsize=2*num_workers)
@@ -290,29 +291,38 @@ def sketch_worker(sketcher, stream):
                 print('Sketch worker back from sleep')
                 pause_displayed = False
 
+            print('sketch: trying to get lock')
             with getlock():
                 id = stream.data['counter']
-                if id >= stream.data['max_counter']:
-                    # they can die.
+                print('sketch: got lock and id', id)
+                if id >= stream.data['max_counter'] - 1:
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
-                    # while stream.data['in_progress'] > 0:
-                    #     pass
                     stream.data['pause'] = True
-                else:
+                if id < stream.data['max_counter']:
                     id_obtained = True
                     stream.data['counter'] += 1
                     stream.data['in_progress'] += 1
 
         if id_obtained:
+            print('sketch: now trying to compute id', id)
             (target_qf, projector, id) = sketcher[id]
+            print('sketch: we computed the sketch with id', id)
             stream.queue.put(((target_qf, projector, id)))
+            print('sketch: we put id', id)
+
             with stream.lock:
                 stream.data['in_progress'] -= 1
+                print('sketch: we decreased the inprogress to',
+                      stream.data['in_progress'],
+                      'pause is set to:',
+                      (
+                       'pause' in stream.data and stream.data['pause']))
 
                 if (
-                 'pause' in stream.data and stream.data['pause']
+                 ('pause' in stream.data and stream.data['pause']
+                  or id == stream.data['max_counter'] - 1)
                  and not stream.data['in_progress']):
                     print('I just finished my job. Pause has been asked and '
                           'everything has been computed. Sending the '
