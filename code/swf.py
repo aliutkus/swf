@@ -123,7 +123,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
-            import ipdb; ipdb.set_trace()
             particles[task] += stepsize/step_weight[task]*step[task]
 
             # then possibly add the noise if needed

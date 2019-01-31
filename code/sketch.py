@@ -297,6 +297,10 @@ def sketch_worker(sketcher, stream):
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
+                    while stream.data['in_progress'] > 0:
+                        pass
+                    print('ok, everything has been computed. Sending the '
+                          'None sentinel to terminate this epoch')
                     stream.queue.put(None)
                     stream.data['pause'] = True
                 else:
