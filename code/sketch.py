@@ -221,6 +221,7 @@ class SketchStream:
             num_workers = np.inf
             num_workers = max(1, min(num_workers,
                               int((mp.cpu_count()-2)/2)))
+        num_workers = 3
         print('using ', num_workers,' workers')
         # now create a queue with a maxsize corresponding to a few times
         # the number of workers
@@ -297,11 +298,8 @@ def sketch_worker(sketcher, stream):
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
-                    while stream.data['in_progress'] > 0:
-                        pass
-                    print('ok, everything has been computed. Sending the '
-                          'None sentinel to terminate this epoch')
-                    stream.queue.put(None)
+                    # while stream.data['in_progress'] > 0:
+                    #     pass
                     stream.data['pause'] = True
                 else:
                     id_obtained = True
@@ -313,6 +311,14 @@ def sketch_worker(sketcher, stream):
             stream.queue.put(((target_qf, projector, id)))
             with stream.lock:
                 stream.data['in_progress'] -= 1
+
+                if (
+                 'pause' in stream.data and stream.data['pause']
+                 and not stream.data['in_progress']):
+                    print('I just finished my job. Pause has been asked and '
+                          'everything has been computed. Sending the '
+                          'None sentinel to terminate this epoch')
+                    stream.queue.put(None)
 
         if 'die' in stream.data:
             print('Sketch worker dying')
