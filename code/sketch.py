@@ -232,6 +232,7 @@ class SketchStream:
         self.data['max_counter'] = (num_sketches if num_sketches > 0
                                     else np.inf)
         self.data['counter'] = 0
+        self.data['sentinel_required'] = False
         self.lock = self.ctx.Lock()
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
@@ -292,14 +293,15 @@ def sketch_worker(sketcher, stream):
                 print('Sketch worker back from sleep')
                 pause_displayed = False
 
-            print('sketch: trying to get lock')
+            print('sketch: trying to get> lock')
             with getlock():
                 id = stream.data['counter']
                 print('sketch: got lock and id', id)
-                if id >= stream.data['max_counter'] - 1:
+                if id == stream.data['max_counter'] - 1:
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is over the target number of "
                           "sketches. Pausing sketching " % id)
+                    stream.data['sentinel_required'] = True
                     send_sentinel = True
                 if id < stream.data['max_counter']:
                     id_obtained = True
@@ -310,6 +312,8 @@ def sketch_worker(sketcher, stream):
             print('sketch: now trying to compute id', id)
             (target_qf, projector, id) = sketcher[id]
             print('sketch: we computed the sketch with id', id)
+            while (stream.data['sentinel_required'] and not send_sentinel):
+                pass
             stream.queue.put(((target_qf, projector, id)))
             print('sketch: we put id', id)
 
@@ -335,6 +339,7 @@ def sketch_worker(sketcher, stream):
             stream.queue.put(None)
             with stream.lock:
                 stream.data['counter'] = 0
+                stream.data['sentinel_required'] = False
 
         if 'die' in stream.data:
             print('Sketch worker dying')
