@@ -228,11 +228,12 @@ class SketchStream:
         self.queue = self.ctx.Queue(maxsize=2*num_workers)
         self.manager = self.ctx.Manager()
         self.data = self.manager.dict()
-        self.data['in_progress'] = 0
-        self.data['max_counter'] = (num_sketches if num_sketches > 0
+        self.data['pause'] = False
+        self.data['current_epoch'] = 0
+        self.data['current_sketch'] = 0
+        self.data['done_in_current_epoch'] = 0
+        self.data['num_sketches'] = (num_sketches if num_sketches > 0
                                     else np.inf)
-        self.data['counter'] = 0
-        self.data['sentinel_required'] = False
         self.lock = self.ctx.Lock()
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
@@ -286,61 +287,45 @@ def sketch_worker(sketcher, stream):
 
     pause_displayed = False
     while True:
-        id_obtained = False
-        send_sentinel = False
-        if ('pause' not in stream.data) or (not stream.data['pause']):
+        if not stream.data['pause']:
             if pause_displayed:
                 print('Sketch worker back from sleep')
                 pause_displayed = False
 
             # print('sketch: trying to get> lock')
             with getlock():
-                id = stream.data['counter']
-                # print('sketch: got lock and id', id)
-                if id == stream.data['max_counter'] - 1:
+                id = stream.data['current_sketch']
+                epoch = stream.data['current_epoch']
+                print('sketch: got lock, epoch %d and id %d'%(epoch,id))
+                if id == stream.data['num_sketches'] - 1:
                     # we reached the limit, we let the other workers know
-                    print("Obtained id %d is over the target number of "
-                          "sketches. need to send sentinel " % id)
-                    stream.data['sentinel_required'] = True
-                    stream.data['counter'] = -1
-                    send_sentinel = True
-                if id < stream.data['max_counter']:
-                    id_obtained = True
-                    stream.data['counter'] += 1
-                    stream.data['in_progress'] += 1
+                    print("Obtained id %d is last for this epoch. "
+                          "Reseting the counter and incrementing current "
+                          "epoch " % id)
+                    stream.data['current_sketch'] = 0
+                    stream.data['current_epoch'] += 1
+                else:
+                    stream.data['current_sketch'] += 1
 
-        if id_obtained:
             #print('sketch: now trying to compute id', id)
             (target_qf, projector, id) = sketcher[id]
+
             #print('sketch: we computed the sketch with id', id)
-            while (stream.data['sentinel_required'] and not send_sentinel):
+            while (stream.data['current_epoch'] < epoch):
                 pass
+
             stream.queue.put(((target_qf, projector, id)))
             #print('sketch: we put id', id)
 
             with stream.lock:
-                stream.data['in_progress'] -= 1
-                # print('sketch: we decreased the inprogress to',
-                #       stream.data['in_progress'],
-                #       'pause is set to:',
-                #       (
-                #        'pause' in stream.data and stream.data['pause']))
-                #
-                # if (
-                #  ('pause' in stream.data and stream.data['pause']
-                #   or id == stream.data['max_counter'] - 1)
-                #  and not stream.data['in_progress']):
-                #     print('I just finished my job. Pause has been asked and '
-                #           'everything has been computed. Sending the '
-                #           'None sentinel to terminate this epoch')
-                #     stream.queue.put(None)
-
-        if send_sentinel:
-            print('Sketch: sending the sentinel')
-            XXX I must make sure that theitems from this epoch are put
-            stream.queue.put(None)
-            with stream.lock:
-                stream.data['sentinel_required'] = False
+                stream.data['done_in_current_epoch'] += 1
+                if (
+                  stream.data['done_in_current_epoch']
+                  == stream.data['num_sketches']):
+                    # we need to send sentinel
+                    print('Sketch: sending the sentinel')
+                    stream.queue.put(None)
+                    stream.data['done_in_current_epoch'] = 0
 
         if 'die' in stream.data:
             print('Sketch worker dying')
