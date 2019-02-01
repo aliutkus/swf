@@ -229,7 +229,8 @@ class SketchStream:
         self.manager = self.ctx.Manager()
         self.data = self.manager.dict()
         self.data['pause'] = False
-        self.data['current_epoch'] = 0
+        self.data['current_pick_epoch'] = 0
+        self.data['current_put_epoch'] = 0
         self.data['current_sketch'] = 0
         self.data['done_in_current_epoch'] = 0
         self.data['num_sketches'] = (num_sketches if num_sketches > 0
@@ -295,15 +296,15 @@ def sketch_worker(sketcher, stream):
             # print('sketch: trying to get> lock')
             with getlock():
                 id = stream.data['current_sketch']
-                epoch = stream.data['current_epoch']
-                print('sketch: got lock, epoch %d and id %d'%(epoch,id))
+                epoch = stream.data['current_pick_epoch']
+                print('sketch: got lock, epoch %d and id %d' % (epoch, id))
                 if id == stream.data['num_sketches'] - 1:
                     # we reached the limit, we let the other workers know
                     print("Obtained id %d is last for this epoch. "
                           "Reseting the counter and incrementing current "
                           "epoch " % id)
                     stream.data['current_sketch'] = 0
-                    stream.data['current_epoch'] += 1
+                    stream.data['current_pick_epoch'] += 1
                 else:
                     stream.data['current_sketch'] += 1
 
@@ -311,11 +312,12 @@ def sketch_worker(sketcher, stream):
             (target_qf, projector, id) = sketcher[id]
 
             #print('sketch: we computed the sketch with id', id)
-            while (stream.data['current_epoch'] < epoch):
+            while (stream.data['current_put_epoch'] != epoch):
+                print("waiting: current put epoch",stream.data['current_put_epoch'])
                 pass
 
             stream.queue.put(((target_qf, projector, id)))
-            #print('sketch: we put id', id)
+            print('sketch: we put id', id, 'epoch', epoch)
 
             with stream.lock:
                 stream.data['done_in_current_epoch'] += 1
@@ -326,6 +328,7 @@ def sketch_worker(sketcher, stream):
                     print('Sketch: sending the sentinel')
                     stream.queue.put(None)
                     stream.data['done_in_current_epoch'] = 0
+                    stream.data['current_put_epoch'] += 1
 
         if 'die' in stream.data:
             print('Sketch worker dying')

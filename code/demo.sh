@@ -1,5 +1,5 @@
 # parameters for sketching
-NUM_SKETCHES=10
+NUM_SKETCHES=5
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
 NUM_THETAS=10000
