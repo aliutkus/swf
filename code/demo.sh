@@ -1,8 +1,8 @@
 # parameters for sketching
-NUM_SKETCHES=5
+NUM_SKETCHES=200
 NUM_QUANTILES=100
 # pick something related to bottleneck size for num_thetas
-NUM_THETAS=10000
+NUM_THETAS=500
 CLIPTO=3000
 
 IMG_SIZE=32
@@ -13,7 +13,7 @@ CONV_AE_STRING="--conv_ae"
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=50
+STEPSIZE=10
 REG=0
 NUM_EPOCHS=1001
 
@@ -29,7 +29,7 @@ NUM_TEST=0
 TEST_TYPE='INTERPOLATE'
 
 # plot every
-PLOT_EVERY=100
+PLOT_EVERY=10
 MATCH_EVERY=1000
 
 if [ $1 = "toy.npy" ]; then

@@ -41,7 +41,8 @@ def load_data(dataset, data_dir="data", img_size=None,
     if use_cuda:
         kwargs = {'num_workers': 1, 'pin_memory': True}
     else:
-        num_workers = max(1, floor((mp.cpu_count()-2)/2))
+        #num_workers = max(1, floor((mp.cpu_count()-1)/3))
+        num_workers = 1
         kwargs = {'num_workers': num_workers}
 
     # First load the DataSet
@@ -75,7 +76,7 @@ def load_data(dataset, data_dir="data", img_size=None,
     # Now get a dataloader
     # filter data by target label
     if digits is not None:
-        indices = np.where(np.isin(np.array([int(Y) for X, Y in data]), digits))[0]
+        indices = np.where(np.isin(np.array([int(Y) for X, Y in daa]), digits))[0]
     else:
         indices = None
 

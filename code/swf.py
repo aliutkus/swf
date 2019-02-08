@@ -25,6 +25,7 @@ import utils
 import numpy as np
 import json
 from pathlib import Path
+import copy
 import uuid
 
 
@@ -37,6 +38,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     The function gets sketches from the queue, and then applies steps of a
     SWF to the particles. The flow is parameterized by a stepsize and a
     regularization parameter. """
+
     # get the device
     device = torch.device(device_str)
 
@@ -61,6 +63,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     test_losses = []
     interp_q['train'] = None
     transported['train'] = None
+    first_moment = 0
+    second_moment = 0
     if test_particles is not None:
         interp_q['test'] = None
         transported['test'] = None
@@ -69,6 +73,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     logger(particles, -1, loss)
 
     data_queue = target_stream.queue
+
     # loop over epochs
     for epoch in range(num_epochs):
         next_queue = target_stream.ctx.Queue()
@@ -85,6 +90,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         for (target_qf, projector, id) in iter(data_queue.get, None):
             #print('SWF got in for id', id)
             # get the data from the sketching queue
+            next_queue.put((target_qf.detach().clone(),
+                            copy.deepcopy(projector), id))
             target_qf = target_qf.to(device)
             projector = projector.to(device)
 
@@ -118,17 +125,14 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                         projector.backward(
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
-
-            next_queue.put((target_qf.to('cpu'), projector.to('cpu'), id))
-            print('SWF: finish id', id)
+            #print('SWF: finish id', id)
 
         next_queue.put(None)
         data_queue = next_queue
-        #print('SWF restarting stream')
-        # restart the stream
-        #target_stream.restart()
+
 
         print('SWF: updating particles')
+        #import ipdb; ipdb.set_trace()
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
@@ -162,7 +166,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
             outfile.write(json.dumps(params, indent=4, sort_keys=True))"""
 
-
     return (
         (particles['train'], particles['test']) if 'test' in particles
         else particles['train'])
@@ -177,7 +180,7 @@ def logger_function(particles, index, loss,
         for task in loss:
             log_writer.add_scalar('data/%s_loss' % task,
                                   loss[task].item(), index)
-    loss_str = 'iteration %d: ' % (index + 1)
+    loss_str = 'epoch %d: ' % (index + 1)
     for item, value in loss.items():
         loss_str += item + ': %0.12f ' % value
     print(loss_str)
@@ -210,20 +213,10 @@ def logger_function(particles, index, loss,
             print("Finding closest matches in dataset")
             closest = utils.find_closest(particles[task][:nb_of_images],
                                          data_loader.dataset)
-            output_viewport = decoder(closest.to(device))
-
-            # # iterate over the number of images/particles
-            # for k in range(img_viewport.shape[0]):
-            #     # find closest match between image_k and sketched dataset
-            #     ind, mse = utils.compare_image(
-            #         img_viewport[k], data_loader.dataset, 1
-            #     )
-            #     # load closest match
-            #     best_match = data_loader.dataset[int(ind)][0].to(particles[task].device)
-            #     # decode closest match
-            #     best_match_decoded = decoder(best_match)[0][0]
-            #     # add images to output grid
-            #     output_viewport[k] = best_match_decoded
+            if ae is not None:
+                output_viewport = decoder(closest.to(device))
+            else:
+                output_viewport = closest
 
             pic = make_grid(
                 output_viewport.view(-1, *img_shape),
@@ -349,20 +342,22 @@ if __name__ == "__main__":
     # load the data
     if args.root_data_dir is None:
         args.root_data_dir = 'data/'+args.dataset
+
     train_data_loader = data.load_data(
-        args.dataset,
-        args.root_data_dir,
-        args.img_size,
-        args.clip_to
+        dataset=args.dataset,
+        data_dir=args.root_data_dir,
+        img_size=args.img_size,
+        clipto=args.clip_to
     )
     test_data_loader = data.load_data(
-        args.dataset,
-        args.root_data_dir,
-        args.img_size,
+        dataset=args.dataset,
+        data_dir=args.root_data_dir,
+        img_size=args.img_size,
         clipto=-1,
-        mode='test',
         batch_size=args.num_samples,
-        digits=None
+        use_cuda=False,
+        digits=None,
+        mode='test'
     )
 
     # prepare AE
@@ -416,9 +411,11 @@ if __name__ == "__main__":
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
-    num_workers = max(1, floor((mp.cpu_count()-2)/2))
+    num_workers = max(1, floor((mp.cpu_count()-2)/3))
+    #num_workers = 5
     target_stream = SketchStream()
     target_stream.start(num_workers,
+                        num_epochs=1,
                         num_sketches=args.num_sketches,
                         dataloader=train_data_loader,
                         projectors=projectors,
