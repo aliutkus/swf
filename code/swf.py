@@ -2,7 +2,6 @@
 import os
 import torch
 from torch import nn
-from torch import optim
 from torchvision.utils import save_image
 from torchvision.utils import make_grid
 from tensorboardX import SummaryWriter
@@ -23,10 +22,7 @@ from interp1d import Interp1d
 from math import sqrt
 import utils
 import numpy as np
-import json
-from pathlib import Path
 import copy
-import uuid
 
 
 def swf(train_particles, test_particles, target_stream, num_quantiles,
@@ -88,7 +84,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
         print('SWF starting epoch', epoch)
         for (target_qf, projector, id) in iter(data_queue.get, None):
-            #print('SWF got in for id', id)
             # get the data from the sketching queue
             next_queue.put((target_qf.detach().clone(),
                             copy.deepcopy(projector), id))
@@ -347,7 +342,8 @@ if __name__ == "__main__":
         dataset=args.dataset,
         data_dir=args.root_data_dir,
         img_size=args.img_size,
-        clipto=args.clip_to
+        clipto=args.clip_to,
+        use_cuda=False
     )
     test_data_loader = data.load_data(
         dataset=args.dataset,
@@ -356,7 +352,6 @@ if __name__ == "__main__":
         clipto=-1,
         batch_size=args.num_samples,
         use_cuda=False,
-        digits=None,
         mode='test'
     )
 
@@ -406,20 +401,24 @@ if __name__ == "__main__":
 
     data_shape = train_data_loader.dataset[0][0].shape
 
+    # Launch the data stream
+    data_stream = data.DataStream(train_data_loader)
+    data_stream.start()
+
     # prepare the projectors
     #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
     projectors = sketch.Projectors(args.num_thetas, data_shape)
 
     # start sketching
-    num_workers = max(1, floor((mp.cpu_count()-2)/3))
-    #num_workers = 5
+    num_workers = max(1, floor((mp.cpu_count()-2)/2))
     target_stream = SketchStream()
     target_stream.start(num_workers,
                         num_epochs=1,
                         num_sketches=args.num_sketches,
-                        dataloader=train_data_loader,
+                        data_stream=data_stream,
                         projectors=projectors,
-                        num_quantiles=args.num_quantiles)
+                        num_quantiles=args.num_quantiles,
+                        clip_to=args.clip_to)
 
     # generates the train particles
     print('using ', device)

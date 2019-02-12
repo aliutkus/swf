@@ -92,13 +92,15 @@ class Sketcher(Dataset):
     When iterated upon, computes random batches of sketches.
     """
     def __init__(self,
-                 dataloader,
+                 data_stream,
                  projectors,
                  num_quantiles,
+                 clip_to,
                  seed=0):
-        self.data_source = dataloader
+        self.data_source = data_stream
         self.projectors = projectors
         self.num_quantiles = num_quantiles
+        self.clip_to = len(data_stream.dataset) if clip_to < 0 else clip_to
 
         # the random sequence should be reproductible without interfering
         # with other np random seed stuff. To achieve this, we
@@ -147,30 +149,26 @@ class Sketcher(Dataset):
             projector = self.projectors[id].to(device)
 
             # allocate the projectons variable
-            projections = torch.empty((len(self.data_source.sampler),
+            projections = torch.empty((self.clip_to,
                                        self.projectors.num_thetas),
                                       device=device)
 
-            print('IN GETITEM', indexes, self.data_source)
             # compute the projections by a loop over the data
             pos = 0
-            for imgs, labels in self.data_source:
-                if pos == 0:
-                    print('   GOT IN DATALOOP FOR ITEM',id)
+            while pos < self.clip_to:
+                (imgs, labels) = self.data_source.get()
                 # get a batch of images and send it to device
                 imgs = imgs.to(device)
 
                 # aggregate the projections
                 projections[pos:pos+len(imgs)] = projector(imgs)
                 pos += len(imgs)
-
             # compute the quantiles for these projections
             sketches += [
                 (Percentile(
                     self.num_quantiles, device)(projections).float(),
                  projector,
                  index)]
-        #print('OUT GETITEM',indexes)
         return sketches[0] if isinstance(indexes, int) else sketches
 
 
@@ -193,7 +191,6 @@ class SketchStream:
     def dump(self, file):
         # first pausing the sketching
         self.pause()
-        import time
         time.sleep(5)
         data = []
         while True:
@@ -222,7 +219,7 @@ class SketchStream:
             self.queue.put(item)
 
     def start(self, num_workers, num_epochs, num_sketches,
-              dataloader, projectors, num_quantiles):
+              data_stream, projectors, num_quantiles, clip_to):
         # first stop if it was started before
         self.stop()
 
@@ -230,7 +227,7 @@ class SketchStream:
         if num_workers < 0:
             num_workers = np.inf
             num_workers = max(1, min(num_workers,
-                              int((mp.cpu_count()-1)/3)))
+                              int((mp.cpu_count()-1)/2)))
 
         print('using ', num_workers, 'workers')
         # now create a queue with a maxsize corresponding to a few times
@@ -246,13 +243,14 @@ class SketchStream:
         self.data['current_sketch'] = 0
         self.data['done_in_current_epoch'] = 0
         self.data['num_sketches'] = (num_sketches if num_sketches > 0
-                                    else np.inf)
+                                     else np.inf)
         self.lock = self.ctx.Lock()
         self.processes = [self.ctx.Process(target=sketch_worker,
                                            kwargs={'sketcher':
-                                                   Sketcher(dataloader,
+                                                   Sketcher(data_stream.queue,
                                                             projectors,
-                                                            num_quantiles),
+                                                            num_quantiles,
+                                                            clip_to),
                                                    'stream': self})
                           for n in range(num_workers)]
 
@@ -265,8 +263,6 @@ class SketchStream:
         if self.data is None:
             return
         self.data['pause'] = True
-        while self.data['in_progress'] > 0:
-            pass
 
     def restart(self):
         self.data['counter'] = 0

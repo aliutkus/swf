@@ -6,9 +6,57 @@ from torchvision import transforms
 from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.data.sampler import Sampler
 import torch.multiprocessing as mp
+import time
 from math import floor
 from celeba import CelebA
 import os
+
+
+class DataStream:
+    "A DataStream object puts items from a Dataset into a queue"
+
+    def __init__(self, data_source, maxsize=0, num_epochs=-1, queue=None):
+        """creates a new datastream object. If num_epoch is negative, will
+        loop endlessly. If the queue object is None, will create a new one"""
+        self.data_source = data_source
+        self.num_epochs = num_epochs
+
+        # go into a start method that works with pytorch queues
+        self.ctx = mp.get_context('fork')
+
+        # Allocate the data queue
+        self.queue = self.ctx.Queue(maxsize=30)
+
+        self.data = {'pause': False,
+                     'die': False}
+
+    def start(self):
+        self.process = self.ctx.Process(target=data_worker,
+                                        kwargs={'stream': self})
+        self.process.start()
+
+
+def exit_handler(stream):
+    print('Terminating data worker...')
+    if stream.data is not None:
+        stream.data['die'] = True
+    stream.process.join()
+    print('done')
+
+
+def data_worker(stream):
+    epoch = 0
+    print('starting the data_worker')
+    while stream.num_epochs < 0 or epoch < stream.num_epochs:
+        print('Data stream: epoch %d' % epoch)
+        if not stream.data['pause']:
+            for (X, Y) in stream.data_source:
+                stream.queue.put((X, Y))
+                if stream.data['die']:
+                    break
+                while stream.data['pause']:
+                    time.sleep(5)
+            epoch += 1
 
 
 class DynamicSubsetRandomSampler(Sampler):
@@ -37,12 +85,11 @@ class DynamicSubsetRandomSampler(Sampler):
 
 
 def load_data(dataset, data_dir="data", img_size=None,
-              clipto=None, batch_size=600, use_cuda=False, digits=None, mode='train'):
+              clipto=None, batch_size=600, use_cuda=False, mode='train'):
     if use_cuda:
         kwargs = {'num_workers': 1, 'pin_memory': True}
     else:
-        #num_workers = max(1, floor((mp.cpu_count()-1)/3))
-        num_workers = 1
+        num_workers = max(1, floor((mp.cpu_count()-1)/2))
         kwargs = {'num_workers': num_workers}
 
     # First load the DataSet
@@ -75,17 +122,18 @@ def load_data(dataset, data_dir="data", img_size=None,
 
     # Now get a dataloader
     # filter data by target label
-    if digits is not None:
-        indices = np.where(np.isin(np.array([int(Y) for X, Y in daa]), digits))[0]
-    else:
-        indices = None
+    # if digits is not None:
+    #     indices = np.where(np.isin(np.array([int(Y) for X, Y in daa]), digits))[0]
+    # else:
+    #     indices = None
 
-    nb_items = len(data) if clipto < 0 else clipto
-    sampler = DynamicSubsetRandomSampler(data, nb_items, indices)
-    data_loader = DataLoader(data,
-                             sampler=sampler,
-                             batch_size=min(nb_items, batch_size),
-                             **kwargs)
+    data_loader = DataLoader(data, batch_size=batch_size, **kwargs)
+    # nb_items = len(data) if clipto < 0 else clipto
+    # sampler = DynamicSubsetRandomSampler(data, nb_items, None)
+    # data_loader = DataLoader(data,
+    #                          sampler=sampler,
+    #                          batch_size=min(nb_items, batch_size),
+    #                          **kwargs)
     return data_loader
 
 
