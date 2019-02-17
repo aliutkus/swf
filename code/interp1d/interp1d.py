@@ -2,7 +2,7 @@ import torch
 import contextlib
 SEARCHSORTED_AVAILABLE = True
 try:
-    from searchsorted import searchsorted
+    from torchsearchsorted import searchsorted
 except ImportError:
     SEARCHSORTED_AVAILABLE = False
 
@@ -41,8 +41,8 @@ class Interp1d(torch.autograd.Function):
         if not SEARCHSORTED_AVAILABLE:
             raise Exception(
                 'The interp1d function depends on the '
-                'searchsorted module, which is not available.\n'
-                'You must run "make" to install it.\n')
+                'torchsearchsorted module, which is not available.\n'
+                'You must get it at https://github.com/aliutkus/torchsearchsorted\n')
 
         # making the vectors at least 2D
         is_flat = {}
@@ -105,7 +105,7 @@ class Interp1d(torch.autograd.Function):
 
         # calling searchsorted on the x values.
         ind = ynew
-        searchsorted(v['x'], v['xnew'], ind)
+        searchsorted(v['x'].contiguous(), v['xnew'].contiguous(), ind)
 
         # the `-1` is because searchsorted looks for the index where the values
         # must be inserted to preserve order. And we want the index of the
@@ -119,7 +119,7 @@ class Interp1d(torch.autograd.Function):
         # helper function to select stuff according to the found indices.
         def sel(name):
             if is_flat[name]:
-                return v[name].view(-1)[ind]
+                return v[name].contiguous().view(-1)[ind]
             return torch.gather(v[name], 1, ind)
 
         # activating gradient storing for everything now

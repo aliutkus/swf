@@ -161,8 +161,9 @@ class Sketcher(Dataset):
                 imgs = imgs.to(device)
 
                 # aggregate the projections
-                projections[pos:pos+len(imgs)] = projector(imgs)
-                pos += len(imgs)
+                n_imgs = min(len(imgs), self.clip_to - pos)
+                projections[pos:pos+n_imgs] = projector(imgs[:n_imgs])
+                pos += n_imgs
             # compute the quantiles for these projections
             sketches += [
                 (Percentile(
@@ -335,7 +336,7 @@ def sketch_worker(sketcher, stream):
                 pass
 
             #print('sketch: trying to put id',id,'epoch',epoch)
-            stream.queue.put(((target_qf, projector, id)))
+            stream.queue.put(((target_qf.detach(), projector, id)))
             #print('sketch: we put id', id, 'epoch', epoch)
 
             with stream.lock:
