@@ -1,1 +1,1 @@
-# sketchMCMC
+# Sliced Wasserstein Flow
