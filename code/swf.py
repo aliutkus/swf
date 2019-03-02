@@ -18,7 +18,7 @@ import queue
 from math import floor
 from torchvision import transforms
 from autoencoder import AE
-from interp1d import Interp1d
+from torchinterp1d import Interp1d
 from math import sqrt
 import utils
 import numpy as np
