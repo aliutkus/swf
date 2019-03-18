@@ -14,7 +14,7 @@ import time
 
 class LinearWithBackward(nn.Linear):
     def __init__(self, **kwargs):
-        super(LinearWithBackward, self).__init__(**kwargs)
+        super(LinearWithBackward, self).__init__(**kwargs, bias=False)
         self.weight = torch.nn.Parameter(
             self.weight/torch.norm(self.weight, dim=1, keepdim=True))
 
@@ -29,10 +29,12 @@ class LinearWithBackward(nn.Linear):
 class Projectors:
     """Each projector is a set of unit-length random vector"""
 
-    def __init__(self, num_thetas, data_shape):
+    def __init__(self, num_thetas, data_shape, projector_class):
         self.num_thetas = num_thetas
         self.data_shape = data_shape
         self.data_dim = np.prod(np.array(data_shape))
+        self.projector_class = projector_class
+
         # for now, always use the CPU for generating projectors
         self.device = "cpu"
 
@@ -47,9 +49,9 @@ class Projectors:
         result = []
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
-            new_projector = LinearWithBackward(in_features=self.data_dim,
-                                      out_features=self.num_thetas,
-                                      bias=False).to(device)
+            new_projector = self.projector_class(
+                                      in_features=self.data_dim,
+                                      out_features=self.num_thetas).to(device)
             new_projector.weight = nn.Parameter(
                                     new_projector.weight
                                     / torch.norm(new_projector.weight,
@@ -303,13 +305,13 @@ def sketch_worker(sketcher, stream):
                 print('Sketch worker back from sleep')
                 pause_displayed = False
 
-            #print('sketch: trying to get lock')
+            # print('sketch: trying to get lock')
             with getlock():
                 id = stream.data['current_sketch']
                 epoch = stream.data['current_pick_epoch']
-                #print('sketch: got lock, epoch %d and id %d' % (epoch, id))
+                # print('sketch: got lock, epoch %d and id %d' % (epoch, id))
                 if epoch >= stream.num_epochs:
-                    print('epoch',epoch,'greater than the number of epochs:',stream.num_epochs,'dying now')
+                    print('epoch', epoch,'greater than the number of epochs:', stream.num_epochs,'dying now')
                     worker_dying = True
                 else:
                     if id == stream.data['num_sketches'] - 1:

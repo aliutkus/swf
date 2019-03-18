@@ -15,6 +15,7 @@ import socket
 import functools
 import torch.multiprocessing as mp
 import queue
+import networks
 from math import floor
 from torchvision import transforms
 from autoencoder import AE
@@ -369,7 +370,9 @@ if __name__ == "__main__":
             bottleneck_size=args.bottleneck_size,
             convolutive=args.conv_ae
         )
-        ae_filename = (args.ae_model
+        ae_filename = os.path.join(
+                       'weights',
+                       args.ae_model
                        + '%d' % args.bottleneck_size
                        + ('conv' if args.conv_ae else 'dense')
                        + '%d' % args.img_size
@@ -406,8 +409,9 @@ if __name__ == "__main__":
     data_stream.start()
 
     # prepare the projectors
-    #projectors = sketch.RandomCoders(args.num_thetas, data_shape)
-    projectors = sketch.Projectors(args.num_thetas, data_shape)
+    projectors = sketch.Projectors(
+        args.num_thetas, data_shape,
+        networks.LinearWithBackward)
 
     # start sketching
     num_workers = max(1, floor((mp.cpu_count()-2)/2))

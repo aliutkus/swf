@@ -1,11 +1,11 @@
 # parameters for sketching
-NUM_SKETCHES=10
+NUM_SKETCHES=20
 NUM_QUANTILES=200
 # pick something related to bottleneck size for num_thetas
 NUM_THETAS=5000
-CLIPTO=3000
+CLIPTO=5000
 
-IMG_SIZE=64
+IMG_SIZE=128
 # parameters for auto encoder
 BOTTLENECK_SIZE=128
 AE_STRING="--ae"
