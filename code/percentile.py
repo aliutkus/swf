@@ -22,16 +22,6 @@ class Percentile(torch.autograd.Function):
         ceiled[ceiled > input.shape[0] - 1] = input.shape[0] - 1
         weight_ceiled = positions-floored
         weight_floored = 1.0 - weight_ceiled
-        # identical = (ceiled == floored)
-        # weight_floored[identical] = 0.5
-        # weight_ceiled[identical] = 0.5
-        # d0 = (
-        #       torch.gather(input=in_sorted, dim=0, index=floored[:, None].long())
-        #       * weight_floored)
-        # d1 = (
-        #       torch.gather(input=in_sorted, dim=0, index=ceiled.long())
-        #       * weight_ceiled)
-        #
         d0 = in_sorted[floored.long(), :] * weight_floored[:, None]
         d1 = in_sorted[ceiled.long(), :] * weight_ceiled[:, None]
         self.save_for_backward(in_argsort, floored.long(), ceiled.long(),

@@ -59,31 +59,6 @@ def data_worker(stream):
             epoch += 1
 
 
-class DynamicSubsetRandomSampler(Sampler):
-    r"""Samples a given number of elements randomly, without replacement.
-
-    Arguments:
-        data_source (Dataset): elements to sample from
-        nb_items (int): number of samples to draw each time
-        indices (list[int]): list of valid indices to contrain the dataset
-    """
-
-    def __init__(self, data_source, nb_items, indices=None):
-        self.nb_items = nb_items
-        if indices is not None:
-            self.indices = indices
-        else:
-            self.indices = np.arange(len(data_source))
-
-    def __iter__(self):
-        return iter(list(np.random.choice(
-            self.indices, size=self.nb_items, replace=False
-        )))
-
-    def __len__(self):
-        return self.nb_items
-
-
 def load_data(dataset, data_dir="data", img_size=None,
               clipto=None, batch_size=600, use_cuda=False, mode='train'):
     if use_cuda:
@@ -120,20 +95,7 @@ def load_data(dataset, data_dir="data", img_size=None,
                            download=True,
                            transform=transform)
 
-    # Now get a dataloader
-    # filter data by target label
-    # if digits is not None:
-    #     indices = np.where(np.isin(np.array([int(Y) for X, Y in daa]), digits))[0]
-    # else:
-    #     indices = None
-
     data_loader = DataLoader(data, batch_size=batch_size, **kwargs)
-    # nb_items = len(data) if clipto < 0 else clipto
-    # sampler = DynamicSubsetRandomSampler(data, nb_items, None)
-    # data_loader = DataLoader(data,
-    #                          sampler=sampler,
-    #                          batch_size=min(nb_items, batch_size),
-    #                          **kwargs)
     return data_loader
 
 

@@ -86,10 +86,10 @@ class DenseDecoder(nn.Module):
         )
 
 
-class AutoEncoderModel(nn.Module):
+class AutoEncoder(nn.Module):
     def __init__(self, input_shape=(1, 28, 28), bottleneck_size=64,
                  convolutive=False):
-        super(AutoEncoderModel, self).__init__()
+        super(AutoEncoder, self).__init__()
         self.input_shape = input_shape
         self.encode = (ConvEncoder(input_shape, bottleneck_size)
                        if convolutive
@@ -118,7 +118,7 @@ class AE(object):
         self.device = device
         self.criterion = nn.BCELoss()
         self.input_shape = input_shape
-        self.model = AutoEncoderModel(
+        self.model = AutoEncoder(
             input_shape=self.input_shape,
             bottleneck_size=self.bottleneck_size,
             convolutive=convolutive
@@ -184,6 +184,8 @@ if __name__ == '__main__':
                         action="store_true")
     parser.add_argument("--ae_model", default="ae.model",
                         help="filename for the autoencoder model")
+    parser.add_argument("--datadir", default="~/data",
+                        help="directory for the data")
 
     args = parser.parse_args()
     args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -204,7 +206,7 @@ if __name__ == '__main__':
 
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST(
-            '../data',
+            args.datadir,
             train=True,
             download=True,
             transform=tr
@@ -212,7 +214,7 @@ if __name__ == '__main__':
         batch_size=args.batch_size, shuffle=True, **kwargs
     )
     test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=False, transform=tr),
+        datasets.MNIST(args.data, train=False, transform=tr),
         batch_size=args.batch_size, shuffle=True, **kwargs)
 
     autoencoder = AE(

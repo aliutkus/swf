@@ -1,8 +1,6 @@
 from torch.utils import data
 from torchvision import transforms as T
-from torchvision.datasets import ImageFolder
 from PIL import Image
-import torch
 import os
 import random
 
@@ -12,7 +10,8 @@ class CelebA(data.Dataset):
 
     def __init__(self, data_dir, transform, mode):
         """Initialize and preprocess the CelebA dataset."""
-        self.image_dir = os.path.join(data_dir,'images')
+        data_dir = os.path.join(data_dir, 'CelebA')
+        self.image_dir = os.path.join(data_dir, 'images')
         self.attr_path = os.path.join(data_dir, 'list_attr_celeba.txt')
 
         self.transform = T.Compose([T.CenterCrop(178), transform])

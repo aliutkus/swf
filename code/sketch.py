@@ -6,39 +6,35 @@ from percentile import Percentile
 import atexit
 import queue
 import torch.multiprocessing as mp
-from torch import nn
 from contextlib import contextmanager
 from functools import partial
 import time
 
 
-class LinearWithBackward(nn.Linear):
-    def __init__(self, **kwargs):
-        super(LinearWithBackward, self).__init__(**kwargs)
-        self.weight = torch.nn.Parameter(
-            self.weight/torch.norm(self.weight, dim=1, keepdim=True))
-
-    def forward(self, input):
-        return super(LinearWithBackward, self).forward(
-            input.view(input.shape[0], -1))
-
-    def backward(self, grad):
-        return torch.mm(grad.view(grad.shape[0], -1), self.weight)
-
-
 class Projectors:
-    """Each projector is a set of unit-length random vector"""
+    """Dataset class for projectors"""
 
-    def __init__(self, num_thetas, data_shape):
+    def __init__(self, num_thetas, data_shape, projector_class):
+        """
+        Creates a new dataset of projectors.
+        num_thetas: int
+            number of projectors per item
+        data_shape: shape tensor
+            shape of the input data
+        projector_class: torch.nn.Module
+            the constructor must take two arguments: `in_features` that
+            is a shape tensor, and `out_features`, which is integer.
+
+        """
         self.num_thetas = num_thetas
         self.data_shape = data_shape
         self.data_dim = np.prod(np.array(data_shape))
+        self.projector_class = projector_class
+
         # for now, always use the CPU for generating projectors
         self.device = "cpu"
 
     def __getitem__(self, indexes):
-        device = torch.device(self.device)
-
         if isinstance(indexes, int):
             idx = [indexes]
         else:
@@ -47,41 +43,9 @@ class Projectors:
         result = []
         for pos, id in enumerate(idx):
             torch.manual_seed(id)
-            new_projector = LinearWithBackward(in_features=self.data_dim,
-                                      out_features=self.num_thetas,
-                                      bias=False).to(device)
-            new_projector.weight = nn.Parameter(
-                                    new_projector.weight
-                                    / torch.norm(new_projector.weight,
-                                                 dim=1, keepdim=True))
-            result += [new_projector]
-        return result[0] if isinstance(indexes, int) else result
-
-
-class RandomCoders:
-    """Each coder has random weights"""
-
-    def __init__(self, num_thetas, data_shape):
-        self.num_thetas = num_thetas
-        self.data_shape = data_shape
-        self.data_dim = np.prod(np.array(data_shape))
-        # for now, always use the CPU for generating projectors
-        self.device = "cpu"
-
-    def __getitem__(self, indexes):
-        from autoencoder import DenseEncoder
-
-        if isinstance(indexes, int):
-            idx = [indexes]
-        else:
-            idx = indexes
-
-        result = []
-        for pos, id in enumerate(idx):
-            torch.manual_seed(id)
-            print(id)
-            result += [DenseEncoder(input_shape=self.data_shape,
-                                    bottleneck_size=self.num_thetas)]
+            result += [self.projector_class(
+                            in_features=self.data_shape,
+                            out_features=self.num_thetas).to(self.device)]
         return result[0] if isinstance(indexes, int) else result
 
 
@@ -97,6 +61,19 @@ class Sketcher(Dataset):
                  num_quantiles,
                  clip_to,
                  seed=0):
+        """ creates a new sketcher, which is a dataset of sketches.
+        data_stream: a Queue object
+            source for data.
+        projectors: a Projectors object
+            dataset of projectors
+        num_quantiles: int
+            number of quantiles to take when sketching
+        clip_to: int
+            number of datapoints to use to compute a sketch
+        seed: int
+            random seed to use to initialize the sequence of sketch numbers
+            when iterating
+        """
         self.data_source = data_stream
         self.projectors = projectors
         self.num_quantiles = num_quantiles
@@ -189,38 +166,27 @@ class SketchStream:
         # Allocate the sketch queue
         self.queue = self.ctx.Queue()
 
-    def dump(self, file):
-        # first pausing the sketching
-        self.pause()
-        time.sleep(5)
-        data = []
-        while True:
-            try:
-                item = self.queue.get(block=False)
-            except queue.Empty:
-                break
-            data += [item, ]
-        with open(file, 'wb') as handle:
-            torch.save(data, handle)
-        self.load(file)
-
-    def load(self, file):
-        # killing the sketching in progress if any
-        self.stop()
-
-        # get the data
-        with open(file, 'rb') as handle:
-            data = torch.load(handle)
-
-        # create the queue
-        self.queue = self.ctx.Queue(maxsize=len(data))
-
-        # then fill with the data
-        for item in data:
-            self.queue.put(item)
-
     def start(self, num_workers, num_epochs, num_sketches,
               data_stream, projectors, num_quantiles, clip_to):
+        """
+        starts the sketch stream
+        num_workers: int
+            number of workers to use. If negative, will take half of cores
+        num_epochs: int
+            number of epochs over sketches
+        num_sketches: int
+            number of sketches per epoch
+        data_stream: Queue
+            source of data
+        projector: Projectors
+            projectors dataset
+        num_quantiles: int
+            number of quantiles
+        clip_to: int
+            number of datapoints to use to compute each sketch. if negative,
+            use as many as datapoints.
+
+        """
         # first stop if it was started before
         self.stop()
 

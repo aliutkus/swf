@@ -31,7 +31,6 @@ def find_closest(items, dataset):
     num_workers = max(1, floor((mp.cpu_count()-2)/2))
     dataloader = DataLoader(dataset, batch_size=5000, num_workers=num_workers)
     for (candidates, _) in dataloader:
-        print('pouet')
         candidates = candidates.view(candidates.shape[0], -1).cpu()
         distances = torch.norm(
                         items[:, None, :] - candidates[None, ...],
