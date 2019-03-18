@@ -487,15 +487,15 @@ if __name__ == "__main__":
 
     # launch the sliced wasserstein flow
     particles = swf(train_particles, test_particles, target_stream,
-                     args.num_quantiles, args.stepsize,
-                     args.regularization, args.num_epochs,
-                     device_str,
-                     functools.partial(logger_function,
-                                       plot_dir=args.plot_dir,
-                                       log_writer=log_writer,
-                                       plot_every=args.plot_every,
-                                       match_every=args.match_every,
-                                       img_shape=data_shape,
-                                       data_loader=train_data_loader,
-                                       ae=(None if not args.ae
-                                           else autoencoder)))
+                    args.num_quantiles, args.stepsize,
+                    args.regularization, args.num_epochs,
+                    device_str,
+                    functools.partial(logger_function,
+                                      plot_dir=args.plot_dir,
+                                      log_writer=log_writer,
+                                      plot_every=args.plot_every,
+                                      match_every=args.match_every,
+                                      img_shape=data_shape,
+                                      data_loader=train_data_loader,
+                                      ae=(None if not args.ae
+                                          else autoencoder)))
