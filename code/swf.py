@@ -4,25 +4,26 @@ import torch
 from torch import nn
 from torchvision.utils import save_image
 from torchvision.utils import make_grid
-from tensorboardX import SummaryWriter
 import sketch
 import data
 from sketch import SketchStream
 from percentile import Percentile
 import argparse
-from time import strftime, gmtime
-import socket
 import functools
 import torch.multiprocessing as mp
 import queue
 import networks
 from math import floor
 from torchvision import transforms
+<<<<<<< HEAD
+=======
+from networks import AE
+>>>>>>> 4289ffaa6b21858b75e5289c425b4e5afb891ccf
 from torchinterp1d import Interp1d
 from math import sqrt
 import utils
 import numpy as np
-import copy
+from tqdm import tqdm, trange
 
 
 def swf(train_particles, test_particles, target_stream, num_quantiles,
@@ -59,20 +60,24 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     test_losses = []
     interp_q['train'] = None
     transported['train'] = None
-    first_moment = 0
-    second_moment = 0
     if test_particles is not None:
         interp_q['test'] = None
         transported['test'] = None
 
-    # call the logger with the transported train and test particles
-    logger(particles, -1, loss)
 
     data_queue = target_stream.queue
 
+    projector = target_stream.projectors[0].to(device)
+
+    bar_epoch = trange(num_epochs, desc="epoch")
+    
+    # call the logger with the transported train and test particles
+    logger(bar_epoch, particles, -1, loss)
+    
     # loop over epochs
-    for epoch in range(num_epochs):
-        next_queue = target_stream.ctx.Queue()
+    for epoch in bar_epoch:
+        if target_stream.num_epochs == 1:
+            next_queue = target_stream.ctx.Queue()
 
         # reset the step for both train and test
         step['train'] = 0
@@ -82,13 +87,14 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         loss['train'] = 0
         loss['test'] = 0
 
-        print('SWF starting epoch', epoch)
-        for (target_qf, projector, id) in iter(data_queue.get, None):
+        pbar = tqdm(total=target_stream.num_sketches)
+        for (target_qf, id) in iter(data_queue.get, None):
             # get the data from the sketching queue
-            next_queue.put((target_qf.detach().clone(),
-                            copy.deepcopy(projector), id))
+            if target_stream.num_epochs == 1:
+                next_queue.put((target_qf.detach().clone(), id))
             target_qf = target_qf.to(device)
-            projector = projector.to(device)
+            torch.manual_seed(id)
+            projector.reset_parameters()
 
             # stepsize *= (index+1)/(index+2)
             for task in particles:  # will include test if provided
@@ -120,27 +126,30 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                         projector.backward(
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
+            pbar.update(1)
             #print('SWF: finish id', id)
 
-        next_queue.put(None)
-        data_queue = next_queue
+
+            #print('SWF: updating particles')
+            #import ipdb; ipdb.set_trace()
+            # we got all the updates with the sketches. Now apply the steps
+            for task in particles:
+                # first apply the step
+                particles[task] += stepsize/step_weight[task]*step[task]
+
+                # then possibly add the noise if needed
+                noise = torch.randn(*particles[task].shape, device=device)
+                noise /= sqrt(particles[task].shape[-1])
+                particles[task] += regularization * noise
+        
+        if target_stream.num_epochs == 1:
+            next_queue.put(None)
+            data_queue = next_queue
 
 
-        print('SWF: updating particles')
-        #import ipdb; ipdb.set_trace()
-        # we got all the updates with the sketches. Now apply the steps
-        for task in particles:
-            # first apply the step
-            particles[task] += stepsize/step_weight[task]*step[task]
-
-            # then possibly add the noise if needed
-            noise = torch.randn(*particles[task].shape, device=device)
-            noise /= sqrt(particles[task].shape[-1])
-            particles[task] += regularization * noise
-
-        print('SWF: now plot')
+        #print('SWF: now plot')
         # Now do some logging / plotting
-        loss = logger(particles, epoch, loss)
+        loss = logger(bar_epoch, particles, epoch, loss)
         train_losses.append(float(loss['train']))
         if test_particles is not None:
             test_losses.append(float(loss['test']))
@@ -166,19 +175,15 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         else particles['train'])
 
 
-def logger_function(particles, index, loss,
-                    plot_dir, log_writer,
-                    plot_every, match_every, img_shape, data_loader, ae=None):
+def logger_function(writer, particles, index, loss,
+                    plot_dir, plot_every, match_every,
+                    img_shape, data_loader, ae=None):
     """ Logging function."""
 
-    if log_writer is not None:
-        for task in loss:
-            log_writer.add_scalar('data/%s_loss' % task,
-                                  loss[task].item(), index)
     loss_str = 'epoch %d: ' % (index + 1)
     for item, value in loss.items():
         loss_str += item + ': %0.12f ' % value
-    print(loss_str)
+    writer.write(loss_str)
 
     match = match_every > 0 and index > 0 and not index % match_every
     plot = index < 0 or (plot_every > 0 and not index % plot_every)
@@ -205,7 +210,7 @@ def logger_function(particles, index, loss,
             output_viewport = torch.zeros((nb_of_images,)
                                           + cur_task.shape[1:])
 
-            print("Finding closest matches in dataset")
+            writer.write("Finding closest matches in dataset")
             closest = utils.find_closest(particles[task][:nb_of_images],
                                          data_loader.dataset)
             if ae is not None:
@@ -235,9 +240,6 @@ def logger_function(particles, index, loss,
             output_viewport.view(-1, *img_shape),
             nrow=16, padding=2, normalize=True, scale_each=True
         )
-
-        if log_writer is not None:
-            log_writer.add_image('%s Image' % task, pic, index)
 
         if plot_dir is not None:
             # create the temporary folder for plotting generated samples
@@ -281,6 +283,10 @@ if __name__ == "__main__":
                         help="Regularization term for the additive noise",
                         type=float,
                         default=0)
+    parser.add_argument("--no_fixed_sketch",
+                        help="If active, will generate new sketch at "
+                             "each epoch",
+                        action="store_true")
     parser.add_argument("--plot_every",
                         help="Number of iterations between each plot."
                              " Negative value means no plot",
@@ -295,14 +301,6 @@ if __name__ == "__main__":
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
                         default="samples")
-    parser.add_argument("--log",
-                        help="Flag indicating whether or not to log the "
-                             "sliced Wasserstein error along iterations.",
-                        action="store_true")
-    parser.add_argument("--logdir",
-                        help="Directory for the logs using tensorboard. If "
-                             "not provided, will log to directory `logs`.",
-                        default="logs")
     parser.add_argument("--ae",
                         help="Activate reduction dimension through auto-"
                              "encoding.",
@@ -370,7 +368,12 @@ if __name__ == "__main__":
             convolutive=args.conv_ae
         )
         ae_filename = os.path.join(
+<<<<<<< HEAD
                        'weights', args.ae_model
+=======
+                       'weights',
+                       args.ae_model
+>>>>>>> 4289ffaa6b21858b75e5289c425b4e5afb891ccf
                        + '%d' % args.bottleneck_size
                        + ('conv' if args.conv_ae else 'dense')
                        + '%d' % args.img_size
@@ -407,14 +410,25 @@ if __name__ == "__main__":
     data_stream.start()
 
     # prepare the projectors
+<<<<<<< HEAD
     projectors = sketch.Projectors(args.num_thetas, data_shape,
                                    networks.LinearWithBackward)
+=======
+    projectors = sketch.Projectors(
+        args.num_thetas, data_shape,
+        networks.LinearWithBackward)
+>>>>>>> 4289ffaa6b21858b75e5289c425b4e5afb891ccf
 
     # start sketching
-    num_workers = max(1, floor((mp.cpu_count()-2)/2))
+    if args.num_workers is None:
+        num_workers = max(1, floor((mp.cpu_count()-2)/2))
+    else:
+        num_workers = args.num_workers
     target_stream = SketchStream()
     target_stream.start(num_workers,
-                        num_epochs=1,
+                        num_epochs=(
+                            args.num_epochs if args.no_fixed_sketch
+                            else 1),
                         num_sketches=args.num_sketches,
                         data_stream=data_stream,
                         projectors=projectors,
@@ -477,15 +491,6 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
-    # create the logger
-    if args.log:
-        log_writer = SummaryWriter(os.path.join(args.logdir,
-                                                strftime('%Y-%m-%d-%h-%s-',
-                                                         gmtime())
-                                                + socket.gethostname()))
-    else:
-        log_writer = None
-
     # launch the sliced wasserstein flow
     particles = swf(train_particles, test_particles, target_stream,
                     args.num_quantiles, args.stepsize,
@@ -493,7 +498,6 @@ if __name__ == "__main__":
                     device_str,
                     functools.partial(logger_function,
                                       plot_dir=args.plot_dir,
-                                      log_writer=log_writer,
                                       plot_every=args.plot_every,
                                       match_every=args.match_every,
                                       img_shape=data_shape,
