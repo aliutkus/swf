@@ -61,7 +61,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         interp_q['test'] = None
         transported['test'] = None
 
-
     data_queue = target_stream.queue
 
     projector = target_stream.projectors[0].to(device)
@@ -73,7 +72,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
     # loop over epochs
     for epoch in bar_epoch:
-        if target_stream.num_epochs == 1:
+        if target_stream.data['num_epochs'] == 1:
             next_queue = target_stream.ctx.Queue()
 
         # reset the step for both train and test
@@ -84,15 +83,14 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         loss['train'] = 0
         loss['test'] = 0
 
-        pbar = tqdm(total=target_stream.num_sketches)
+        pbar = tqdm(total=target_stream.data['num_sketches'])
         for (target_qf, id) in iter(data_queue.get, None):
             # get the data from the sketching queue
-            if target_stream.num_epochs == 1:
+            if target_stream.data['num_epochs'] == 1:
                 next_queue.put((target_qf.detach().clone(), id))
             target_qf = target_qf.to(device)
-            torch.manual_seed(id)
-            projector.reset_parameters()
-
+            projector.reset(id)
+            #print('IN SWF',id, projector.weight[0,:5])
             # stepsize *= (index+1)/(index+2)
             for task in particles:  # will include test if provided
                 # project the particles
@@ -124,20 +122,21 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                                 transported[task].t() - projections[task])
                         .view(num_particles, *data_shape))
             pbar.update(1)
+
             #print('SWF: finish id', id)
-            #print('SWF: updating particles')
-            #import ipdb; ipdb.set_trace()
-            # we got all the updates with the sketches. Now apply the steps
-            for task in particles:
-                # first apply the step
-                particles[task] += stepsize/step_weight[task]*step[task]
+        #print('SWF: updating particles')
+        #import ipdb; ipdb.set_trace()
+        # we got all the updates with the sketches. Now apply the steps
+        for task in particles:
+            # first apply the step
+            particles[task] += stepsize/step_weight[task]*step[task]
 
-                # then possibly add the noise if needed
-                noise = torch.randn(*particles[task].shape, device=device)
-                noise /= sqrt(particles[task].shape[-1])
-                particles[task] += regularization * noise
+            # then possibly add the noise if needed
+            noise = torch.randn(*particles[task].shape, device=device)
+            noise /= sqrt(particles[task].shape[-1])
+            particles[task] += regularization * noise
 
-        if target_stream.num_epochs == 1:
+        if target_stream.data['num_epochs'] == 1:
             next_queue.put(None)
             data_queue = next_queue
 
@@ -171,7 +170,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
 def logger_function(writer, particles, index, loss,
                     plot_dir, plot_every, match_every,
-                    img_shape, data_loader, ae=None):
+                    img_shape, dataset, ae=None):
     """ Logging function."""
 
     loss_str = 'epoch %d: ' % (index + 1)
@@ -206,7 +205,7 @@ def logger_function(writer, particles, index, loss,
 
             writer.write("Finding closest matches in dataset")
             closest = utils.find_closest(particles[task][:nb_of_images],
-                                         data_loader.dataset)
+                                         dataset)
             if ae is not None:
                 output_viewport = decoder(closest.to(device))
             else:
@@ -330,33 +329,28 @@ if __name__ == "__main__":
     if args.root_data_dir is None:
         args.root_data_dir = 'data'
 
-    train_data_loader = data.load_data(
+    train_data = data.load_image_dataset(
         dataset=args.dataset,
         data_dir=args.root_data_dir,
-        img_size=args.img_size,
-        clipto=args.clip_to,
-        use_cuda=False
+        img_size=args.img_size
     )
-    test_data_loader = data.load_data(
+    test_data = data.load_image_dataset(
         dataset=args.dataset,
         data_dir=args.root_data_dir,
         img_size=args.img_size,
-        clipto=-1,
-        batch_size=args.num_samples,
-        use_cuda=False,
         mode='test'
     )
 
     # prepare AE
     if args.ae:
         train_loader = torch.utils.data.DataLoader(
-            train_data_loader.dataset,
+            train_data,
             batch_size=32,
             shuffle=True
         )
 
         autoencoder = AE(
-            train_data_loader.dataset[0][0].shape,
+            train_data[0][0].shape,
             device=device,
             bottleneck_size=args.bottleneck_size,
             convolutive=args.conv_ae
@@ -375,12 +369,12 @@ if __name__ == "__main__":
 
         if not os.path.exists(ae_filename) or args.train_ae:
             train_loader = torch.utils.data.DataLoader(
-                train_data_loader.dataset,
+                train_data,
                 batch_size=32,
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=1)
+            autoencoder.train(train_loader, nb_epochs=10)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
@@ -389,14 +383,24 @@ if __name__ == "__main__":
             state = torch.load(ae_filename, map_location='cpu')
             autoencoder.model.to('cpu').load_state_dict(state)
 
-        t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
-        train_data_loader.dataset.transform.transforms.append(t)
-        test_data_loader.dataset.transform.transforms.append(t)
+        train_data = data.FnDataset(train_data,
+                                    autoencoder.model.encode_nograd)
+        test_data = data.FnDataset(test_data,
+                                   autoencoder.model.encode_nograd)
+        #t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
+        #train_data.transform.transforms.append(t)
+        #test_data.transform.transforms.append(t)
 
-    data_shape = train_data_loader.dataset[0][0].shape
+    data_shape = train_data[0][0].shape
 
     # Launch the data stream
-    data_stream = data.DataStream(train_data_loader)
+    dataset = data.load_image_dataset(
+        dataset=args.dataset,
+        data_dir=args.root_data_dir,
+        img_size=args.img_size)
+    data_stream = data.DataStream(train_data)
+    #    "load_image_dataset(dataset=\'%s\', data_dir=\'%s\', img_size=%d)" % (args.dataset, args.root_data_dir, args.img_size)
+    #)
     data_stream.start()
 
     # prepare the projectors
@@ -486,6 +490,6 @@ if __name__ == "__main__":
                                       plot_every=args.plot_every,
                                       match_every=args.match_every,
                                       img_shape=data_shape,
-                                      data_loader=train_data_loader,
+                                      dataset=train_data,
                                       ae=(None if not args.ae
                                           else autoencoder)))

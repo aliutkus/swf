@@ -31,10 +31,10 @@ class Projectors:
 
         result = []
         for pos, id in enumerate(idx):
-            torch.manual_seed(id)
             result += [self.projector_class(
                                       in_features=self.data_dim,
-                                      out_features=self.num_thetas).to(device)]
+                                      out_features=self.num_thetas,
+                                      seed=id).to(device)]
         return result[0] if isinstance(indexes, int) else result
 
 
@@ -92,6 +92,7 @@ class Sketcher(Dataset):
 
             # compute the projections by a loop over the data
             pos = 0
+
             while pos < self.clip_to:
                 (imgs, labels) = self.data_source.get()
                 # get a batch of images and send it to device
@@ -105,7 +106,6 @@ class Sketcher(Dataset):
             sketches += [
                 (Percentile(
                     self.num_quantiles, device)(projections).float(),
-                 projector,
                  id)]
         return sketches[0] if isinstance(indexes, int) else sketches
 
@@ -119,7 +119,7 @@ class SketchStream:
         self.data = None
 
         # go into a start method that works with pytorch queues
-        self.ctx = mp.get_context('fork')
+        self.ctx = mp.get_context('spawn')
 
         self.in_progress = 0
 
@@ -142,19 +142,21 @@ class SketchStream:
         # the number of workers
         self.queue = self.ctx.Queue(maxsize=2*num_workers)
         self.manager = self.ctx.Manager()
-        self.num_epochs = num_epochs
-        self.num_sketches = (num_sketches if num_sketches > 0
-                             else np.inf)
         self.projectors = projectors
 
         # prepare some data for the synchronization of the workers
         self.data = self.manager.dict()
+        self.data['num_epochs'] = num_epochs
         self.data['pause'] = False
         self.data['current_pick_epoch'] = 0
         self.data['current_put_epoch'] = 0
         self.data['current_sketch'] = 0
         self.data['done_in_current_epoch'] = 0
-        self.data['sketch_list'] = torch.randperm(self.num_sketches)
+        self.data['num_sketches'] = (num_sketches if num_sketches > 0
+                                     else np.inf)
+        self.data['sketch_list'] = np.random.randint(
+                np.iinfo(np.int16).max,
+                size=self.data['num_sketches']).astype(int)
         self.lock = self.ctx.Lock()
 
         # prepare the workers
@@ -164,7 +166,9 @@ class SketchStream:
                                                             projectors,
                                                             num_quantiles,
                                                             clip_to),
-                                                   'stream': self})
+                                                   'data': self.data,
+                                                   'lock': self.lock,
+                                                   'stream_queue': self.queue})
                           for n in range(num_workers)]
 
         atexit.register(partial(exit_handler, stream=self))
@@ -200,7 +204,7 @@ def exit_handler(stream):
     print('done')
 
 
-def sketch_worker(sketcher, stream):
+def sketch_worker(sketcher, data, lock, stream_queue):
     """ Actual worker for the sketch stream.
     Will get sketch ids, get data from the data queue and put sketches in the
     stream queue"""
@@ -208,17 +212,17 @@ def sketch_worker(sketcher, stream):
     @contextmanager
     def getlock():
         # get the lock of the stream to manipulate the stream.data
-        result = stream.lock.acquire(block=True)
+        result = lock.acquire(block=True)
         yield result
         if result:
-            stream.lock.release()
+            lock.release()
 
     pause_displayed = False
     while True:
         # not dying, unless we see that later
         worker_dying = False
 
-        if not stream.data['pause']:
+        if not data['pause']:
             # not in pause
 
             if pause_displayed:
@@ -234,78 +238,83 @@ def sketch_worker(sketcher, stream):
                 # (the epoch we are currently asked to compute, as opposed
                 # to the put epoch, which is the epoch whose sketches we are
                 # currently putting in the queue.)
-                id = stream.data['current_sketch']
-                sketch_id = stream.data['sketch_list'][id]
-                epoch = stream.data['current_pick_epoch']
+                id = data['current_sketch']
+                sketch_id = data['sketch_list'][id].item()
+                epoch = data['current_pick_epoch']
                 # print('sketch: got lock, epoch %d and id %d' % (epoch, id))
-                if epoch >= stream.num_epochs:
+                if epoch >= data['num_epochs']:
                     # the picked epoch is larger than the number of epochs.
                     # sketching is finished.
-                    print('epoch', epoch, 'greater than the number of epochs:',
-                          stream.num_epochs, 'dying now.')
+                    #print('epoch', epoch, 'greater than the number of epochs:',
+                    #      stream.num_epochs, 'dying now.')
                     worker_dying = True
                 else:
-                    if id == stream.num_sketches - 1:
+                    if id == data['num_sketches'] - 1:
                         # we reached the number of sketches per epoch.
                         # we let the other workers know and increment the
                         # pick epoch.
-                        print("Obtained id %d is last for this epoch. "
-                              "Reseting the counter and incrementing current "
-                              "epoch " % id)
-                        stream.data['current_sketch'] = 0
-                        stream.data['current_pick_epoch'] += 1
-                        stream.data['sketch_list'] = torch.randperm(
-                            stream.num_sketches)
+                        #print("Obtained id %d is last for this epoch. "
+                        #      "Reseting the counter and incrementing current "
+                        #      "epoch " % id)
+                        data['current_sketch'] = 0
+                        data['current_pick_epoch'] += 1
+                        data['sketch_list'] = np.random.randint(
+                            np.iinfo(np.int16).max,
+                            size=data['num_sketches']).astype(int)
                     else:
                         # we just increment the current sketch to pick for
                         # the next worker.
-                        stream.data['current_sketch'] += 1
+                        data['current_sketch'] += 1
             if worker_dying:
                 # dying has been asked for. we'll just loop infinitely.
                 # this is because there is apparently some issues raised when
                 # we just kill the worker, in case some data in the queue
                 # originated from him has not been taken out ?
-                print(
-                    id, epoch, 'Reached the desired amount of epochs. Dying.')
+                #print(
+                #    id, epoch, 'Reached the desired amount of epochs. Dying.')
                 while True:
                     time.sleep(10)
                 return
 
             # now to the thing. We compute the sketch that has been asked for.
             #print('sketch: now trying to compute id', id)
-            (target_qf, projector, id) = sketcher[sketch_id]
+            (target_qf, sketch_id) = sketcher[sketch_id]
 
             # print('sketch: we computed the sketch with id', id)
             # we need to wait until the current put epoch is the epoch we
             # picked. It may indeed happen that we are several epochs ahead.
-            while (stream.data['current_put_epoch'] != epoch):
-                #print("waiting: current put epoch",stream.data['current_put_epoch'])
-                time.sleep(1)
-                pass
+            can_put = False
+            while not can_put:
+                with getlock():
+                    current_put_epoch = data['current_put_epoch']
+                if current_put_epoch == epoch:
+                    can_put = True
+                else:
+                    time.sleep(1)
 
             #print('sketch: trying to put id',id,'epoch',epoch)
             # now we actually put the sketch in the queue.
-            stream.queue.put((target_qf.detach(), sketch_id))
+            stream_queue.put((target_qf.detach(), sketch_id))
             #print('sketch: we put id', id, 'epoch', epoch)
 
             with getlock():
                 # we put the data, now update the counting
-                stream.data['done_in_current_epoch'] += 1
-                #print('sketch: after put, got lock. id', id, 'epoch', epoch, 'done in current epoch',stream.data['done_in_current_epoch'])
+                data['done_in_current_epoch'] += 1
+                #print('sketch: after put, got lock. id', id, 'epoch', epoch, 'done in current epoch',data['done_in_current_epoch'])
                 if (
-                  stream.data['done_in_current_epoch']
-                  == stream.num_sketches):
+                        data['done_in_current_epoch']
+                        == data['num_sketches']):
                     # This item was the last of its epoch, we put the sentinel
-                    print('Sketch: sending the sentinel')
-                    stream.queue.put(None)
-                    stream.data['done_in_current_epoch'] = 0
-                    stream.data['current_put_epoch'] += 1
+                    #print('Sketch: sending the sentinel')
+                    stream_queue.put(None)
+                    data['done_in_current_epoch'] = 0
+                    data['current_put_epoch'] += 1
 
-        if 'die' in stream.data:
+        if 'die' in data:
             print('Sketch worker dying')
             break
 
-        if stream.data['pause']:
+        if data['pause']:
             if not pause_displayed:
                 print('Sketch worker going to sleep')
                 pause_displayed = True
