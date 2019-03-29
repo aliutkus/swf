@@ -4,23 +4,15 @@ import torch
 from torch import nn
 from torchvision.utils import save_image
 from torchvision.utils import make_grid
-import sketch
-import data
-from sketch import SketchStream
-from percentile import Percentile
+import qsketch
 import argparse
 import functools
 import torch.multiprocessing as mp
-import queue
 import networks
-from math import floor
-from torchvision import transforms
-from networks import AE
 from torchinterp1d import Interp1d
-from math import sqrt
+from torchpercentile import Percentile
 import utils
-import numpy as np
-from tqdm import tqdm, trange
+from math import sqrt
 
 
 def swf(train_particles, test_particles, target_stream, num_quantiles,
@@ -32,6 +24,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     The function gets sketches from the queue, and then applies steps of a
     SWF to the particles. The flow is parameterized by a stepsize and a
     regularization parameter. """
+
+    from tqdm import tqdm, trange
 
     # get the device
     device = torch.device(device_str)
@@ -64,7 +58,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     data_queue = target_stream.queue
 
     projector = target_stream.projectors[0].to(device)
-
+    percentiles = torch.linspace(0, 100, num_quantiles)
     bar_epoch = trange(num_epochs, desc="epoch")
 
     # call the logger with the transported train and test particles
@@ -73,7 +67,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
     # loop over epochs
     for epoch in bar_epoch:
         if target_stream.data['num_epochs'] == 1:
-            next_queue = target_stream.ctx.Queue()
+            next_queue = mp.Queue()
 
         # reset the step for both train and test
         step['train'] = 0
@@ -90,7 +84,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                 next_queue.put((target_qf.detach().clone(), id))
             target_qf = target_qf.to(device)
             projector.reset(id)
-            #print('IN SWF',id, projector.weight[0,:5])
+            # print('IN SWF',id, projector.weight[0,:5])
             # stepsize *= (index+1)/(index+2)
             for task in particles:  # will include test if provided
                 # project the particles
@@ -99,8 +93,9 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                     projections[task] = projector(particles[task])
 
                     # compute the corresponding quantiles
-                    percentile_fn = Percentile(num_quantiles, device)
-                    particles_qf[task] = percentile_fn(projections[task])
+                    percentile_fn = Percentile()
+                    particles_qf[task] = percentile_fn(projections[task],
+                                                       percentiles)
 
                     # compute the loss: squared error over the quantiles
                     loss[task] += criterion(particles_qf[task], target_qf)
@@ -111,7 +106,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                                                 xnew=projections[task].t(),
                                                 out=interp_q[task])
 
-                    interp_q[task] = torch.clamp(interp_q[task], 0, 100)
+                    #interp_q[task] = torch.clamp(interp_q[task], 0, 100)
                     transported[task] = Interp1d()(x=quantiles,
                                                    y=target_qf.t(),
                                                    xnew=interp_q[task],
@@ -123,9 +118,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
                         .view(num_particles, *data_shape))
             pbar.update(1)
 
-            #print('SWF: finish id', id)
-        #print('SWF: updating particles')
-        #import ipdb; ipdb.set_trace()
+            # print('SWF: finish id', id)
+        # print('SWF: updating particles')
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
@@ -140,7 +134,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
             next_queue.put(None)
             data_queue = next_queue
 
-        #print('SWF: now plot')
         # Now do some logging / plotting
         loss = logger(bar_epoch, particles, epoch, loss)
         train_losses.append(float(loss['train']))
@@ -244,10 +237,12 @@ def logger_function(writer, particles, index, loss,
 
 
 if __name__ == "__main__":
+    mp.set_start_method('spawn', force=True)
+
     # create arguments parser and parse arguments
     parser = argparse.ArgumentParser(description='Sliced Wasserstein Flow.')
-    parser = data.add_data_arguments(parser)
-    parser = sketch.add_sketch_arguments(parser)
+    parser = qsketch.add_data_arguments(parser)
+    parser = qsketch.add_sketch_arguments(parser)
 
     parser.add_argument("--input_dim",
                         help="Dimension of the random input to the "
@@ -306,11 +301,6 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("--ae_model",
                         help="filename for the autoencoder model")
-    parser.add_argument("--particles_type",
-                        help="different kinds of particles. should be "
-                             "either RANDOM for random particles "
-                             "or TESTSET for particles drawn from the test "
-                             "set.")
     parser.add_argument("--num_test",
                         help="number of test samples",
                         type=int,
@@ -326,43 +316,28 @@ if __name__ == "__main__":
     device = torch.device(device_str)
 
     # load the data
-    if args.root_data_dir is None:
-        args.root_data_dir = 'data'
-
-    train_data = data.load_image_dataset(
+    train_data = qsketch.load_image_dataset(
         dataset=args.dataset,
         data_dir=args.root_data_dir,
         img_size=args.img_size
     )
-    test_data = data.load_image_dataset(
-        dataset=args.dataset,
-        data_dir=args.root_data_dir,
-        img_size=args.img_size,
-        mode='test'
-    )
 
     # prepare AE
     if args.ae:
-        train_loader = torch.utils.data.DataLoader(
-            train_data,
-            batch_size=32,
-            shuffle=True
-        )
-
-        autoencoder = AE(
+        autoencoder = networks.AE(
             train_data[0][0].shape,
             device=device,
             bottleneck_size=args.bottleneck_size,
             convolutive=args.conv_ae
         )
         ae_filename = os.path.join(
-                       'weights',
-                       args.ae_model
-                       + '%d' % args.bottleneck_size
-                       + ('conv' if args.conv_ae else 'dense')
-                       + '%d' % args.img_size
-                       + ''.join(e for e in args.dataset if e.isalnum())
-                       + '.model')
+            'weights',
+            args.ae_model
+            + '%d' % args.bottleneck_size
+            + ('conv' if args.conv_ae else 'dense')
+            + '%d' % args.img_size
+            + ''.join(e for e in args.dataset if e.isalnum())
+            + '.model')
 
         print(ae_filename, 'number of bottleneck features:',
               args.bottleneck_size)
@@ -379,42 +354,29 @@ if __name__ == "__main__":
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
         else:
-            print("Model loaded")
             state = torch.load(ae_filename, map_location='cpu')
             autoencoder.model.to('cpu').load_state_dict(state)
+            print("Model loaded")
 
-        train_data = data.FnDataset(train_data,
-                                    autoencoder.model.encode_nograd)
-        test_data = data.FnDataset(test_data,
-                                   autoencoder.model.encode_nograd)
-        #t = transforms.Lambda(lambda x: autoencoder.model.encode_nograd(x))
-        #train_data.transform.transforms.append(t)
-        #test_data.transform.transforms.append(t)
+        # augmenting the dataset with calling the encoder, to get an item
+        train_data = qsketch.TransformDataset(
+            train_data,
+            transform=autoencoder.model.encode_nograd)
 
     data_shape = train_data[0][0].shape
 
     # Launch the data stream
-    dataset = data.load_image_dataset(
-        dataset=args.dataset,
-        data_dir=args.root_data_dir,
-        img_size=args.img_size)
-    data_stream = data.DataStream(train_data)
-    #    "load_image_dataset(dataset=\'%s\', data_dir=\'%s\', img_size=%d)" % (args.dataset, args.root_data_dir, args.img_size)
-    #)
+    data_stream = qsketch.DataStream(train_data)
     data_stream.start()
 
     # prepare the projectors
-    projectors = sketch.Projectors(
+    projectors = qsketch.Projectors(
         args.num_thetas, data_shape,
-        networks.LinearWithBackward)
+        qsketch.LinearProjector)
 
     # start sketching
-    if args.num_workers is None:
-        num_workers = max(1, floor((mp.cpu_count()-2)/2))
-    else:
-        num_workers = args.num_workers
-    target_stream = SketchStream()
-    target_stream.start(num_workers,
+    target_stream = qsketch.SketchStream()
+    target_stream.start(args.num_workers,
                         num_epochs=(
                             args.num_epochs if args.no_fixed_sketch
                             else 1),
@@ -422,27 +384,21 @@ if __name__ == "__main__":
                         data_stream=data_stream,
                         projectors=projectors,
                         num_quantiles=args.num_quantiles,
-                        clip_to=args.clip_to)
+                        num_examples=args.num_examples)
 
     # generates the train particles
     print('using ', device)
     if args.input_dim < 0:
-        input_dim = projectors.data_dim
+        input_shape = data_shape
     else:
-        input_dim = args.input_dim
+        input_shape = [args.input_dim, ]
 
-    if args.particles_type.upper() == "RANDOM":
-        train_particles = torch.rand(
-            args.num_samples,
-            input_dim).to(device)
-    elif args.particles_type.upper() == "TESTSET":
-        for train_particles in test_data_loader:
-            break
-        train_particles = train_particles[0].to(device)
-        train_particles = train_particles.view(args.num_samples, -1)
+    train_particles = 0.5 + 0.1 * torch.rand(
+        args.num_samples,
+        *input_shape).to(device)
 
     # get the initial dimension for the train particles
-    train_particles_dim = np.prod(train_particles.shape[1:])
+    train_particles_shape = train_particles.shape[1:]
 
     # generate test particles
     if not args.num_test:
@@ -453,26 +409,30 @@ if __name__ == "__main__":
         nb_test_pic = 100
         interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
         test_particles = torch.zeros(nb_interp_test * nb_test_pic,
-                                     train_particles_dim).to(device)
+                                     *train_particles_shape).to(device)
         for id in range(nb_test_pic):
             for id_in_q, q in enumerate(interpolation):
                 test_particles[id*nb_interp_test+id_in_q, :] = (
                  q * train_particles[2*id+1] + (1-q)*train_particles[2*id])
     elif args.test_type.upper() == "RANDOM":
         test_particles = torch.randn(args.num_test,
-                                     train_particles_dim).to(device)
+                                     *train_particles_shape).to(device)
     else:
         raise Exception('test type must be either INTERPOLATE or RANDOM')
 
-    print('Train particles dimension:', train_particles_dim)
+    print('Train particles dimension:', torch.tensor(
+        train_particles_shape).numpy())
 
     # multiply them by a random matrix if not of the appropriate size
-    if train_particles_dim != projectors.data_dim:
+    if train_particles_shape != data_shape:
         print('Using a dimension augmentation matrix')
         torch.manual_seed(0)
-        input_linear = torch.randn(input_dim,
-                                   projectors.data_dim).to(device)
-        train_particles = torch.mm(train_particles, input_linear)
+        input_linear = torch.randn(
+            torch.prod(torch.tensor(input_shape)),
+            torch.prod(torch.tensor(data_shape))).to(device)
+        train_particles = torch.mm(
+            train_particles.view(args.num_samples, -1),
+            input_linear)
         if test_particles is not None:
             test_particles = torch.mm(test_particles, input_linear)
 
