@@ -250,6 +250,10 @@ if __name__ == "__main__":
                              "match the data dimension inferred from dataset",
                         type=int,
                         default=100)
+    parser.add_argument("--num_thetas",
+                        help="Number of thetas per sketch.",
+                        type=int,
+                        default=2000)
     parser.add_argument("--num_epochs",
                         help="Number of epochs",
                         type=int,
