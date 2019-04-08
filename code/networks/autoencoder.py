@@ -51,37 +51,43 @@ class ConvDecoder(nn.Module):
                                           kernel_size=2, stride=2, padding=0)
         self.conv5 = nn.Conv2d(d, self.input_shape[0],
                                kernel_size=3, stride=1, padding=1)
-        self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         d = self.input_shape[-1]
         out = self.relu(self.fc4(x))
         out = out.view(-1, d, int(d/2), int(d/2))
-        out = self.relu(self.deconv1(out))
-        out = self.relu(self.deconv2(out))
-        out = self.relu(self.deconv3(out))
-        return self.sigmoid(self.conv5(out))
+        out = torch.relu(self.deconv1(out))
+        out = torch.relu(self.deconv2(out))
+        out = torch.relu(self.deconv3(out))
+        return torch.relu(self.conv5(out))
 
 
 class DenseEncoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(DenseEncoder, self).__init__()
         self.input_shape = input_shape
-        self.fc1 = nn.Linear(np.prod(input_shape), bottleneck_size)
+        intermediate_size = max(64, bottleneck_size)
+        self.fc1 = nn.Linear(np.prod(input_shape), intermediate_size)
+        self.fc2 = nn.Linear(intermediate_size, bottleneck_size)
 
     def forward(self, x):
-        return torch.sigmoid(self.fc1(x.view(-1, np.prod(self.input_shape))))
+        out = self.fc1(x.view(-1, np.prod(self.input_shape)))
+        out = torch.relu(out)
+        out = self.fc2(out)
+        return torch.relu(out)
 
 
 class DenseDecoder(nn.Module):
     def __init__(self, input_shape, bottleneck_size=64):
         super(DenseDecoder, self).__init__()
         self.input_shape = input_shape
-        self.fc1 = nn.Linear(bottleneck_size, np.prod(input_shape))
+        intermediate_size = max(64, bottleneck_size)
+        self.fc1 = nn.Linear(bottleneck_size, intermediate_size)
+        self.fc2 = nn.Linear(intermediate_size, np.prod(input_shape))
 
     def forward(self, x):
-        return torch.sigmoid(self.fc1(x)).view(
+        out = torch.relu(self.fc1(x))
+        return torch.relu(self.fc2(out)).view(
             -1, self.input_shape[0], self.input_shape[1], self.input_shape[2]
         )
 
@@ -116,7 +122,7 @@ class AE(object):
         super(AE, self).__init__()
         self.bottleneck_size = bottleneck_size
         self.device = device
-        self.criterion = nn.BCELoss()
+        self.criterion = nn.MSELoss()#BCELoss()
         self.input_shape = input_shape
         self.model = AutoEncoder(
             input_shape=self.input_shape,

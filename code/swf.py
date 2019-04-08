@@ -5,6 +5,7 @@ from torch import nn
 from torchvision.utils import save_image
 from torchvision.utils import make_grid
 import qsketch
+import data
 import argparse
 import functools
 import torch.multiprocessing as mp
@@ -15,7 +16,7 @@ import utils
 from math import sqrt
 
 
-def swf(train_particles, test_particles, target_stream, num_quantiles,
+def swf(train_particles, test_particles, target_stream, modules,
         stepsize, regularization, num_epochs,
         device_str, logger, results_path="results"):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
@@ -32,7 +33,6 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
     # prepare stuff
     criterion = nn.MSELoss()
-    quantiles = torch.linspace(0, 100, num_quantiles).to(device)
     particles = {}
     particles['train'] = train_particles.to(device)
     if test_particles is not None:
@@ -56,9 +56,8 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         transported['test'] = None
 
     data_queue = target_stream.queue
-
-    projector = target_stream.projectors[0].to(device)
-    percentiles = torch.linspace(0, 100, num_quantiles)
+    projector = modules[0].to(device)
+    percentiles = target_stream.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
 
     # call the logger with the transported train and test particles
@@ -66,7 +65,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
     # loop over epochs
     for epoch in bar_epoch:
-        if target_stream.data['num_epochs'] == 1:
+        if target_stream.shared_data['num_epochs'] == 1:
             next_queue = mp.Queue()
 
         # reset the step for both train and test
@@ -77,13 +76,14 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
         loss['train'] = 0
         loss['test'] = 0
 
-        pbar = tqdm(total=target_stream.data['num_sketches'])
+        pbar = tqdm(total=target_stream.shared_data['num_sketches'])
         for (target_qf, id) in iter(data_queue.get, None):
             # get the data from the sketching queue
-            if target_stream.data['num_epochs'] == 1:
+            if target_stream.shared_data['num_epochs'] == 1:
                 next_queue.put((target_qf.detach().clone(), id))
             target_qf = target_qf.to(device)
-            projector.reset(id)
+            projector.recycle(id)
+
             # print('IN SWF',id, projector.weight[0,:5])
             # stepsize *= (index+1)/(index+2)
             for task in particles:  # will include test if provided
@@ -102,12 +102,12 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
 
                     # transort the marginals
                     interp_q[task] = Interp1d()(x=particles_qf['train'].t(),
-                                                y=quantiles,
+                                                y=percentiles,
                                                 xnew=projections[task].t(),
                                                 out=interp_q[task])
 
                     #interp_q[task] = torch.clamp(interp_q[task], 0, 100)
-                    transported[task] = Interp1d()(x=quantiles,
+                    transported[task] = Interp1d()(x=percentiles,
                                                    y=target_qf.t(),
                                                    xnew=interp_q[task],
                                                    out=transported[task])
@@ -130,7 +130,7 @@ def swf(train_particles, test_particles, target_stream, num_quantiles,
             noise /= sqrt(particles[task].shape[-1])
             particles[task] += regularization * noise
 
-        if target_stream.data['num_epochs'] == 1:
+        if target_stream.shared_data['num_epochs'] == 1:
             next_queue.put(None)
             data_queue = next_queue
 
@@ -241,8 +241,8 @@ if __name__ == "__main__":
 
     # create arguments parser and parse arguments
     parser = argparse.ArgumentParser(description='Sliced Wasserstein Flow.')
-    parser = qsketch.add_data_arguments(parser)
     parser = qsketch.add_sketch_arguments(parser)
+    parser = data.add_data_arguments(parser)
 
     parser.add_argument("--input_dim",
                         help="Dimension of the random input to the "
@@ -315,12 +315,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # prepare the torch device (cuda or cpu ?)
-    use_cuda = torch.cuda.is_available()
-    device_str = "cuda" if use_cuda else "cpu"
+    device_str = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device_str)
 
     # load the data
-    train_data = qsketch.load_image_dataset(
+    train_data = data.load_image_dataset(
         dataset=args.dataset,
         data_dir=args.root_data_dir,
         img_size=args.img_size
@@ -353,7 +352,7 @@ if __name__ == "__main__":
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=10)
+            autoencoder.train(train_loader, nb_epochs=20)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
@@ -363,32 +362,53 @@ if __name__ == "__main__":
             print("Model loaded")
 
         # augmenting the dataset with calling the encoder, to get an item
-        train_data = qsketch.TransformDataset(
+        train_data = data.TransformedDataset(
             train_data,
             transform=autoencoder.model.encode_nograd)
 
     data_shape = train_data[0][0].shape
+    import seaborn as sb
+    import matplotlib.pyplot as plt
+    test = torch.cat([train_data[id][0] for id in range(50000)])
+    plt.autoscale(True, tight=True)
+    plt.clf()
+    sb.set_style(sb.axes_style('whitegrid'))
+    plot = sb.kdeplot(
+        test[:, 0].numpy(),
+        test[:, 1].numpy(),
+        gridsize=200, n_levels=200,
+        linewidths=0.1,
+        clip=((-1, 12), (-1, 10))
+        )
+    plt.xlabel('feature 1')
+    plt.ylabel('feature 2')
+    plt.title('Distribution of bottleneck features on MNIST')
+    plot.get_figure().savefig('test.pdf')
+
+    import ipdb; ipdb.set_trace()
 
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data)
-    data_stream.start()
+    data_stream.stream()
+
+    # prepare the sketcher
+    target_stream = qsketch.Sketcher(data_source=data_stream,
+                                     percentiles=torch.linspace(
+                                            0, 100, args.num_quantiles),
+                                     num_examples=args.num_examples)
 
     # prepare the projectors
-    projectors = qsketch.Projectors(
-        args.num_thetas, data_shape,
-        qsketch.LinearProjector)
+    projectors = qsketch.ModulesDataset(
+                        networks.LinearProjector,
+                        shape_in=data_shape,
+                        num_out=args.num_thetas)
 
-    # start sketching
-    target_stream = qsketch.SketchStream()
-    target_stream.start(args.num_workers,
-                        num_epochs=(
+    target_stream.stream(modules=projectors,
+                         num_sketches=args.num_sketches,
+                         num_epochs=(
                             args.num_epochs if args.no_fixed_sketch
                             else 1),
-                        num_sketches=args.num_sketches,
-                        data_stream=data_stream,
-                        projectors=projectors,
-                        num_quantiles=args.num_quantiles,
-                        num_examples=args.num_examples)
+                         num_workers=args.num_workers)
 
     # generates the train particles
     print('using ', device)
@@ -445,11 +465,16 @@ if __name__ == "__main__":
         test_particles = test_particles.view(-1, *data_shape)
 
     # launch the sliced wasserstein flow
-    particles = swf(train_particles, test_particles, target_stream,
-                    args.num_quantiles, args.stepsize,
-                    args.regularization, args.num_epochs,
-                    device_str,
-                    functools.partial(logger_function,
+    particles = swf(train_particles=train_particles,
+                    test_particles=test_particles,
+                    target_stream=target_stream,
+                    modules=projectors,
+                    stepsize=args.stepsize,
+                    regularization=args.regularization,
+                    num_epochs=args.num_epochs,
+                    device_str=device_str,
+                    logger=functools.partial(
+                                      logger_function,
                                       plot_dir=args.plot_dir,
                                       plot_every=args.plot_every,
                                       match_every=args.match_every,
