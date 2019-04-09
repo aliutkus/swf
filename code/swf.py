@@ -14,6 +14,7 @@ from torchinterp1d import Interp1d
 from torchpercentile import Percentile
 import utils
 from math import sqrt
+from tqdm import tqdm, trange
 
 
 def swf(train_particles, test_particles, target_stream, modules,
@@ -25,8 +26,6 @@ def swf(train_particles, test_particles, target_stream, modules,
     The function gets sketches from the queue, and then applies steps of a
     SWF to the particles. The flow is parameterized by a stepsize and a
     regularization parameter. """
-
-    from tqdm import tqdm, trange
 
     # get the device
     device = torch.device(device_str)
@@ -47,16 +46,12 @@ def swf(train_particles, test_particles, target_stream, modules,
     particles_qf = {}
     projections = {}
     loss = {}
-    train_losses = []
-    test_losses = []
-    interp_q['train'] = None
-    transported['train'] = None
-    if test_particles is not None:
-        interp_q['test'] = None
-        transported['test'] = None
+    for task in particles:
+        interp_q[task] = None
+        transported[task] = None
 
-    data_queue = target_stream.queue
     projector = modules[0].to(device)
+    data_queue = target_stream.queue
     percentiles = target_stream.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
 
@@ -69,33 +64,31 @@ def swf(train_particles, test_particles, target_stream, modules,
             next_queue = mp.Queue()
 
         # reset the step for both train and test
-        step['train'] = 0
-        step['test'] = 0
-        step_weight['train'] = 0
-        step_weight['test'] = 0
-        loss['train'] = 0
-        loss['test'] = 0
+        for task in particles:
+            step[task] = 0
+            step_weight[task] = 0
+            loss[task] = 0
 
         pbar = tqdm(total=target_stream.shared_data['num_sketches'])
+        # get the data from the sketching queue until the None sentinel
         for (target_qf, id) in iter(data_queue.get, None):
-            # get the data from the sketching queue
+            # putting back the data to our temporary queue
             if target_stream.shared_data['num_epochs'] == 1:
                 next_queue.put((target_qf.detach().clone(), id))
+
+            # putting the target quantiles to device and setting the projector
             target_qf = target_qf.to(device)
             projector.recycle(id)
 
-            # print('IN SWF',id, projector.weight[0,:5])
-            # stepsize *= (index+1)/(index+2)
             for task in particles:  # will include test if provided
-                # project the particles
                 with torch.no_grad():
                     num_particles = particles[task].shape[0]
+                    # project the particles
                     projections[task] = projector(particles[task])
 
                     # compute the corresponding quantiles
-                    percentile_fn = Percentile()
-                    particles_qf[task] = percentile_fn(projections[task],
-                                                       percentiles)
+                    particles_qf[task] = Percentile()(projections[task],
+                                                      percentiles)
 
                     # compute the loss: squared error over the quantiles
                     loss[task] += criterion(particles_qf[task], target_qf)
@@ -106,7 +99,6 @@ def swf(train_particles, test_particles, target_stream, modules,
                                                 xnew=projections[task].t(),
                                                 out=interp_q[task])
 
-                    #interp_q[task] = torch.clamp(interp_q[task], 0, 100)
                     transported[task] = Interp1d()(x=percentiles,
                                                    y=target_qf.t(),
                                                    xnew=interp_q[task],
@@ -118,8 +110,6 @@ def swf(train_particles, test_particles, target_stream, modules,
                         .view(num_particles, *data_shape))
             pbar.update(1)
 
-            # print('SWF: finish id', id)
-        # print('SWF: updating particles')
         # we got all the updates with the sketches. Now apply the steps
         for task in particles:
             # first apply the step
@@ -130,109 +120,91 @@ def swf(train_particles, test_particles, target_stream, modules,
             noise /= sqrt(particles[task].shape[-1])
             particles[task] += regularization * noise
 
+        # if we are reusing the same sketches again, we prepare the sentinel
+        # and replace the data source by what we just recorded
         if target_stream.shared_data['num_epochs'] == 1:
             next_queue.put(None)
             data_queue = next_queue
 
         # Now do some logging / plotting
         loss = logger(bar_epoch, particles, epoch, loss)
-        train_losses.append(float(loss['train']))
-        if test_particles is not None:
-            test_losses.append(float(loss['test']))
-
-        """print('SWF writing results')
-        # Saving stuff on disk
-        params = {
-            'train_losses': [float(x) for x in train_losses],
-            'test_losses': [float(x) for x in test_losses],
-            'args': vars(args),
-            'epochs': int(epoch)
-        }
-        uuids = uuid.uuid4().hex[:6]
-
-        if not os.path.exists(results_path):
-            os.mkdir(results_path)
-
-        with open(Path(results_path,  uuids + ".json"), 'w') as outfile:
-            outfile.write(json.dumps(params, indent=4, sort_keys=True))"""
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
         else particles['train'])
 
 
+def plot_function(data, axes, plot_dir, filename):
+    import numpy as np
+    import matplotlib.pyplot as pl
+
+    if plot_dir is None or filename is None:
+        return
+    if len(data.shape) == 4:
+        # it's image data
+        pic = make_grid(
+            data,
+            nrow=16, padding=2, normalize=True, scale_each=True
+            )
+        pic_npy = pic.numpy()
+        newplots = axes.imshow(
+            np.transpose(pic_npy, (1, 2, 0)),
+            interpolation='nearest')
+    elif len(data.shape) == 2 and data.shape[1] == 2:
+        # it's 2D data
+        newplots = pl.plot(data[:, 0], data[:, 1], '.')
+
+    # create the temporary folder for plotting generated samp
+    if not os.path.exists(plot_dir):
+        os.mkdir(plot_dir)
+    figure = axes.get_figure()
+    figure.canvas.draw()
+    figure.savefig(os.path.join(plot_dir, filename))
+    for p in newplots:
+        p.remove()
+    return
+
+
 def logger_function(writer, particles, index, loss,
-                    plot_dir, plot_every, match_every,
-                    img_shape, dataset, ae=None):
+                    axes, plot_dir, plot_every, match_every,
+                    dataset, decode_fn=None, nb_plot=320):
     """ Logging function."""
 
+    # some text output
     loss_str = 'epoch %d: ' % (index + 1)
     for item, value in loss.items():
         loss_str += item + ': %0.12f ' % value
     writer.write(loss_str)
 
+    # checking whether we need to match and/or plot
     match = match_every > 0 and index > 0 and not index % match_every
     plot = index < 0 or (plot_every > 0 and not index % plot_every)
     if not plot and not match:
         return loss
 
-    # set the number of images we want to plot in the grid
-    # for each image we add the closest match (so nb_of_images * 2)
-    nb_of_images = 320
-
-    # displays generated images and display closest match in dataset
+    # prepares the generated outputs and their closest match in dataset
+    # if required
     for task in particles:
         # if we use the autoencoder deocde the particles to visualize them
-        if ae is not None:
-            decoder = ae.model.decode.to(particles[task].device)
-            cur_task = decoder(particles[task][:nb_of_images, ...])
-            img_shape = ae.model.input_shape
-        # otherwise just use the particles
-        else:
-            cur_task = particles[task][:nb_of_images, ...]
+        plot_data = particles[task][:nb_plot]
+        if decode_fn is not None:
+            plot_data = decode_fn(plot_data)
+        plot_function(data=plot_data,
+                      axes=axes,
+                      plot_dir=plot_dir,
+                      filename='{}_{}.png'.format(task, index))
 
         if match:
             # create empty grid
-            output_viewport = torch.zeros((nb_of_images,)
-                                          + cur_task.shape[1:])
-
             writer.write("Finding closest matches in dataset")
-            closest = utils.find_closest(particles[task][:nb_of_images],
+            closest = utils.find_closest(particles[task][:nb_plot],
                                          dataset)
-            if ae is not None:
-                output_viewport = decoder(closest.to(device))
-            else:
-                output_viewport = closest
-
-            pic = make_grid(
-                output_viewport.view(-1, *img_shape),
-                nrow=16, padding=2, normalize=True, scale_each=True
-            )
-
-            if plot_dir is not None:
-                # create the temporary folder for plotting generated samp
-                if not os.path.exists(plot_dir):
-                    os.mkdir(plot_dir)
-                save_image(
-                    pic,
-                    '{}/{}_image_match_{}.png'.format(
-                        plot_dir, task, index
-                    )
-                )
-
-        output_viewport = cur_task
-
-        pic = make_grid(
-            output_viewport.view(-1, *img_shape),
-            nrow=16, padding=2, normalize=True, scale_each=True
-        )
-
-        if plot_dir is not None:
-            # create the temporary folder for plotting generated samples
-            if not os.path.exists(plot_dir):
-                os.mkdir(plot_dir)
-            save_image(pic,
-                       '{}/{}_image_{}.png'.format(plot_dir, task, index))
+            if decode_fn is not None:
+                closest = decode_fn(closest)
+            plot_function(data=closest,
+                          axes=axes,
+                          plot_dir=plot_dir,
+                          filename='{}_match_{}.png'.format(task, index))
     return loss
 
 
@@ -367,25 +339,6 @@ if __name__ == "__main__":
             transform=autoencoder.model.encode_nograd)
 
     data_shape = train_data[0][0].shape
-    import seaborn as sb
-    import matplotlib.pyplot as plt
-    test = torch.cat([train_data[id][0] for id in range(50000)])
-    plt.autoscale(True, tight=True)
-    plt.clf()
-    sb.set_style(sb.axes_style('whitegrid'))
-    plot = sb.kdeplot(
-        test[:, 0].numpy(),
-        test[:, 1].numpy(),
-        gridsize=200, n_levels=200,
-        linewidths=0.1,
-        clip=((-1, 12), (-1, 10))
-        )
-    plt.xlabel('feature 1')
-    plt.ylabel('feature 2')
-    plt.title('Distribution of bottleneck features on MNIST')
-    plot.get_figure().savefig('test.pdf')
-
-    import ipdb; ipdb.set_trace()
 
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data)
@@ -464,6 +417,30 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
+    import matplotlib.pyplot as plt
+    if args.bottleneck_size == 2:
+        # we will have a 2D plot, so preparing the vizualization
+        import seaborn as sb
+        test = torch.cat([train_data[id][0] for id in range(50000)])
+        plt.autoscale(True, tight=True)
+        plt.clf()
+        sb.set_style(sb.axes_style('whitegrid'))
+        plot = sb.kdeplot(
+            test[:, 0].numpy(),
+            test[:, 1].numpy(),
+            gridsize=200, n_levels=200,
+            linewidths=0.1,
+            clip=((-1, 12), (-1, 10))
+            )
+        plt.xlabel('feature 1')
+        plt.ylabel('feature 2')
+        plt.title('Distribution of bottleneck features on MNIST')
+        plot.get_figure().savefig('test.pdf')
+        plot_axes = plt.gca()
+    else:
+        plt.clf()
+        plot_axes = plt.gca()
+
     # launch the sliced wasserstein flow
     particles = swf(train_particles=train_particles,
                     test_particles=test_particles,
@@ -474,11 +451,13 @@ if __name__ == "__main__":
                     num_epochs=args.num_epochs,
                     device_str=device_str,
                     logger=functools.partial(
-                                      logger_function,
-                                      plot_dir=args.plot_dir,
-                                      plot_every=args.plot_every,
-                                      match_every=args.match_every,
-                                      img_shape=data_shape,
-                                      dataset=train_data,
-                                      ae=(None if not args.ae
-                                          else autoencoder)))
+                          logger_function,
+                          axes=plot_axes,
+                          plot_dir=args.plot_dir,
+                          plot_every=args.plot_every,
+                          match_every=args.match_every,
+                          img_shape=data_shape,
+                          dataset=train_data,
+                          decode_fn=(
+                            autoencoder.model.decode_nograd if args.ae
+                            else None)))
