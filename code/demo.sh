@@ -1,8 +1,8 @@
 # parameters for sketching
-NUM_SKETCHES=1
-NUM_THETAS=5000
+NUM_SKETCHES=10
+NUM_THETAS=1500
 NUM_QUANTILES=100
-NUM_EXAMPLES=1000
+NUM_EXAMPLES=10000
 
 
 # images dimensions
@@ -16,8 +16,8 @@ BOTTLENECK_SIZE=2
 # parameters for SWF
 # pick something like num_thetas/4
 STEPSIZE=0.5
-REG=0
-NUM_EPOCHS=1001
+REG=0.01
+NUM_EPOCHS=100
 
 # whether to change the sketches at each epoch or not.
 # to change the sketch, set this to "--no_fixed_sketch"
@@ -34,7 +34,7 @@ NUM_TEST=0
 TEST_TYPE='INTERPOLATE'
 
 # plot every
-PLOT_EVERY=10
+PLOT_EVERY=1
 MATCH_EVERY=1000
 
 if [ $1 = "toy.npy" ]; then

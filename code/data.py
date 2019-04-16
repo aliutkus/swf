@@ -17,11 +17,21 @@ class TransformedDataset:
         self.transform = transform
         self.target_transform = target_transform
 
-    def __getitem__(self, index):
-        X, y = self.dataset[index]
-        return (
-            X if self.transform is None else self.transform(X),
-            y if self.target_transform is None else self.target_transform(y))
+    def __getitem__(self, indices):
+        try:
+            _ = iter(indices)
+            iterable = True
+        except TypeError as te:
+            indices = [indices]
+            iterable = False
+        result = []
+        for id in indices:
+            (X, y) = self.dataset[id]
+            result += [
+             (X if self.transform is None else self.transform(X),
+              y if self.target_transform is None else self.target_transform(y))
+            ]
+        return result[0] if not iterable else result
 
     def __len__(self):
         return len(self.dataset)

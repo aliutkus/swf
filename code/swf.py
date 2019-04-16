@@ -17,7 +17,7 @@ from math import sqrt
 from tqdm import tqdm, trange
 
 
-def swf(train_particles, test_particles, target_stream, modules,
+def swf(train_particles, test_particles, target_stream, projector_modules,
         stepsize, regularization, num_epochs,
         device_str, logger, results_path="results"):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
@@ -30,15 +30,12 @@ def swf(train_particles, test_particles, target_stream, modules,
     # get the device
     device = torch.device(device_str)
 
-    # prepare stuff
-    criterion = nn.MSELoss()
+    # pre-allocate variables
     particles = {}
     particles['train'] = train_particles.to(device)
     if test_particles is not None:
         particles['test'] = test_particles.to(device)
-    data_shape = train_particles[0].shape
 
-    # pre-allocate variables
     step = {}
     step_weight = {}
     interp_q = {}
@@ -50,13 +47,15 @@ def swf(train_particles, test_particles, target_stream, modules,
         interp_q[task] = None
         transported[task] = None
 
-    projector = modules[0].to(device)
+    data_shape = train_particles[0].shape
+    criterion = nn.MSELoss()
+    projector = projector_modules[0].to(device)
     data_queue = target_stream.queue
     percentiles = target_stream.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
 
     # call the logger with the transported train and test particles
-    logger(bar_epoch, particles, -1, loss)
+    logger(bar_epoch, locals(), -1)
 
     # loop over epochs
     for epoch in bar_epoch:
@@ -93,16 +92,16 @@ def swf(train_particles, test_particles, target_stream, modules,
                     # compute the loss: squared error over the quantiles
                     loss[task] += criterion(particles_qf[task], target_qf)
 
-                    # transort the marginals
+                    # transort the marginals, using only the quantiles of train
                     interp_q[task] = Interp1d()(x=particles_qf['train'].t(),
                                                 y=percentiles,
                                                 xnew=projections[task].t(),
                                                 out=interp_q[task])
-
                     transported[task] = Interp1d()(x=percentiles,
                                                    y=target_qf.t(),
                                                    xnew=interp_q[task],
                                                    out=transported[task])
+
                     step_weight[task] += projections[task].shape[1]
                     step[task] += (
                         projector.backward(
@@ -127,7 +126,7 @@ def swf(train_particles, test_particles, target_stream, modules,
             data_queue = next_queue
 
         # Now do some logging / plotting
-        loss = logger(bar_epoch, particles, epoch, loss)
+        loss = logger(bar_epoch, locals(), epoch)
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
@@ -137,7 +136,7 @@ def swf(train_particles, test_particles, target_stream, modules,
 def plot_function(data, axes, plot_dir, filename):
     import numpy as np
     import matplotlib.pyplot as pl
-
+    data = data.detach().cpu()
     if plot_dir is None or filename is None:
         return
     if len(data.shape) == 4:
@@ -147,12 +146,13 @@ def plot_function(data, axes, plot_dir, filename):
             nrow=16, padding=2, normalize=True, scale_each=True
             )
         pic_npy = pic.numpy()
-        newplots = axes.imshow(
+        newplots = [axes.imshow(
             np.transpose(pic_npy, (1, 2, 0)),
-            interpolation='nearest')
-    elif len(data.shape) == 2 and data.shape[1] == 2:
+            interpolation='nearest')]
+    elif len(data.squeeze().shape) == 2 and data.squeeze().shape[1] == 2:
         # it's 2D data
-        newplots = pl.plot(data[:, 0], data[:, 1], '.')
+        newplots = pl.plot(data.squeeze().numpy()[:, 0],
+                           data.squeeze().numpy()[:, 1], 'r.', markersize=1)
 
     # create the temporary folder for plotting generated samp
     if not os.path.exists(plot_dir):
@@ -165,46 +165,103 @@ def plot_function(data, axes, plot_dir, filename):
     return
 
 
-def logger_function(writer, particles, index, loss,
-                    axes, plot_dir, plot_every, match_every,
-                    dataset, decode_fn=None, nb_plot=320):
-    """ Logging function."""
-
-    # some text output
+def logger_text(writer, vars, index):
+    # plain text output
     loss_str = 'epoch %d: ' % (index + 1)
-    for item, value in loss.items():
+    for item, value in vars['loss'].items():
         loss_str += item + ': %0.12f ' % value
     writer.write(loss_str)
+
+
+def logger_particles_only(writer, vars, index,
+                          plot_dir, plot_every, match_every,
+                          dataset, decode_fn, nb_match=300):
+    """ Logging function."""
+    # first output some text to console
+    logger_text(writer, vars, index)
 
     # checking whether we need to match and/or plot
     match = match_every > 0 and index > 0 and not index % match_every
     plot = index < 0 or (plot_every > 0 and not index % plot_every)
     if not plot and not match:
-        return loss
+        return
 
     # prepares the generated outputs and their closest match in dataset
     # if required
     for task in particles:
-        # if we use the autoencoder deocde the particles to visualize them
-        plot_data = particles[task][:nb_plot]
-        if decode_fn is not None:
-            plot_data = decode_fn(plot_data)
-        plot_function(data=plot_data,
-                      axes=axes,
-                      plot_dir=plot_dir,
-                      filename='{}_{}.png'.format(task, index))
-
         if match:
             # create empty grid
             writer.write("Finding closest matches in dataset")
-            closest = utils.find_closest(particles[task][:nb_plot],
+            closest = utils.find_closest(particles[task][:nb_match],
                                          dataset)
+        else:
+            closest = None
+
+        # if we use the autoencoder deocde the particles to visualize them
+        plot_data = particles[task][:nb_plot]
+
+        if decode_fn is not None:
+            plot_data = decode_fn(plot_data.to('cpu'))
+        plot_function(data=plot_data,
+                      axes=axes,
+                      plot_dir=plot_dir,
+                      filename='%s_%04d.png' % (task, index))
+
             if decode_fn is not None:
                 closest = decode_fn(closest)
             plot_function(data=closest,
                           axes=axes,
                           plot_dir=plot_dir,
-                          filename='{}_match_{}.png'.format(task, index))
+                          filename='%s_match_%04d.png' % (task, index))
+    return loss
+
+
+def logger_particles_decoder(writer, vars, index,
+                             plot_dir, plot_every, match_every,
+                             dataset, decode_fn, nb_match=300):
+    """ Logging function."""
+    # first output some text to console
+    logger_text(writer, vars, index)
+
+    # checking whether we need to match and/or plot
+    match = match_every > 0 and index > 0 and not index % match_every
+    plot = index < 0 or (plot_every > 0 and not index % plot_every)
+    if not plot and not match:
+        return
+
+    # prepares the generated outputs and their closest match in dataset
+    # if required
+    for task in particles:
+        if match:
+            # create empty grid
+            writer.write("Finding closest matches in dataset")
+            closest = utils.find_closest(particles[task][:nb_match],
+                                         dataset)
+        else:
+            closest = None
+        for plot_fn in plot_fns:
+            plot_fn(particles=particles,
+                    closest=closest,
+                    index=index,
+                    plot_dir=plot_dir,
+                    filename='%s_%04d.png' % (task, index))
+        for
+        # if we use the autoencoder deocde the particles to visualize them
+        plot_data = particles[task][:nb_plot]
+
+        if decode_fn is not None:
+            plot_data = decode_fn(plot_data.to('cpu'))
+        plot_function(data=plot_data,
+                      axes=axes,
+                      plot_dir=plot_dir,
+                      filename='%s_%04d.png' % (task, index))
+
+            if decode_fn is not None:
+                closest = decode_fn(closest)
+            plot_function(data=closest,
+                          axes=axes,
+                          plot_dir=plot_dir,
+                          filename='%s_match_%04d.png' % (task, index))
     return loss
 
 
@@ -370,7 +427,7 @@ if __name__ == "__main__":
     else:
         input_shape = [args.input_dim, ]
 
-    train_particles = 0.5 + 0.1 * torch.rand(
+    train_particles = torch.randn(
         args.num_samples,
         *input_shape).to(device)
 
@@ -421,14 +478,14 @@ if __name__ == "__main__":
     if args.bottleneck_size == 2:
         # we will have a 2D plot, so preparing the vizualization
         import seaborn as sb
-        test = torch.cat([train_data[id][0] for id in range(50000)])
+        test = torch.cat([train_data[id][0] for id in range(50000)], dim=0)
         plt.autoscale(True, tight=True)
         plt.clf()
         sb.set_style(sb.axes_style('whitegrid'))
         plot = sb.kdeplot(
             test[:, 0].numpy(),
             test[:, 1].numpy(),
-            gridsize=200, n_levels=200,
+            gridsize=100, n_levels=200,
             linewidths=0.1,
             clip=((-1, 12), (-1, 10))
             )
@@ -456,8 +513,10 @@ if __name__ == "__main__":
                           plot_dir=args.plot_dir,
                           plot_every=args.plot_every,
                           match_every=args.match_every,
-                          img_shape=data_shape,
                           dataset=train_data,
-                          decode_fn=(
-                            autoencoder.model.decode_nograd if args.ae
-                            else None)))
+                          nb_plot=-1,
+                          decode_fn=None#(
+                            # autoencoder.model.decode_nograd if args.ae
+                            # else None
+                          )
+                    )
