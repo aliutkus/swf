@@ -2,8 +2,6 @@
 import os
 import torch
 from torch import nn
-from torchvision.utils import save_image
-from torchvision.utils import make_grid
 import qsketch
 import data
 import argparse
@@ -12,14 +10,13 @@ import torch.multiprocessing as mp
 import networks
 from torchinterp1d import Interp1d
 from torchpercentile import Percentile
-import utils
 from math import sqrt
 from tqdm import tqdm, trange
 
 
 def swf(train_particles, test_particles, target_stream, projector_modules,
         stepsize, regularization, num_epochs,
-        device_str, logger, results_path="results"):
+        device_str, plot_function):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
     the distribution whose sketches are given by the target queue.
 
@@ -54,8 +51,9 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
     percentiles = target_stream.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
 
-    # call the logger with the transported train and test particles
-    logger(bar_epoch, locals(), -1)
+    # call the plot function before starting
+    if plot_function is not None:
+        plot_function(locals(), -1)
 
     # loop over epochs
     for epoch in bar_epoch:
@@ -126,143 +124,17 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
             data_queue = next_queue
 
         # Now do some logging / plotting
-        loss = logger(bar_epoch, locals(), epoch)
+        loss_str = 'epoch %d: ' % (epoch + 1)
+        for item, value in loss.items():
+            loss_str += item + ': %0.12f ' % value
+        bar_epoch.write(loss_str)
+
+        if plot_function is not None:
+            plot_function(locals(), epoch)
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
         else particles['train'])
-
-
-def plot_function(data, axes, plot_dir, filename):
-    import numpy as np
-    import matplotlib.pyplot as pl
-    data = data.detach().cpu()
-    if plot_dir is None or filename is None:
-        return
-    if len(data.shape) == 4:
-        # it's image data
-        pic = make_grid(
-            data,
-            nrow=16, padding=2, normalize=True, scale_each=True
-            )
-        pic_npy = pic.numpy()
-        newplots = [axes.imshow(
-            np.transpose(pic_npy, (1, 2, 0)),
-            interpolation='nearest')]
-    elif len(data.squeeze().shape) == 2 and data.squeeze().shape[1] == 2:
-        # it's 2D data
-        newplots = pl.plot(data.squeeze().numpy()[:, 0],
-                           data.squeeze().numpy()[:, 1], 'r.', markersize=1)
-
-    # create the temporary folder for plotting generated samp
-    if not os.path.exists(plot_dir):
-        os.mkdir(plot_dir)
-    figure = axes.get_figure()
-    figure.canvas.draw()
-    figure.savefig(os.path.join(plot_dir, filename))
-    for p in newplots:
-        p.remove()
-    return
-
-
-def logger_text(writer, vars, index):
-    # plain text output
-    loss_str = 'epoch %d: ' % (index + 1)
-    for item, value in vars['loss'].items():
-        loss_str += item + ': %0.12f ' % value
-    writer.write(loss_str)
-
-
-def logger_particles_only(writer, vars, index,
-                          plot_dir, plot_every, match_every,
-                          dataset, decode_fn, nb_match=300):
-    """ Logging function."""
-    # first output some text to console
-    logger_text(writer, vars, index)
-
-    # checking whether we need to match and/or plot
-    match = match_every > 0 and index > 0 and not index % match_every
-    plot = index < 0 or (plot_every > 0 and not index % plot_every)
-    if not plot and not match:
-        return
-
-    # prepares the generated outputs and their closest match in dataset
-    # if required
-    for task in particles:
-        if match:
-            # create empty grid
-            writer.write("Finding closest matches in dataset")
-            closest = utils.find_closest(particles[task][:nb_match],
-                                         dataset)
-        else:
-            closest = None
-
-        # if we use the autoencoder deocde the particles to visualize them
-        plot_data = particles[task][:nb_plot]
-
-        if decode_fn is not None:
-            plot_data = decode_fn(plot_data.to('cpu'))
-        plot_function(data=plot_data,
-                      axes=axes,
-                      plot_dir=plot_dir,
-                      filename='%s_%04d.png' % (task, index))
-
-            if decode_fn is not None:
-                closest = decode_fn(closest)
-            plot_function(data=closest,
-                          axes=axes,
-                          plot_dir=plot_dir,
-                          filename='%s_match_%04d.png' % (task, index))
-    return loss
-
-
-def logger_particles_decoder(writer, vars, index,
-                             plot_dir, plot_every, match_every,
-                             dataset, decode_fn, nb_match=300):
-    """ Logging function."""
-    # first output some text to console
-    logger_text(writer, vars, index)
-
-    # checking whether we need to match and/or plot
-    match = match_every > 0 and index > 0 and not index % match_every
-    plot = index < 0 or (plot_every > 0 and not index % plot_every)
-    if not plot and not match:
-        return
-
-    # prepares the generated outputs and their closest match in dataset
-    # if required
-    for task in particles:
-        if match:
-            # create empty grid
-            writer.write("Finding closest matches in dataset")
-            closest = utils.find_closest(particles[task][:nb_match],
-                                         dataset)
-        else:
-            closest = None
-        for plot_fn in plot_fns:
-            plot_fn(particles=particles,
-                    closest=closest,
-                    index=index,
-                    plot_dir=plot_dir,
-                    filename='%s_%04d.png' % (task, index))
-        for
-        # if we use the autoencoder deocde the particles to visualize them
-        plot_data = particles[task][:nb_plot]
-
-        if decode_fn is not None:
-            plot_data = decode_fn(plot_data.to('cpu'))
-        plot_function(data=plot_data,
-                      axes=axes,
-                      plot_dir=plot_dir,
-                      filename='%s_%04d.png' % (task, index))
-
-            if decode_fn is not None:
-                closest = decode_fn(closest)
-            plot_function(data=closest,
-                          axes=axes,
-                          plot_dir=plot_dir,
-                          filename='%s_match_%04d.png' % (task, index))
-    return loss
 
 
 if __name__ == "__main__":
@@ -473,30 +345,6 @@ if __name__ == "__main__":
     train_particles = train_particles.view(-1, *data_shape)
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
-
-    import matplotlib.pyplot as plt
-    if args.bottleneck_size == 2:
-        # we will have a 2D plot, so preparing the vizualization
-        import seaborn as sb
-        test = torch.cat([train_data[id][0] for id in range(50000)], dim=0)
-        plt.autoscale(True, tight=True)
-        plt.clf()
-        sb.set_style(sb.axes_style('whitegrid'))
-        plot = sb.kdeplot(
-            test[:, 0].numpy(),
-            test[:, 1].numpy(),
-            gridsize=100, n_levels=200,
-            linewidths=0.1,
-            clip=((-1, 12), (-1, 10))
-            )
-        plt.xlabel('feature 1')
-        plt.ylabel('feature 2')
-        plt.title('Distribution of bottleneck features on MNIST')
-        plot.get_figure().savefig('test.pdf')
-        plot_axes = plt.gca()
-    else:
-        plt.clf()
-        plot_axes = plt.gca()
 
     # launch the sliced wasserstein flow
     particles = swf(train_particles=train_particles,
