@@ -2,15 +2,17 @@
 
 import seaborn as sb
 import matplotlib.pyplot as plt
+from matplotlib.cm import get_cmap
+import matplotlib.patches as mpatches
 import torch
 from torch.utils.data import DataLoader
 from torchvision.utils import make_grid
 import torch.multiprocessing as mp
 import numpy as np
 from math import floor
-import itertools
+import tqdm
 import os
-sb.set_style(sb.axes_style('whitegrid'))
+#sb.set_style(sb.axes_style('whitegrid'))
 
 
 def find_closest(items, dataset):
@@ -51,26 +53,27 @@ def plot_function(data, axes, markers='r.'):
         newplots = [axes.imshow(
             np.transpose(pic_npy, (1, 2, 0)),
             interpolation='nearest')]
+        plt.axis('off')
     elif len(data.squeeze().shape) == 2 and data.squeeze().shape[1] == 2:
         # it's 2D data
         newplots = plt.plot(data.squeeze().numpy()[:, 0],
                             data.squeeze().numpy()[:, 1],
                             markers, markersize=1)
+    plt.subplots_adjust()
     return newplots
 
 
 class SWFPlot:
     """ some big dirty class with just plotting stuff"""
-    def __init__(self, ndim, train_data, plot_dir,
+    def __init__(self, features, dataset, plot_dir,
                  plot_every, match_every,
-                 decode_fn, nb_plot, nb_match, test):
+                 decode_fn, nb_plot, test):
         """
         Initialize the plotting class
 
         ndim: int,
             number of dimensions to consider for the density plots
-            and the projections
-        train_data: dataset
+        dataset: dataset
             dataset to use for finding the closest entries, and also for the
             density plots
         plot_dir: string
@@ -84,139 +87,230 @@ class SWFPlot:
             if not None, the features are sent there for plotting
         nb_plot: int
             number of samples to plot (use -1 for all)
-        nb_match: int
-            number of samples of which to find closest in dataset
         test: """
 
         # hard coded switches
-        density_plot = True
-        particles_plot = True
-        closest_plot = True
-        projections_plot = True
+        self.density_plot = True
+        self.particles_plot = True
+        self.closest_plot = True
+        self.projections_plot = True
 
         self.plot_every = plot_every
         self.match_every = match_every
-        self.ndim = ndim
-        self.train_data = train_data
+        self.ndim = features if isinstance(features, int) else len(features)
+        self.features = features
+        self.dataset = dataset
         self.plot_dir = plot_dir
         self.decode_fn = decode_fn
-        self.nb_match = nb_match
         self.nb_plot = nb_plot
+
         self.plots_to_purge = []
 
         self.axes = {}
-
+        self.figs = {}
+        self.updated = []
         # initialize the figures if needed
-        if density_plot:
+        if self.density_plot:
+            self.density_nlevels = 10
+            self.density_data_palette = get_cmap("Blues")
+            self.density_train_palette = get_cmap("copper")
+
             # Plot figure with subplots of different sizes
-            fig = plt.figure(1)
+            fig = plt.figure(1, dpi=200)
             fig.clf()
 
             # prepare the heat map of the distribution of the data
-            train_loader = DataLoader(train_data, batch_size=len(train_data))
-            data = next(iter(train_loader))[0].numpy()
+            train_loader = DataLoader(dataset, batch_size=min(50000,len(dataset)))
+            data = next(iter(train_loader))[0].squeeze().numpy()
+
+            std_data = np.std(data, axis=0)
+            data += (np.random.randn(*data.shape)
+                     * np.maximum(1e-5,
+                                  std_data[None, :]/100))
+            if isinstance(features, int) and features == data.shape[1]:
+                self.features = range(self.features)
+            elif isinstance(features, int) and features > data.shape[1]:
+                raise Exception('There are less features than those asked for')
+            elif isinstance(features, int) and features <= data.shape[1]:
+                # picking the most energetic features
+                self.features = np.argsort(std_data)[-self.ndim:][::-1]
 
             self.axes['density'] = []
-            for row in range(ndim - 1):
+            print('Preparing the density plots of figures... may take a while')
+            pbar = tqdm.tqdm(total=(self.ndim - 1)*self.ndim/2)
+            for row in range(self.ndim - 1):
                 row_axes = []
                 for col in range(row+1):
-                    ax = fig.subplot(ndim, ndim, row*ndim+col)
-                    ax.autoscale(True, tight=True)
-                    ax.kdeplot(
-                        data[:, row],
-                        data[:, col],
-                        gridsize=100, n_levels=200,
-                        linewidths=0.1)
+                    xlims = np.percentile(data[:, self.features[col]],
+                                          [1, 80])
+                    ylims = np.percentile(data[:, self.features[row+1]],
+                                          [1, 80])
+                    ax = plt.subplot(self.ndim-1, self.ndim-1,
+                                     row*(self.ndim-1)+col+1)
+                    sb.kdeplot(
+                        data=data[:, self.features[col]],
+                        data2=data[:, self.features[row+1]],
+                        gridsize=100, n_levels=self.density_nlevels,
+                        cut=0.7,
+                        shade=True,
+                        shade_lowest=False,
+                        cmap=self.density_data_palette,
+                        ax=ax)
+                    pbar.update(1)
                     ax.xaxis.set_major_formatter(plt.NullFormatter())
                     ax.yaxis.set_major_formatter(plt.NullFormatter())
+                    ax.set_xlim(xlims)
+                    ax.set_ylim(ylims)
                     row_axes += [ax]
+                    if row == self.ndim - 2:
+                        plt.text(0.5, -(self.ndim-1)/15.,
+                                 'feature %d' % self.features[col],
+                                 transform=ax.transAxes,
+                                 horizontalalignment='center')
+
+                plt.text(1+(self.ndim-1)/30, 0.5,
+                         'feature %d' % self.features[row+1], rotation=90,
+                         transform=ax.transAxes,
+                         verticalalignment='center')
                 self.axes['density'] += [row_axes]
+
+            self.density_legend = [
+                mpatches.Patch(
+                    color=self.density_data_palette(255),
+                    label='Training data'),
+                mpatches.Patch(
+                    color=self.density_train_palette(255),
+                    label='Generated particles')]
+            fig.suptitle('Density plot of particles')
+            plt.figlegend(handles=self.density_legend, loc='upper center',
+                          frameon=True, fancybox=True, ncol=2, bbox_to_anchor=(0.4, 0.92))
+            plt.subplots_adjust()
+            #plt.tight_layout()
             self.figs['density'] = fig
-            fig.savefig('density_fig_init.pdf')
+            fig.canvas.draw()
+            self.updated += ['density']
+            self.save_figs('init.pdf')
 
         def new_fig(num):
-            fig = plt.figure(num)
-            fig.autoscale(True, tight=True)
+            fig = plt.figure(num, dpi=200)
             fig.clf()
             axes = plt.gca()
             axes.autoscale(True, tight=True)
             axes.xaxis.set_major_formatter(plt.NullFormatter())
             axes.yaxis.set_major_formatter(plt.NullFormatter())
+            plt.subplots_adjust()
             return (fig, axes)
-        if particles_plot:
-            (self.figs['particles'], self.axes['particles']) = new_fig(2)
-        if closest_plot:
-            (self.figs['closest'], self.axes['closest']) = new_fig(3)
-        if projections_plot:
-            (self.figs['projections'], self.axes['projections']) = new_fig(4)
+        if self.particles_plot:
+            (self.figs['particles_train'],
+                self.axes['particles_train']) = new_fig(2)
+            (self.figs['particles_test'],
+                self.axes['particles_test']) = new_fig(3)
+        if self.closest_plot:
+            (self.figs['closest'], self.axes['closest']) = new_fig(4)
+        if self.projections_plot:
+            (self.figs['projections'], self.axes['projections']) = new_fig(5)
+        self.updated = []
 
     def save_figs(self, filename):
         # create the folder if it doesn't exist
         if not os.path.exists(self.plot_dir):
             os.mkdir(self.plot_dir)
         # now loop over the available figures and plot them all
-        for name in self.figs:
+        for name in self.updated:
             self.figs[name].canvas.draw()
-            self.figs[name].savefig(os.path.join(self.plot_dir, name+filename))
+            self.figs[name].savefig(
+                os.path.join(self.plot_dir, name+filename),
+                bbox_inches='tight')
+        self.updated = []
 
     def clear_plots(self):
-        for plot in self.new_plots:
+        for plot in self.plots_to_purge:
             plot.remove()
-        self.new_plots = []
+        self.plots_to_purge = []
 
-    def logger(self, vars, epoch):
+    def log(self, vars, epoch):
         # checking whether we need to match and/or plot
         match = (self.match_every > 0
                  and epoch > 0 and not epoch % self.match_every)
-        plot = (epoch < 0
+        plot = (epoch == 0
                 or (self.plot_every > 0 and not epoch % self.plot_every))
 
         if not plot and not match:
             # nothing to do
             return
 
-        # convert the particles to numpy
-        train = vars['particles']['train'].squeeze().numpy()
-        test = (vars['particles']['test'].squeeze().numpy()
+        # convert the particles to cpu
+        train = vars['particles']['train'].to('cpu')
+        test = (vars['particles']['test'].to('cpu')
                 if 'test' in vars['particles']
                 else None)
 
         self.clear_plots()
         newplots = []
+        self.updated = []
         if 'density' in self.figs:
             # plot the actual values of the particles over density plots,
             # just doing this for train particles
-            for dim2 in range(1, self.ndim):
-                for dim1 in range(dim2):
-                    ax = self.axes['density'][dim1-1][dim2]
-                    newplots += ax.plot(train[:, dim1], train[:, dim2],
-                                        'xb', markersize=1)
+            for row in range(self.ndim - 1):
+                for col in range(row+1):
+                    ax = self.axes['density'][row][col]
+                    xlimits = ax.get_xlim()
+                    ylimits = ax.get_ylim()
+                    children = ax.get_children()
+                    sb.kdeplot(
+                        data=train.squeeze()[:, self.features[col]].numpy(),
+                        data2=train.squeeze()[:, self.features[row+1]].numpy(),
+                        gridsize=100, n_levels=self.density_nlevels,
+                        shade=False,
+                        cmap=self.density_train_palette,
+                        ax=ax)
 
+                    ax.autoscale(enable=True, tight=True)
+                    ax.set_xlim(*xlimits)
+                    ax.set_ylim(*ylimits)
+                    newplots += [p for p in ax.get_children() if p not in children]
+            self.figs['density'].suptitle(
+                'Density plot of particles, iteration %04d' % epoch)
+            self.updated += ['density']
+        train = train[:self.nb_plot]
+        if test is not None:
+            test = test[:self.nb_plot]
+        if self.decode_fn is not None:
+            train = self.decode_fn(train)
+            if test is not None:
+                test = self.decode_fn(test)
+        if 'particles_train' in self.figs:
+            plot_function(data=train,
+                          axes=self.axes['particles_train'])
+            self.figs['particles_train'].suptitle(
+                'SWF, iteration %04d' % epoch)
+            self.updated += ['particles_train']
 
-        # prepares the generated outputs and their closest match in dataset
-        # if required
-        for task in vars['particles']:
-            if match:
-                # create empty grid
-                writer.write("Finding closest matches in dataset")
-                closest = find_closest(vars['particles'][task][:nb_match],
-                                       dataset)
-            else:
-                closest = None
+        if 'particles_test' in self.figs and test is not None:
+            plot_function(data=test,
+                          axes=self.axes['particles_test'])
+            self.figs['particles_test'].suptitle(
+                'Pre-trained SWF, iteration %04d' % epoch)
+            self.updated += ['particles_test']
 
-            # if we use the autoencoder deocde the particles to visualize them
-            plot_data = vars['particles'][task][:nb_plot]
+        if 'closest' in self.figs and match:
+            closest = find_closest(vars['particles']['train'][:self.nb_plot],
+                                   self.dataset)
+            if self.decode_fn is not None:
+                closest = self.decode_fn(closest)
+            plot_function(data=closest,
+                          axes=self.axes['closest'])
+            self.figs['closest'].suptitle(
+                'Closest samples, iteration %04d' % epoch)
+            self.updated += ['closest']
 
-            if decode_fn is not None:
-                plot_data = decode_fn(plot_data.to('cpu'))
-                plot_function(data=plot_data,
-                              axes=axes,
-                              plot_dir=plot_dir,
-                              filename='%s_%04d.png' % (task, index))
+        if 'projections' in self.figs:
+            pass
+            # sketcher = vars['target_stream']
+            # part = vars['particles']['train']
+            # module = vars['projector_modules'][42]
+            # import ipdb; ipdb.set_trace()
+            # sketcher(module, part)
 
-            if closest is not None:
-                closest = decode_fn(closest)
-                plot_function(data=closest,
-                              axes=axes,
-                              plot_dir=plot_dir,
-                              filename='%s_match_%04d.png' % (task, index))
+        self.save_figs(filename='%04d' % epoch)
+        self.plots_to_purge = newplots

@@ -5,7 +5,7 @@ from torch import nn
 import qsketch
 import data
 import argparse
-import functools
+import plotting
 import torch.multiprocessing as mp
 import networks
 from torchinterp1d import Interp1d
@@ -53,7 +53,7 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
 
     # call the plot function before starting
     if plot_function is not None:
-        plot_function(locals(), -1)
+        plot_function(locals(), 0)
 
     # loop over epochs
     for epoch in bar_epoch:
@@ -130,7 +130,7 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
         bar_epoch.write(loss_str)
 
         if plot_function is not None:
-            plot_function(locals(), epoch)
+            plot_function(locals(), epoch+1)
 
     return (
         (particles['train'], particles['test']) if 'test' in particles
@@ -268,7 +268,6 @@ if __name__ == "__main__":
             transform=autoencoder.model.encode_nograd)
 
     data_shape = train_data[0][0].shape
-
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data)
     data_stream.stream()
@@ -277,7 +276,8 @@ if __name__ == "__main__":
     target_stream = qsketch.Sketcher(data_source=data_stream,
                                      percentiles=torch.linspace(
                                             0, 100, args.num_quantiles),
-                                     num_examples=args.num_examples)
+                                     num_examples=args.num_examples,
+                                     )
 
     # prepare the projectors
     projectors = qsketch.ModulesDataset(
@@ -346,25 +346,24 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
+    plotter = plotting.SWFPlot(features=min(args.bottleneck_size, 6),
+                               dataset=train_data,
+                               plot_dir=args.plot_dir,
+                               plot_every=args.plot_every,
+                               match_every=args.match_every,
+                               decode_fn=(
+                                autoencoder.model.decode_nograd if args.ae
+                                else None),
+                               nb_plot=304,
+                               test=test_particles is not None)
     # launch the sliced wasserstein flow
     particles = swf(train_particles=train_particles,
                     test_particles=test_particles,
                     target_stream=target_stream,
-                    modules=projectors,
+                    projector_modules=projectors,
                     stepsize=args.stepsize,
                     regularization=args.regularization,
                     num_epochs=args.num_epochs,
                     device_str=device_str,
-                    logger=functools.partial(
-                          logger_function,
-                          axes=plot_axes,
-                          plot_dir=args.plot_dir,
-                          plot_every=args.plot_every,
-                          match_every=args.match_every,
-                          dataset=train_data,
-                          nb_plot=-1,
-                          decode_fn=None#(
-                            # autoencoder.model.decode_nograd if args.ae
-                            # else None
-                          )
+                    plot_function=plotter.log
                     )

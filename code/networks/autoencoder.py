@@ -21,19 +21,18 @@ class ConvEncoder(nn.Module):
                                kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(input_shape[-1], input_shape[-1],
                                kernel_size=3, stride=1, padding=1)
-        self.relu = nn.ReLU()
         self.fc1 = nn.Linear(int(input_shape[-1]**3/4), bottleneck_size)
 
     def forward(self, x):
         if len(x.shape) == 3:
             x = x[None, ...]
 
-        out = self.relu(self.conv1(x))
-        out = self.relu(self.conv2(out))
-        out = self.relu(self.conv3(out))
-        out = self.relu(self.conv4(out))
+        out = torch.relu(self.conv1(x))
+        out = torch.relu(self.conv2(out))
+        out = torch.relu(self.conv3(out))
+        out = torch.relu(self.conv4(out))
         out = out.view(out.size(0), -1)
-        return self.relu(self.fc1(out))
+        return torch.relu(self.fc1(out))
 
 
 class ConvDecoder(nn.Module):
@@ -54,12 +53,12 @@ class ConvDecoder(nn.Module):
 
     def forward(self, x):
         d = self.input_shape[-1]
-        out = self.relu(self.fc4(x))
+        out = torch.relu(self.fc4(x))
         out = out.view(-1, d, int(d/2), int(d/2))
         out = torch.relu(self.deconv1(out))
         out = torch.relu(self.deconv2(out))
         out = torch.relu(self.deconv3(out))
-        return torch.relu(self.conv5(out))
+        return torch.sigmoid(self.conv5(out))
 
 
 class DenseEncoder(nn.Module):
@@ -87,7 +86,7 @@ class DenseDecoder(nn.Module):
 
     def forward(self, x):
         out = torch.relu(self.fc1(x))
-        return torch.relu(self.fc2(out)).view(
+        return torch.sigmoid(self.fc2(out)).view(
             -1, self.input_shape[0], self.input_shape[1], self.input_shape[2]
         )
 
@@ -101,7 +100,7 @@ class AutoEncoder(nn.Module):
                        if convolutive
                        else DenseEncoder(input_shape, bottleneck_size))
         self.decode = (ConvDecoder(input_shape, bottleneck_size)
-                       if convolutive
+                if convolutive
                        else DenseDecoder(input_shape, bottleneck_size))
 
     def encode_nograd(self, x):
@@ -122,7 +121,7 @@ class AE(object):
         super(AE, self).__init__()
         self.bottleneck_size = bottleneck_size
         self.device = device
-        self.criterion = nn.MSELoss()#BCELoss()
+        self.criterion = nn.MSELoss()
         self.input_shape = input_shape
         self.model = AutoEncoder(
             input_shape=self.input_shape,
