@@ -121,7 +121,7 @@ class AE(object):
         super(AE, self).__init__()
         self.bottleneck_size = bottleneck_size
         self.device = device
-        self.criterion = nn.MSELoss()
+        self.criterion = nn.BCELoss()
         self.input_shape = input_shape
         self.model = AutoEncoder(
             input_shape=self.input_shape,

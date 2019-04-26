@@ -4,6 +4,7 @@ from torchvision import transforms
 from torchvision import transforms as T
 from torch.utils import data
 import os
+import torch
 import random
 from PIL import Image
 
@@ -100,15 +101,20 @@ def load_image_dataset(dataset, data_dir="data", img_size=None, mode='train'):
 
     # If it's celebA, then we have a special loader
     if os.path.basename(dataset).upper() == "CELEBA":
-        data = CelebA(data_dir, transform, mode=mode)
+        res_data = CelebA(data_dir, transform, mode=mode)
+    elif dataset.upper() == 'TOY':
+        import numpy as np
+        xdata = torch.tensor(np.load('toy.npy'))
+        ydata = torch.zeros(len(xdata))
+        res_data = data.TensorDataset(xdata[:, None, ...], ydata)
     else:
         data_dir = os.path.join(data_dir, os.path.basename(dataset))
         # Just assume it's a torchvision dataset
         DATASET = getattr(datasets, dataset)
-        data = DATASET(data_dir, train=(mode == 'train'),
-                       download=True,
-                       transform=transform)
-    return data
+        res_data = DATASET(data_dir, train=(mode == 'train'),
+                           download=True,
+                           transform=transform)
+    return res_data
 
 
 def add_data_arguments(parser):

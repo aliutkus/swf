@@ -10,12 +10,12 @@ def draw_GMM_parameters(d, K, seed = None):
     if seed is not None:
         np.random.seed(seed)
     # weights
-    w = rand(K)**2
+    w = rand(K)#**2
     w /= np.sum(w)
 
     # means
-    mu = randn(d, K)*K*10*np.log(d)#**3
-    mu[:,0] *= 3
+    mu = randn(d, K)*K*10*np.log(d)**3
+    mu[:, 0] += np.abs(mu).max(axis=1)*2
 
     # covariances
     L = (randn(d, d, K) * rand(1, 1, K) * K

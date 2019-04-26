@@ -14,7 +14,7 @@ from math import sqrt
 from tqdm import tqdm, trange
 
 
-def swf(train_particles, test_particles, target_stream, projector_modules,
+def swf(train_particles, test_particles, sketcher, projector_modules,
         stepsize, regularization, num_epochs,
         device_str, plot_function):
     """Starts a Sliced Wasserstein Flow with the train_particles, to match
@@ -47,8 +47,8 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
     data_shape = train_particles[0].shape
     criterion = nn.MSELoss()
     projector = projector_modules[0].to(device)
-    data_queue = target_stream.queue
-    percentiles = target_stream.percentiles.clone().to(device)
+    data_queue = sketcher.queue
+    percentiles = sketcher.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
 
     # call the plot function before starting
@@ -57,7 +57,7 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
 
     # loop over epochs
     for epoch in bar_epoch:
-        if target_stream.shared_data['num_epochs'] == 1:
+        if sketcher.shared_data['num_epochs'] == 1:
             next_queue = mp.Queue()
 
         # reset the step for both train and test
@@ -66,11 +66,12 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
             step_weight[task] = 0
             loss[task] = 0
 
-        pbar = tqdm(total=target_stream.shared_data['num_sketches'])
+        pbar = tqdm(total=sketcher.shared_data['num_sketches'])
         # get the data from the sketching queue until the None sentinel
         for (target_qf, id) in iter(data_queue.get, None):
+            # print('SWF, got id %d', id)
             # putting back the data to our temporary queue
-            if target_stream.shared_data['num_epochs'] == 1:
+            if sketcher.shared_data['num_epochs'] == 1:
                 next_queue.put((target_qf.detach().clone(), id))
 
             # putting the target quantiles to device and setting the projector
@@ -119,7 +120,7 @@ def swf(train_particles, test_particles, target_stream, projector_modules,
 
         # if we are reusing the same sketches again, we prepare the sentinel
         # and replace the data source by what we just recorded
-        if target_stream.shared_data['num_epochs'] == 1:
+        if sketcher.shared_data['num_epochs'] == 1:
             next_queue.put(None)
             data_queue = next_queue
 
@@ -253,7 +254,7 @@ if __name__ == "__main__":
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=20)
+            autoencoder.train(train_loader, nb_epochs=30)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
@@ -273,7 +274,7 @@ if __name__ == "__main__":
     data_stream.stream()
 
     # prepare the sketcher
-    target_stream = qsketch.Sketcher(data_source=data_stream,
+    sketcher = qsketch.Sketcher(data_source=data_stream,
                                      percentiles=torch.linspace(
                                             0, 100, args.num_quantiles),
                                      num_examples=args.num_examples,
@@ -285,7 +286,7 @@ if __name__ == "__main__":
                         shape_in=data_shape,
                         num_out=args.num_thetas)
 
-    target_stream.stream(modules=projectors,
+    sketcher.stream(modules=projectors,
                          num_sketches=args.num_sketches,
                          num_epochs=(
                             args.num_epochs if args.no_fixed_sketch
@@ -311,15 +312,16 @@ if __name__ == "__main__":
         test_particles = None
     elif args.test_type.upper() == "INTERPOLATE":
         # Create an interpolation between training particles
-        nb_interp_test = 8
+        nb_interp_test = 16
         nb_test_pic = 100
-        interpolation = torch.linspace(0, 1, nb_interp_test).to(device)
+        interpolation = torch.linspace(0, 1, nb_interp_test).to('cpu').numpy()
         test_particles = torch.zeros(nb_interp_test * nb_test_pic,
                                      *train_particles_shape).to(device)
         for id in range(nb_test_pic):
             for id_in_q, q in enumerate(interpolation):
                 test_particles[id*nb_interp_test+id_in_q, :] = (
-                 q * train_particles[2*id+1] + (1-q)*train_particles[2*id])
+                 q * train_particles[2*id+1]
+                 + (1. - q)*train_particles[2*id])
     elif args.test_type.upper() == "RANDOM":
         test_particles = torch.randn(args.num_test,
                                      *train_particles_shape).to(device)
@@ -346,7 +348,7 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
-    plotter = plotting.SWFPlot(features=min(args.bottleneck_size, 6),
+    plotter = plotting.SWFPlot(features=min(train_particles.shape[-1], 2),
                                dataset=train_data,
                                plot_dir=args.plot_dir,
                                plot_every=args.plot_every,
@@ -354,12 +356,15 @@ if __name__ == "__main__":
                                decode_fn=(
                                 autoencoder.model.decode_nograd if args.ae
                                 else None),
-                               nb_plot=304,
-                               test=test_particles is not None)
+                               nb_plot=8,
+                               nb_plot_test=96,
+                               make_titles=False,
+                               dpi=300,
+                               extension='pdf')
     # launch the sliced wasserstein flow
     particles = swf(train_particles=train_particles,
                     test_particles=test_particles,
-                    target_stream=target_stream,
+                    sketcher=sketcher,
                     projector_modules=projectors,
                     stepsize=args.stepsize,
                     regularization=args.regularization,
