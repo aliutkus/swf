@@ -36,11 +36,11 @@ In our second experiment, we investigate the effect of the level of the regulari
 
 \subsection{Experiments on real data}
 
-In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The recently proposed FashionMNIST dataset \cite{xiao2017fashion}, that contains $50000$ gray-scale images. This dataset is advocated as more challenging than MNIST. In all cases, images were interpolated as $32\times 32$, yielding a dimension of $1024$.
+In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202k$ color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA..
 
 In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
 with dimension $d$. Particles can be visualized with the pre-trained decoder.
-Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $d=48$ and $N_\theta=16000$.
+Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $d=32$ for MNIST and $d=64$ for CelebA  and $N_\theta=40000$.
 
 \begin{figure}
 \centering
@@ -60,21 +60,19 @@ Our goal is to show that SWF permits to directly sample from the distribution of
 % \vspace{-10pt}
 \end{figure}
 
-
-Assessing the validity of IGM algorithms is generally done by visualizing the generated samples. Figure~\ref{fig:samples} shows some particles after a few hundreds iterations of SWF. We can observe they are considerably accurate. Interestingly, the generated samples gradually take the form of either digits or various clothings along the iterations, as illustrated on Figure~\ref{fig:evolution}. In this figure, we also display the closest sample from the original database to check we are not just reproducing training data.
+Assessing the validity of IGM algorithms is generally done by visualizing the generated samples. Figure~\ref{fig:samples} shows some particles after $500$ iterations of SWF. We can observe they are considerably accurate. Interestingly, the generated samples gradually take the form of either digits or faces along the iterations, as seen on Figure~\ref{fig:evolution}. In this figure, we also display the closest sample from the original database to check we are not just reproducing training data.
 
 \begin{figure}[]
 \centering
-\subfigure{
 \begin{tikzpicture}[font=\small]
 
 	\begin{axis}[%
 		/pgf/number format/.cd,
 				use comma,
 				1000 sep={},
-	width=.9\columnwidth,
+	width=1\columnwidth,
 	axis line style={draw=none},
-	height=3.5cm,
+	height=9.5cm,
 	axis on top,
 	trim axis left,
 	scale only axis,
@@ -83,52 +81,25 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 	xticklabels={3,5,8,10,15,20,30,50,100,200},
 	xtick align=center,
 	ticklabel style = {font=\tiny},
-	xmin=-20,
-	xmax=99,
+	xmin=-10,
+	xmax=90,
 	ymin=0,
-	ymax=8
+	ymax=16
 	]
-	\addplot [forget plot] graphics [xmin=-10,xmax=-2,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0000-crop.pdf};
-	\addplot [forget plot] graphics [xmin=0.0,xmax=8,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0003-crop.pdf};
-	\addplot [forget plot] graphics [xmin=7.5,xmax=16,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0005-crop.pdf};
-	\addplot [forget plot] graphics [xmin=15.5,xmax=24,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0008-crop.pdf};
-	\addplot [forget plot] graphics [xmin=23.5,xmax=32,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0010-crop.pdf};
-	\addplot [forget plot] graphics [xmin=31.5,xmax=40,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0015-crop.pdf};
-	\addplot [forget plot] graphics [xmin=39.5,xmax=48,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0020-crop.pdf};
-	\addplot [forget plot] graphics [xmin=47.5,xmax=56,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0030-crop.pdf};
-	\addplot [forget plot] graphics [xmin=55.5,xmax=64,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0050-crop.pdf};
-	\addplot [forget plot] graphics [xmin=63.5,xmax=72,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0100-crop.pdf};
-	\addplot [forget plot] graphics [xmin=71.5,xmax=80,ymin=0,ymax=8] {figures/MNIST_evolution2/particles_train0200-crop.pdf};
-	\addplot [forget plot] graphics [xmin=82.0,xmax=90,ymin=0,ymax=8] {figures/MNIST_evolution2/closest0200-crop.pdf};
 
-	\end{axis}
-\end{tikzpicture}%
-\label{fig:mnist}
-}
-\hfill
-\subfigure{
-\begin{tikzpicture}[font=\small]
+	\addplot [forget plot] graphics [xmin=-10,xmax=-2,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0000-crop.pdf};
+	\addplot [forget plot] graphics [xmin=0.0,xmax=8,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0003-crop.pdf};
+	\addplot [forget plot] graphics [xmin=7.5,xmax=16,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0005-crop.pdf};
+	\addplot [forget plot] graphics [xmin=15.5,xmax=24,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0008-crop.pdf};
+	\addplot [forget plot] graphics [xmin=23.5,xmax=32,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0010-crop.pdf};
+	\addplot [forget plot] graphics [xmin=31.5,xmax=40,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0015-crop.pdf};
+	\addplot [forget plot] graphics [xmin=39.5,xmax=48,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0020-crop.pdf};
+	\addplot [forget plot] graphics [xmin=47.5,xmax=56,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0030-crop.pdf};
+	\addplot [forget plot] graphics [xmin=55.5,xmax=64,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0050-crop.pdf};
+	\addplot [forget plot] graphics [xmin=63.5,xmax=72,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0100-crop.pdf};
+	\addplot [forget plot] graphics [xmin=71.5,xmax=80,ymin=8,ymax=16] {figures/MNIST_evolution2/particles_train0200-crop.pdf};
+	\addplot [forget plot] graphics [xmin=82.0,xmax=90,ymin=8,ymax=16] {figures/MNIST_evolution2/closest0200-crop.pdf};
 
-	\begin{axis}[%
-		/pgf/number format/.cd,
-				use comma,
-				1000 sep={},
-	width=.9\columnwidth,
-	axis line style={draw=none},
-	height=3.5cm,
-	axis on top,
-	trim axis left,
-	scale only axis,
-	ymajorticks=false,
-	xtick={4,12,20,28,36,44,52,60,68,76},
-	xticklabels={3,5,8,10,15,20,30,50,100,200},
-	xtick align=center,
-	ticklabel style = {font=\tiny},
-	xmin=-20,
-	xmax=99,
-	ymin=0,
-	ymax=8
-	]
 	\addplot [forget plot] graphics [xmin=-10,xmax=-2,ymin=0,ymax=8] {figures/celeba_evolution/particles_train0000-crop.pdf};
 	\addplot [forget plot] graphics [xmin=0.0,xmax=8,ymin=0,ymax=8] {figures/celeba_evolution/particles_train0003-crop.pdf};
 	\addplot [forget plot] graphics [xmin=7.5,xmax=16,ymin=0,ymax=8] {figures/celeba_evolution/particles_train0005-crop.pdf};
@@ -143,11 +114,9 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 	\addplot [forget plot] graphics [xmin=82.0,xmax=90,ymin=0,ymax=8] {figures/celeba_evolution/closest0200-crop.pdf};
 
 	\end{axis}
-\end{tikzpicture}%
-\label{fig:fashionmnist}
-}
-% \vspace{-10pt}
-\caption{Initial random particles (left), particles through iterations (middle, from 1 to 201 iterations) and closest sample from the training dataset (right), for both MNIST and FashionMNIST.\label{fig:evolution}}
+\end{tikzpicture}
+\vspace{-20pt}
+\caption{Initial random particles (left), particles through iterations (middle, from 1 to 200 iterations) and closest sample from the training dataset (right), for both MNIST and CelebA.\label{fig:evolution}}
 % \vspace{-10pt}
 \end{figure}
 
@@ -170,8 +139,9 @@ The visual comparison suggests that the samples generated by SWF is less crisp t
 \includegraphics[width=0.95\columnwidth]{figures/CelebA_interpolation_image_500.pdf}
 % \includegraphics[width=0.95\columnwidth]{figures/interpolations.png}
 \label{fig:interpolation}
+\vspace{-5ptp}
 \caption{Applying a pre-trained SWF on new samples located in-between the ones used for training. Visualization is done with the pre-trained decoder.}
-% \vspace{-10pt}
+\vspace{-10pt}
 \end{figure}
 
 We also provide the outcome of the pre-trained SWF with samples that are regularly spaced in between those used for training. The result is shown in Figure \ref{fig:interpolation}. This plot suggests that SWF is a way to interpolate non-parametrically in between latent spaces of regular AE.
