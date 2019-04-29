@@ -275,10 +275,10 @@ if __name__ == "__main__":
 
     # prepare the sketcher
     sketcher = qsketch.Sketcher(data_source=data_stream,
-                                     percentiles=torch.linspace(
-                                            0, 100, args.num_quantiles),
-                                     num_examples=args.num_examples,
-                                     )
+                                percentiles=torch.linspace(
+                                        0, 100, args.num_quantiles),
+                                num_examples=args.num_examples,
+                                )
 
     # prepare the projectors
     projectors = qsketch.ModulesDataset(
@@ -287,11 +287,11 @@ if __name__ == "__main__":
                         num_out=args.num_thetas)
 
     sketcher.stream(modules=projectors,
-                         num_sketches=args.num_sketches,
-                         num_epochs=(
+                    num_sketches=args.num_sketches,
+                    num_epochs=(
                             args.num_epochs if args.no_fixed_sketch
                             else 1),
-                         num_workers=args.num_workers)
+                    num_workers=args.num_workers)
 
     # generates the train particles
     print('using ', device)

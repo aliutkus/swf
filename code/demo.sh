@@ -1,7 +1,7 @@
 # parameters for sketching
-NUM_SKETCHES=50
+NUM_SKETCHES=5
 NUM_THETAS=6000
-NUM_QUANTILES=300
+NUM_QUANTILES=3000
 NUM_EXAMPLES=5000
 
 
@@ -15,7 +15,7 @@ BOTTLENECK_SIZE=64
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=1
+STEPSIZE=10
 REG=0
 NUM_EPOCHS=5000
 
@@ -30,11 +30,11 @@ NUM_SAMPLES=5000
 INPUT_DIM=10
 
 # number of test
-NUM_TEST=5000
+NUM_TEST=0
 TEST_TYPE='RANDOM'
 
 # plot options
-PLOT_EVERY=5
+PLOT_EVERY=50
 MATCH_EVERY=500
 
 if [ $1 = "toy" ]; then

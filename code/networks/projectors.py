@@ -26,16 +26,10 @@ class LinearProjector(nn.Linear):
             gen_device = torch.device('cpu')
         new_weights = torch.randn(
             self.weight.shape, device=gen_device).to(self.weight.device)
-        new_bias = 10*torch.randn(
-            self.bias.shape, device=gen_device).to(self.bias.device)
-
-        self.weight = torch.nn.Parameter(
-            new_weights)
-        self.bias = torch.nn.Parameter(
-            new_bias)
-        #
         # self.weight = torch.nn.Parameter(
-        #     new_weights/torch.norm(new_weights, dim=1, keepdim=True))
+        #     new_weights)
+        self.weight = torch.nn.Parameter(
+            new_weights/torch.norm(new_weights, dim=1, keepdim=True))
 
     def backward(self, grad):
         """Manually compute the gradient of the layer for any input"""
