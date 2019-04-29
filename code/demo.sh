@@ -1,7 +1,7 @@
 # parameters for sketching
-NUM_SKETCHES=1
-NUM_THETAS=50
-NUM_QUANTILES=100
+NUM_SKETCHES=50
+NUM_THETAS=6000
+NUM_QUANTILES=300
 NUM_EXAMPLES=5000
 
 
@@ -11,13 +11,13 @@ IMG_SIZE=32
 # parameters for auto encoder
 AE_STRING=""
 CONV_AE_STRING="--conv_ae"
-BOTTLENECK_SIZE=32
+BOTTLENECK_SIZE=64
 
 # parameters for SWF
 # pick something like num_thetas/4
 STEPSIZE=1
-REG=0.0001
-NUM_EPOCHS=50
+REG=0
+NUM_EPOCHS=5000
 
 # whether to change the sketches at each epoch or not.
 # to change the sketch, set this to "--no_fixed_sketch"
@@ -27,7 +27,7 @@ NO_FIXED_SKETCH_STRING=""
 NUM_SAMPLES=5000
 
 # controls the dimension of the input. -1 for the dimension of the bottleneck
-INPUT_DIM=2
+INPUT_DIM=10
 
 # number of test
 NUM_TEST=5000
@@ -35,7 +35,7 @@ TEST_TYPE='RANDOM'
 
 # plot options
 PLOT_EVERY=5
-MATCH_EVERY=200
+MATCH_EVERY=500
 
 if [ $1 = "toy" ]; then
   echo "generating toy data, and then SWF on it"

@@ -16,16 +16,17 @@
 \section{Additional Experimental Results}
 
 \subsection{The Sliced Wasserstein Flow}
-The whole code for the Sliced Wasserstein Flow was implemented in Python, for use with Pytorch\footnote{\url{http://www.pytorch.org}.}. The code was written so as to run efficiently on GPU, and is available on the publicly available repository related to this paper\footnote{\url{github.com/removed_for_double_blind}.}.
+The whole code for the Sliced Wasserstein Flow was implemented in Python, for use with Pytorch\footnote{\url{http://www.pytorch.org}.}. The code was written so as to run efficiently on GPU, and is available on the publicly available repository related to this paper\footnote{\url{https://github.com/aliutkus/SWF}.}.
 
 In practice, the SWF involves relatively simple operations, the most important being:
 \begin{itemize}
   \item For each random $\theta\in\{\theta_n\}_{n=1\dots N_\theta}$,  compute its inner product with all items from a dataset and obtain the empirical quantiles for these \emph{projections}.
   \item At each step $k$ of the SWF, for each projection $z=\left<\theta, \bar{X}^i_k\right>$, apply two piece-wise linear functions, corresponding to the scalar optimal transport $\psi_{k, \theta}'(z)$.
 \end{itemize}
-Even if such steps are conceptually simple, the quantile and required linear interpolation functions were not available on GPU for any framework we could figure out at the time of writing this paper. Hence, we implemented them ourselves for use with Pytorch, and the interested reader will find them in the Github repository dedicated to this paper.
+Even if such steps are conceptually simple, the quantile and required linear interpolation functions were not available on GPU for any framework we could figure out at the time of writing this paper. Hence, we implemented them ourselves for use with Pytorch, and the interested reader will find the details in the Github repository dedicated to this paper.
 
-Given these operations, putting a SWF implementation together is straightforward, and the online code is able to apply it on any dataset.
+Given these operations, putting a SWF implementation together is straightforward.
+The code provided allows not only to apply it on any dataset, but also provides routines to have the computation of these sketches running in the background in a parallel manner.
 
 \subsection{The need for dimension reduction through autoencoders}
 
@@ -60,7 +61,7 @@ As mentioned in the text, we used autoencoders to reduce the dimensionality of t
   \item $\textbf{Decoder}$ A linear layer gets from the bottleneck features to a vector of dimension $8192$, which is reshaped as $(32, 16,16)$. Then, three convolution layers are applied, all with $32$ output channels and (kernel\_size, stride, panning) being respectively $(3,1,1)$, $(3,1,1)$, $(2,2,0)$. A 2d convolution layer is then applied with an output number of channels being that of the data ($1$ for black and white, $3$ for color), and a (kernel\_size, stride, panning) as $(3,1,1)$. In any case, all layers are followed by a ReLU activation, and a sigmoid activation is applied a the very output.
 \end{itemize}
 
-Once these networks defined, these autoencoders are trained in a very simple manner by minimizing the squared difference between input and output over the training set of the considered dataset (here MNIST or FashionMNIST). This training was achieved with the Adam algorithm \cite{kingma2014adam} with learning rate $1e-3$.
+Once these networks defined, these autoencoders are trained in a very simple manner by minimizing the binary cross entropy between input and output over the training set of the considered dataset (here MNIST, CelebA or FashionMNIST). This training was achieved with the Adam algorithm \cite{kingma2014adam} with learning rate $1e-3$.
 
 No additional training trick was involved as in Variational Autoencoder \cite{kingma2013VAE} to make sure the distribution of the bottleneck features matches some prior. The core advantage of the proposed method in this respect is indeed to turn any previously learned AE as a generative model, by automatically and non-parametrically transporting particles drawn from an arbitrary prior distribution $\mu$ to the observed empirical distribution $\nu$ of the bottleneck features over the training set.
 

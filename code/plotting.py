@@ -3,6 +3,7 @@
 import seaborn as sb
 import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
+import matplotlib.ticker as ticker
 import matplotlib.patches as mpatches
 import torch
 from torch.utils.data import DataLoader
@@ -17,7 +18,7 @@ import pandas as pd
 
 
 mpl.rcParams['savefig.pad_inches'] = 0
-
+#sb.set_style('whitegrid',{'grid.linestyle': '--'})
 
 def find_closest(items, dataset):
     """ find the indices of the entries of the dataset that are closest
@@ -173,53 +174,68 @@ class SWFPlot:
                 self.features = np.argsort(std_data)[-self.ndim:][::-1]
 
             self.axes['density'] = []
+            self.density_xlim = []
+            self.density_ylim = []
             print('Preparing the density plots of figures... may take a while')
             pbar = tqdm.tqdm(total=(self.ndim - 1)*self.ndim/2)
             for row in range(self.ndim - 1):
                 row_axes = []
+                row_xlim = []
+                row_ylim = []
                 for col in range(row+1):
-                    xlims = np.percentile(data[:, self.features[col]],
-                                          [0, 100])
-                    ylims = np.percentile(data[:, self.features[row+1]],
-                                          [0, 100])
+                    #xlims = np.percentile(data[:, self.features[col]],
+                    #                      [0, 100])
+                    #ylims = np.percentile(data[:, self.features[row+1]],
+                    #                      [0, 100])
                     ax = plt.subplot(self.ndim-1, self.ndim-1,
                                      row*(self.ndim-1)+col+1)
-                    sb.kdeplot(
-                        data=data[:, self.features[col]],
-                        data2=data[:, self.features[row+1]],
-                        gridsize=100, n_levels=self.density_nlevels,
-                        cut=0.5,
-                        shade=True,
-                        shade_lowest=False,
-                        cmap=self.density_data_palette,
-                        ax=ax)
-                    ax.tick_params(
-                        axis='both',
-                        which='both',
-                        bottom=False,
-                        left=False,
-                        right=False,
-                        top=False,
-                        labelbottom=False,
-                        labelleft=False)
+                    with sb.axes_style("whitegrid"):
+                        sb.kdeplot(
+                            data=data[:, self.features[col]],
+                            data2=data[:, self.features[row+1]],
+                            gridsize=100, n_levels=self.density_nlevels,
+                            #cut=0.5,
+                            shade=True,
+                            shade_lowest=False,
+                            cmap=self.density_data_palette,
+                            ax=ax)
+                        ax.tick_params(
+                            axis='both',
+                            which='both',
+                            bottom=True,
+                            left=True,
+                            right=True,
+                            top=True,
+                            labelbottom=False,
+                            labelleft=False)
+                    ax.xaxis.set_major_locator(ticker.LinearLocator(numticks=5))
+                    ax.yaxis.set_major_locator(ticker.LinearLocator(numticks=5))
+                    ax.tick_params(axis=u'both', which=u'both',length=0)
+                    ax.set_axisbelow(True)
+                    ax.grid(True, zorder=0)
                     #ax.xaxis.set_major_formatter(plt.NullFormatter())
                     #ax.yaxis.set_major_formatter(plt.NullFormatter())
                     #ax.set_xlim(xlims)
                     #ax.set_ylim(ylims)
+
+                    row_xlim += [ax.get_xlim()]
+                    row_ylim += [ax.get_ylim()]
+
                     row_axes += [ax]
-                    if self.make_titles:
-                        if row == self.ndim - 2:
-                            plt.text(0.5, -(self.ndim-1)/25.,
-                                     'feature %d' % self.features[col],
-                                     transform=ax.transAxes,
-                                     horizontalalignment='center')
+                    if self.ndim > 2 and row == self.ndim - 2:
+                        plt.text(0.5, -(self.ndim-1)/25.,
+                                 'feature %d' % self.features[col],
+                                 transform=ax.transAxes,
+                                 horizontalalignment='center')
                     pbar.update(1)
-                if self.make_titles:
+                if self.ndim > 2:
                     plt.text(1+(self.ndim-1)/40, 0.5,
                              'feature %d' % self.features[row+1], rotation=90,
                              transform=ax.transAxes,
                              verticalalignment='center')
                 self.axes['density'] += [row_axes]
+                self.density_xlim += [row_xlim]
+                self.density_ylim += [row_ylim]
             if self.make_titles:
                 self.density_legend = [
                     mpatches.Patch(
@@ -271,12 +287,12 @@ class SWFPlot:
         if self.swcost_plot:
             self.nswcost_plotted =  0
             (self.figs['swcost'], self.axes['swcost']) = new_fig(
-                                                            5, figsize=(10,4),
+                                                            5, figsize=(11,4),
                                                             display_axes=True, title=False)
-            self.swcost = pd.DataFrame({'epoch': [],
+            self.swcost = pd.DataFrame({'iteration': [],
                                         'task': [],
                                         'SW loss (dB)': []})
-            self.swcost.epoch = self.swcost.epoch.astype(int)
+            self.swcost.iteration = self.swcost.iteration.astype(int)
             self.figs['swcost'].set_size_inches(10, 3)
             plt.subplots_adjust(wspace=0.05, hspace=0.05)
             self.updated += ['swcost']
@@ -306,8 +322,7 @@ class SWFPlot:
                  and epoch > 0 and not epoch % self.match_every)
         plot = (epoch == 0
                 or (self.plot_every > 0 and not epoch % self.plot_every)
-                or epoch < 11)#in [1, 7,20,70,100])
-
+                )#or epoch < 11)# in [2, 3,5, 10, 20, 50])
         if not plot and not match:
             # nothing to do
             return
@@ -328,20 +343,29 @@ class SWFPlot:
             for row in range(self.ndim - 1):
                 for col in range(row+1):
                     ax = self.axes['density'][row][col]
-                    xlimits = ax.get_xlim()
-                    ylimits = ax.get_ylim()
                     children = ax.get_children()
-                    sb.kdeplot(
-                        data=train_plot[:, self.features[col]].numpy(),
-                        data2=train_plot[:, self.features[row+1]].numpy(),
-                        gridsize=100, n_levels=self.density_nlevels,
-                        shade=False,
-                        cmap=self.density_train_palette,
-                        ax=ax)
+                    with sb.axes_style("whitegrid"):
+                        ax.set_xlim(*self.density_xlim[row][col])
+                        ax.set_ylim(*self.density_ylim[row][col])
+                        sb.kdeplot(
+                            data=train_plot[:, self.features[col]].numpy(),
+                            data2=train_plot[:, self.features[row+1]].numpy(),
+                            gridsize=100, n_levels=self.density_nlevels,
+                            shade=False,
+                            cmap=self.density_train_palette,
+                            ax=ax)
+                        ax.xaxis.set_major_locator(ticker.LinearLocator(numticks=5))
+                        ax.yaxis.set_major_locator(ticker.LinearLocator(numticks=5))
+                        ax.tick_params(axis=u'both', which=u'both',length=0)
+                        ax.grid(True, zorder=0)
+                    #xlims = np.percentile(train_plot[self.features[col]].numpy(),
+                    #                      [0, 100])
+                    #ylims = np.percentile(train_plot[self.features[row+1]].numpy(),
+                    #        [0, 100])
 
                     #ax.autoscale(enable=True, tight=True)
-                    ax.set_xlim(*xlimits)
-                    ax.set_ylim(*ylimits)
+                    #ax.set_xlim(*xlimits)
+                    #ax.set_ylim(*ylimits)
                     new_plots += [p for p in ax.get_children()
                                   if p not in children]
             if self.make_titles:
@@ -431,7 +455,7 @@ class SWFPlot:
                 errors = errors.mean(dim=1).detach().numpy()
                 errors = 20*np.log10(errors)
                 new_errors = pd.DataFrame(
-                        {'epoch': (np.ones(errors.shape) * epoch).astype(int),
+                        {'iteration': (np.ones(errors.shape) * epoch).astype(int),
                          'task': [task, ]*len(errors),
                          'SW loss (dB)': errors})
                 self.swcost = self.swcost.append(new_errors)
@@ -444,7 +468,7 @@ class SWFPlot:
             # children = ax.get_children()
 
             sb.boxplot(
-                x='epoch',
+                x='iteration',
                 y='SW loss (dB)',
                 hue='task',
                 data=self.swcost,

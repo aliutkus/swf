@@ -11,7 +11,8 @@
 		axis line style={draw=none},
 		height=6.5cm,
 		axis on top,
-		trim axis,
+		trim axis left,
+		trim axis right,
 		scale only axis,
 		ymajorticks=false,
 		xmajorticks=false,
@@ -27,32 +28,32 @@
 		\addplot [forget plot] graphics [xmin=20,xmax=30,ymin=11,ymax=19] {figures/toy_new/density0003.pdf};
 		\addplot [forget plot] graphics [xmin=30,xmax=40,ymin=11,ymax=19] {figures/toy_new/density0005.pdf};
 		\addplot [forget plot] graphics [xmin=40,xmax=50,ymin=11,ymax=19] {figures/toy_new/density0010.pdf};
-		\node[text] at (75,115){\small Target};
-		\node[text] at (175,115){\small$k=2$};
-		\node[text] at (275,115){\small$k=3$};
-		\node[text] at (375,115){\small$k=5$};
-		\node[text] at (475,115){\small$k=10$};
+		\node at (75,115){\small Target};
+		\node at (175,115){\small$k=2$};
+		\node at (275,115){\small$k=3$};
+		\node at (375,115){\small$k=5$};
+		\node at (475,115){\small$k=10$};
 
 		% second line left
 		\addplot [forget plot] graphics [xmin=0,xmax=10,ymin=2,ymax=10] {figures/toy_new/density0020.pdf};
 		\addplot [forget plot] graphics [xmin=10,xmax=20,ymin=2,ymax=10] {figures/toy_new/density0050.pdf};
 		\addplot [forget plot] graphics [xmin=20.5,xmax=50,ymin=1,ymax=10] {figures/toy_swcost_lambda0.pdf};
-		\node[text] at (75,25){\small$k=20$};
-		\node[text] at (175,25){\small$k=50$};
+		\node at (75,25){\small$k=20$};
+		\node at (175,25){\small$k=50$};
 
-		\draw[thick] (525,10) -- (525,250);
+		\draw[thick] (525,20) -- (525,250);
 
 		% first line right
 		\addplot [forget plot] graphics [xmin=55,xmax=65,ymin=11,ymax=19] {figures/toy_vslambda/density0050lambda1e-1.pdf};
 		\addplot [forget plot] graphics [xmin=65,xmax=75,ymin=11,ymax=19] {figures/toy_vslambda/density0050lambda2e-1.pdf};
-		\node[text] at (625,115){\small$\lambda=0.1$};
-		\node[text] at (725,115){\small$\lambda=0.2$};
+		\node at (625,115){\small$\lambda=0.1$};
+		\node at (725,115){\small$\lambda=0.2$};
 
 		% second line right
 		\addplot [forget plot] graphics [xmin=55,xmax=65,ymin=2,ymax=10] {figures/toy_vslambda/density0050lambda5e-1.pdf};
 		\addplot [forget plot] graphics [xmin=65,xmax=75,ymin=2,ymax=10] {figures/toy_vslambda/density0050lambda1.pdf};
-		\node[text] at (625,25){\small$\lambda=0.5$};
-		\node[text] at (725,25){\small$\lambda=1$};
+		\node at (625,25){\small$\lambda=0.5$};
+		\node at (725,25){\small$\lambda=1$};
 
 		\end{axis}
 	\end{tikzpicture}
@@ -107,16 +108,16 @@ In our second experiment on Figure~\ref{fig:toy_example}, we investigate the eff
 \centering
 \includegraphics[width=0.49\columnwidth]{figures/MNIST_train_image_500.pdf}
 \includegraphics[width=0.49\columnwidth]{figures/CelebA_train_image_500.pdf}
-\label{fig:samples}\vspace{-2\baselineskip}
-\caption{Samples generated after 200 iterations of SWF to match the distribution of bottleneck features for the training dataset. Visualization is done with the pre-trained decoder.}
+\vspace{-\baselineskip}
+\caption{Samples generated after 200 iterations of SWF to match the distribution of bottleneck features for the training dataset. Visualization is done with the pre-trained decoder.\label{fig:samples}}
 \vspace{-\baselineskip}
 \end{figure}
 
-In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202k$ color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA..
+In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202$K color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA.
 
 In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
 with dimension $d$. Particles can be visualized with the pre-trained decoder.
-Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $d=32$ for MNIST and $d=64$ for CelebA  and $N_\theta=40000$.
+Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $N_\theta=40000$, $d=32$ for MNIST and $d=64$ for CelebA.
 
 
 Assessing the validity of IGM algorithms is generally done by visualizing the generated samples. Figure~\ref{fig:samples} shows some particles after $500$ iterations of SWF. We can observe they are considerably accurate. Interestingly, the generated samples gradually take the form of either digits or faces along the iterations, as seen on Figure~\ref{fig:evolution}. In this figure, we also display the closest sample from the original database to check we are not just reproducing training data.
@@ -191,7 +192,7 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 For a visual comparison, we provide the results presented in \cite{deshpande2018generative} in Figure~\ref{fig:mnistall}. These results are obtained by running different IGM approaches on the MNIST dataset, namely GAN \cite{goodfellow2014generative}, Wasserstein GAN (W-GAN) \cite{arjovsky2017wasserstein} and the Sliced-Wasserstein Generator (SWG) \cite{deshpande2018generative}.
 %
 % in \supp{}, we provide some of the recent results obtained by \cite{deshpande2018generative} on the MNIST dataset.
-The visual comparison suggests that the samples generated by SWF is less crisp than the neural network-based approaches, such as \cite{goodfellow2014generative,arjovsky2017wasserstein,deshpande2018generative}.
+The visual comparison suggests that the samples generated by SWF are of slightly better quality than those, although research must still be undertaken to scale up to high dimensions without an AE.
 
 \begin{figure}
 \centering

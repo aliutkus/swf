@@ -348,7 +348,7 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
-    plotter = plotting.SWFPlot(features=min(train_particles.shape[-1], 2),
+    plotter = plotting.SWFPlot(features=min(train_particles.shape[-1], 3),
                                dataset=train_data,
                                plot_dir=args.plot_dir,
                                plot_every=args.plot_every,
@@ -356,8 +356,8 @@ if __name__ == "__main__":
                                decode_fn=(
                                 autoencoder.model.decode_nograd if args.ae
                                 else None),
-                               nb_plot=8,
-                               nb_plot_test=96,
+                               nb_plot=104,
+                               nb_plot_test=104,
                                make_titles=False,
                                dpi=300,
                                extension='pdf')
