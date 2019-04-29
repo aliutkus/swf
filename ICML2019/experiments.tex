@@ -1,47 +1,99 @@
 %!TEX root = ./icml_2019_sketchmcmc.tex
 
 \begin{figure*}
-\centering
-\subfigure[]{
-	\includegraphics[width=1.25\columnwidth]{gmm_iter.pdf}
+	\begin{tikzpicture}[font=\small]
+
+		\begin{axis}[%
+			/pgf/number format/.cd,
+					use comma,
+					1000 sep={},
+		width=1\textwidth,
+		axis line style={draw=none},
+		height=6.5cm,
+		axis on top,
+		trim axis,
+		scale only axis,
+		ymajorticks=false,
+		xmajorticks=false,
+		xmin=0,
+		xmax=75,
+		ymin=0,
+		ymax=19
+		]
+
+		% first line left
+		\addplot [forget plot] graphics [xmin=0,xmax=10,ymin=11,ymax=19] {figures/toy_new/densityinit.pdf};
+		\addplot [forget plot] graphics [xmin=10,xmax=20,ymin=11,ymax=19] {figures/toy_new/density0002.pdf};
+		\addplot [forget plot] graphics [xmin=20,xmax=30,ymin=11,ymax=19] {figures/toy_new/density0003.pdf};
+		\addplot [forget plot] graphics [xmin=30,xmax=40,ymin=11,ymax=19] {figures/toy_new/density0005.pdf};
+		\addplot [forget plot] graphics [xmin=40,xmax=50,ymin=11,ymax=19] {figures/toy_new/density0010.pdf};
+		\node[text] at (75,115){\small Target};
+		\node[text] at (175,115){\small$k=2$};
+		\node[text] at (275,115){\small$k=3$};
+		\node[text] at (375,115){\small$k=5$};
+		\node[text] at (475,115){\small$k=10$};
+
+		% second line left
+		\addplot [forget plot] graphics [xmin=0,xmax=10,ymin=2,ymax=10] {figures/toy_new/density0020.pdf};
+		\addplot [forget plot] graphics [xmin=10,xmax=20,ymin=2,ymax=10] {figures/toy_new/density0050.pdf};
+		\addplot [forget plot] graphics [xmin=20.5,xmax=50,ymin=1,ymax=10] {figures/toy_swcost_lambda0.pdf};
+		\node[text] at (75,25){\small$k=20$};
+		\node[text] at (175,25){\small$k=50$};
+
+		\draw[thick] (525,10) -- (525,250);
+
+		% first line right
+		\addplot [forget plot] graphics [xmin=55,xmax=65,ymin=11,ymax=19] {figures/toy_vslambda/density0050lambda1e-1.pdf};
+		\addplot [forget plot] graphics [xmin=65,xmax=75,ymin=11,ymax=19] {figures/toy_vslambda/density0050lambda2e-1.pdf};
+		\node[text] at (625,115){\small$\lambda=0.1$};
+		\node[text] at (725,115){\small$\lambda=0.2$};
+
+		% second line right
+		\addplot [forget plot] graphics [xmin=55,xmax=65,ymin=2,ymax=10] {figures/toy_vslambda/density0050lambda5e-1.pdf};
+		\addplot [forget plot] graphics [xmin=65,xmax=75,ymin=2,ymax=10] {figures/toy_vslambda/density0050lambda1.pdf};
+		\node[text] at (625,25){\small$\lambda=0.5$};
+		\node[text] at (725,25){\small$\lambda=1$};
+
+		\end{axis}
+	\end{tikzpicture}
+	\vspace{-2\baselineskip}\caption{SWF on toy 2D data. \textbf{Left:} Target distribution (shaded contour plot) and distribution of particles (lines) during SWF. (bottom) SW cost over iterations during training (left) and test (right) stages. \textbf{Right:} Influence of the regularization parameter~$\lambda$. }
 	\label{fig:toy_example}
-} \hspace{30pt}
-\subfigure[]{
-\includegraphics[width=0.49\columnwidth]{gmm_reg.pdf}
-\label{fig:lambda_supp}
- }
- % \vspace{-\baselineskip}
-\caption{a) \textbf{Left:} Distribution of particles (contour plots) during the estimation (top) and prediction (bottom) stages. \textbf{Right:} (top) Close-up of some generated particles in red superimposed with data points in black. (bottom) Target distribution. b) Influence of the regularization parameter~$\lambda$. }
-\label{fig:gmm1}
 \end{figure*}
+%
+% \begin{figure*}
+% \centering
+% \subfigure[]{
+% 	\includegraphics[width=1.25\columnwidth]{gmm_iter.pdf}
+% 	\label{fig:toy_example}
+% } \hspace{30pt}
+% \subfigure[]{
+% \includegraphics[width=0.49\columnwidth]{gmm_reg.pdf}
+% \label{fig:lambda_supp}
+%  }
+%  % \vspace{-\baselineskip}
+% \caption{a) \textbf{Left:} Distribution of particles (contour plots) during the estimation (top) and prediction (bottom) stages. \textbf{Right:} (top) Close-up of some generated particles in red superimposed with data points in black. (bottom) Target distribution. b) Influence of the regularization parameter~$\lambda$. }
+% \label{fig:gmm1}
+% \end{figure*}
 
 \section{Experiments}
 
 
 %
-In this section, we evaluate the SWF algorithm on a synthetic and a real data setting. Our primary goal is to validate our theory and illustrate the behavior of our non-standard approach, rather than to obtain the state-of-the-art results in IGM. In all our experiments, the initial distribution $\mu_0$ is selected as the standard Gaussian distribution on $\R^d$, we take $Q=100$ quantiles and $N=3000$ particles, which proved sufficient to approximate the quantile functions accurately.
+In this section, we evaluate the SWF algorithm on a synthetic and a real data setting. Our primary goal is to validate our theory and illustrate the behavior of our non-standard approach, rather than to obtain the state-of-the-art results in IGM. In all our experiments, the initial distribution $\mu_0$ is selected as the standard Gaussian distribution on $\R^d$, we take $Q=100$ quantiles and $N=5000$ particles, which proved sufficient to approximate the quantile functions accurately.
 
 
 \subsection{Gaussian Mixture Model }
-We perform the first set of experiments on synthetic data where we consider a standard Gaussian mixture model (GMM) with $20$ components and random parameters. Centroids are taken as sufficiently distant from each other to make the problem more challenging. We generate $P=50000$ data samples in each experiment.
+We perform the first set of experiments on synthetic data where we consider a standard Gaussian mixture model (GMM) with $10$ components and random parameters. Centroids are taken as sufficiently distant from each other to make the problem more challenging. We generate $P=50000$ data samples in each experiment.
 
 In our first experiment, we set $d=2$ for visualization purposes and illustrate the general behavior of the algorithm. Figure~\ref{fig:toy_example} shows the evolution of the particles through the iterations. Here, we set $N_\theta=30$, $h=1$ and $\lambda=10^{-4}$.
 %
-We observe that the empirical distribution of the particles converges rapidly to the target distribution. Furthermore, we can see that the QFs, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ that are computed with the initial set of particles (so-called the \textit{estimation} stage in Figure~\ref{fig:gmm1}) can be perfectly re-used for new unseen particles in a subsequent \textit{prediction} stage.
+We first observe that the SW cost between the empirical distributions of training data and particles is steadily decreasing along the SW flow. Furthermore, we see that the QFs, $F^{-1}_{\theta^*_\#\bar{\mu}_{kh}^{N}}$ that are computed with the initial set of particles (the \textit{training} stage) can be perfectly re-used for new unseen particles in a subsequent \textit{test} stage, yielding similar ---~yet slightly higher~--- SW cost.
 
 % In both cases, we observe two remarkable outcomes: (i) Even when some modes are isolated from the others, SWF is able to capture them successfully and we never observe a mode collapse. This is due to the OT nature of the procedure. (ii) The generated particles do not collapse on the data points, thanks to the entropy regularization.
 
-
-In our second experiment, we investigate the effect of the level of the regularization $\lambda$. Figure~\ref{fig:lambda_supp}, the distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
+In our second experiment on Figure~\ref{fig:toy_example}, we investigate the effect of the level of the regularization $\lambda$. The distribution of the particles becomes more spread with increasing $\lambda$. This is due to the increment of the entropy, as expected.
 
 \subsection{Experiments on real data}
-
-In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202k$ color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA..
-
-In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
-with dimension $d$. Particles can be visualized with the pre-trained decoder.
-Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $d=32$ for MNIST and $d=64$ for CelebA  and $N_\theta=40000$.
-
 \begin{figure}
 \centering
 \includegraphics[width=0.99\columnwidth]{figures/generating_bottleneck_features.pdf}
@@ -51,14 +103,21 @@ Our goal is to show that SWF permits to directly sample from the distribution of
 \end{figure}
 
 
-\begin{figure}
-%\centering
+\begin{figure}[h]
+\centering
 \includegraphics[width=0.49\columnwidth]{figures/MNIST_train_image_500.pdf}
 \includegraphics[width=0.49\columnwidth]{figures/CelebA_train_image_500.pdf}
-\label{fig:samples}\vspace{-0.1cm}
+\label{fig:samples}\vspace{-2\baselineskip}
 \caption{Samples generated after 200 iterations of SWF to match the distribution of bottleneck features for the training dataset. Visualization is done with the pre-trained decoder.}
-% \vspace{-10pt}
+\vspace{-\baselineskip}
 \end{figure}
+
+In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202k$ color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA..
+
+In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
+with dimension $d$. Particles can be visualized with the pre-trained decoder.
+Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $d=32$ for MNIST and $d=64$ for CelebA  and $N_\theta=40000$.
+
 
 Assessing the validity of IGM algorithms is generally done by visualizing the generated samples. Figure~\ref{fig:samples} shows some particles after $500$ iterations of SWF. We can observe they are considerably accurate. Interestingly, the generated samples gradually take the form of either digits or faces along the iterations, as seen on Figure~\ref{fig:evolution}. In this figure, we also display the closest sample from the original database to check we are not just reproducing training data.
 
@@ -72,7 +131,7 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 				1000 sep={},
 	width=1\columnwidth,
 	axis line style={draw=none},
-	height=9.5cm,
+	height=10cm,
 	axis on top,
 	trim axis left,
 	scale only axis,
@@ -123,6 +182,7 @@ Assessing the validity of IGM algorithms is generally done by visualizing the ge
 \begin{figure}[]
 \centering
 \includegraphics[width=0.99\columnwidth]{mnist_all.pdf}
+\vspace{-\baselineskip}
 \caption{Performance of GAN (left), W-GAN (middle), SWG (right) on MNIST. (The figure is directly taken from \cite{deshpande2018generative}.) }
 \label{fig:mnistall}
 \vspace{-10pt}
@@ -134,12 +194,12 @@ For a visual comparison, we provide the results presented in \cite{deshpande2018
 The visual comparison suggests that the samples generated by SWF is less crisp than the neural network-based approaches, such as \cite{goodfellow2014generative,arjovsky2017wasserstein,deshpande2018generative}.
 
 \begin{figure}
-%\centering
+\centering
 \includegraphics[width=0.95\columnwidth]{figures/MNIST_interpolation_image_500.pdf}
 \includegraphics[width=0.95\columnwidth]{figures/CelebA_interpolation_image_500.pdf}
 % \includegraphics[width=0.95\columnwidth]{figures/interpolations.png}
 \label{fig:interpolation}
-\vspace{-5ptp}
+\vspace{-\baselineskip}
 \caption{Applying a pre-trained SWF on new samples located in-between the ones used for training. Visualization is done with the pre-trained decoder.}
 \vspace{-10pt}
 \end{figure}
