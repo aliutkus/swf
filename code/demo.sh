@@ -1,21 +1,21 @@
 # parameters for sketching
-NUM_SKETCHES=5
-NUM_THETAS=6000
-NUM_QUANTILES=3000
+NUM_SKETCHES=10
+NUM_THETAS=4000
+NUM_QUANTILES=500
 NUM_EXAMPLES=5000
 
 
 # images dimensions
-IMG_SIZE=32
+IMG_SIZE=64
 
 # parameters for auto encoder
-AE_STRING=""
+AE_STRING="--ae"
 CONV_AE_STRING="--conv_ae"
 BOTTLENECK_SIZE=64
 
 # parameters for SWF
 # pick something like num_thetas/4
-STEPSIZE=10
+STEPSIZE=5
 REG=0
 NUM_EPOCHS=5000
 
@@ -34,7 +34,7 @@ NUM_TEST=0
 TEST_TYPE='RANDOM'
 
 # plot options
-PLOT_EVERY=50
+PLOT_EVERY=10
 MATCH_EVERY=500
 
 if [ $1 = "toy" ]; then

@@ -9,7 +9,9 @@ If you find this code useful, thank you to cite the following work:
   author    = {A. Liutkus and U. Simsekli and S. Majewski and A. Durmus and F.-R. St\"oter}  
   title     = {Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions},  
   booktitle = {Proceedings of the 36th International Conference on Machine Learning,
-               (ICML) 2019, Long Beach, CA, USA, 10-15 June 2019},  
+               (ICML) 2019},  
+  address = {Long Beach, CA, USA},  
+  month =  jun,  
   year      = {2019},  
 }
 

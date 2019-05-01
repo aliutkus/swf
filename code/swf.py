@@ -46,7 +46,6 @@ def swf(train_particles, test_particles, sketcher, projector_modules,
 
     data_shape = train_particles[0].shape
     criterion = nn.MSELoss()
-    projector = projector_modules[0].to(device)
     data_queue = sketcher.queue
     percentiles = sketcher.percentiles.clone().to(device)
     bar_epoch = trange(num_epochs, desc="epoch")
@@ -76,8 +75,7 @@ def swf(train_particles, test_particles, sketcher, projector_modules,
 
             # putting the target quantiles to device and setting the projector
             target_qf = target_qf.to(device)
-            projector.recycle(id)
-
+            projector = projector_modules[id]
             for task in particles:  # will include test if provided
                 with torch.no_grad():
                     num_particles = particles[task].shape[0]
@@ -267,7 +265,6 @@ if __name__ == "__main__":
         train_data = data.TransformedDataset(
             train_data,
             transform=autoencoder.model.encode_nograd)
-
     data_shape = train_data[0][0].shape
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data)
@@ -282,7 +279,8 @@ if __name__ == "__main__":
 
     # prepare the projectors
     projectors = qsketch.ModulesDataset(
-                        networks.LinearProjector,
+                        networks.projectors.LinearProjector,
+                        device='cuda',
                         shape_in=data_shape,
                         num_out=args.num_thetas)
 
