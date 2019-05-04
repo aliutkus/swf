@@ -25,15 +25,15 @@ In our first result, we show that there exists a flow $(\mu_t)_{t\geq0}$ in $(\P
 %
 \begin{thm}
 \label{thm:continuity}
-Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with respect to the Lebesgue measure with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$. There exists a generalized minimizing movement scheme  $(\mu_t)_{t \geq 0}$ associated to \eqref{eqn:sw_optim}
+Let $\nu$ be a probability measure on $\cB(0,1)$ with a strictly positive smooth density. Choose a regularization constant $\lambda > 0$ and radius $r > \sqrt{d}$, where $d$ is the data dimension. Assume that $\mu_0 \in \mathcal{P}(\cB(0,r))$ is absolutely continuous with respect to the Lebesgue measure with density $\rho_0 \in \mrl^{\infty}(\cB(0,r))$. There exists a generalized minimizing movement scheme  $(\mu_t)_{t \geq 0}$ associated to \eqref{eqn:sw_optim}
 % given by Theorem~S$2$ in \supp 
 and if $\rho_t$ stands for the density of $\mu_t$ for all $t \geq 0$, then $(\rho_t)_t$ satisfies the following continuity equation:
 \begin{align}
-\frac{\partial \rho_t}{\partial t}   &= -\divop (v_t \rho_t) + \lambda \Delta \rho_t, \\
+\frac{\partial \rho_t}{\partial t}   &= -\divop (v_t \rho_t) + \lambda \Delta \rho_t, \label{eqn:gradflow_reg} \\
  % v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
 % \end{align}
 % \begin{align}
-v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg}
+v_t(x) \triangleq v(x,\mu_t) &= - \int_{\Sp^{d-1}} \psi_{t, \theta}'(\langle x , \theta \rangle ) \theta d\theta  \label{eqn:gradflow_reg_drift}
 \end{align}
 in a weak sense. Here, $\Delta$ denotes the Laplacian operator, $\divop$ the divergence operator, and $\psi_{t,\theta}$ denotes the Kantorovich potential between $\theta^*_{\#}\mu_t$ and $\theta^*_{\#}\nu$.
 \end{thm}
@@ -52,7 +52,7 @@ As a consequence of the entropy regularization, we obtain the Laplacian operator
 \begin{align}
 d X_t = v(X_t,\mu_t) dt + \sqrt{2 \lambda } d W_t, \label{eqn:sde}
 \end{align}
-where $(W_t)_t$ denotes a standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to the solution of \eqref{eqn:sw_optim}, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $(\mu_t)_t$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
+where $(W_t)_t$ denotes a standard Brownian motion. Then, the probability distribution of $X_t$ at time $t$ solves the PDE given in \eqref{eqn:gradflow_reg} \cite{bogachev2015fokker}. This informally means that, if we could simulate \eqref{eqn:sde}, then the distribution of $X_t$ would converge to the solution of \eqref{eqn:sw_optim}, therefore, we could use the sample paths $(X_t)_t$ as samples drawn from $(\mu_t)_t$. However, in practice this is not possible due to two reasons: (i) the drift $v_t$ cannot be computed analytically since it depends on the probability distribution of $X_t$, (ii) the SDE \eqref{eqn:sde} is a continuous-time process, it needs to be discretized.
 
 
 
@@ -69,7 +69,7 @@ Our approach is based on defining a \emph{particle system} that serves as an app
 \begin{align}
 d X_t^i = v(X_t^i, \mu_t^{N}) dt + \sqrt{2 \lambda } d W_t^i \> , \quad i = 1,\dots, N, \label{eqn:sde_particle}
 \end{align}
-where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N = (1/N) \sum_{j=1}^N \delta_{X_t^j}$ denotes the empirical distribution of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for all $t$ \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Proving such a result would be very involved and it is out of the scope of this study.
+where $i$ denotes the particle index, $N \in \mathbb{N}_+$ denotes the total number of particles, and $\mu_t^N = (1/N) \sum_{j=1}^N \delta_{X_t^j}$ denotes the empirical distribution of the particles $\{X_t^j\}_{j=1}^N$. This particle system is particularly interesting, since (i) one typically has $\lim_{N \rightarrow \infty} \mu_t^{N}= \mu_t $ with a rate of convergence of order ${\cal O}(1/\sqrt{N})$ for all $t$ \cite{malrieu03,cgm-08}, and (ii) each of the particle systems in \eqref{eqn:sde_particle} can be simulated by using an Euler-Maruyama discretization scheme. We note that the existing theoretical results in \cite{veretennikov2006ergodic,mishura2016existence} do not directly apply to our case due to the non-standard form of our drift. However, we conjecture that a similar result holds for our problem as well. Such a result would be proven by using the techniques given in \cite{zhang2018stochastic}; however, it is out of the scope of this study.
 
 \subsection{Approximate Euler-Maruyama discretization}
 % \textbf{Approximate Euler-Maruyama discretization:}
@@ -82,7 +82,7 @@ The algorithm iteratively applies the following update equation: ($\forall i \in
 \end{align}
 where $k \in \mathbb{N}_+$ denotes the iteration number, $Z^i_k$ is a standard Gaussian random vector in $\R^d$, $h$ denotes the step-size, and $\hat{v}_k$ is a short-hand notation for a computationally tractable estimator of the original drift $v(\cdot, \bar{\mu}_{kh}^N)$, with $\bar{\mu}_{kh}^{N} = (1/N) \sum_{j=1}^N \delta_{\bar{X}_k^j}$ being the empirical distribution of $\{\bar{X}_k^j\}_{j=1}^N$. A question of fundamental practical importance is how to compute this function $\hat{v}$.
 
-We propose to approximate the integral in \eqref{eqn:gradflow_reg} via a simple Monte Carlo estimate.
+We propose to approximate the integral in \eqref{eqn:gradflow_reg_drift} via a simple Monte Carlo estimate.
 %
 This is done by first drawing $N_\theta$ uniform i.i.d.\ samples from the sphere $\Sp^{d-1}$, $\{\theta_{n}\}_{n=1}^{N_\theta}$. Then, at each iteration $k$, we compute:
 %

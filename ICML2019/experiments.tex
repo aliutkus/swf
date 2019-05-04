@@ -115,7 +115,7 @@ In our second experiment on Figure~\ref{fig:toy_example}, we investigate the eff
 
 In the second set of experiments, we test the SWF algorithm on two real datasets. (i) The traditional MNIST dataset that contains 70K binary images corresponding to different digits. (ii) The popular CelebA dataset \cite{liu2015faceattributes}, that contains $202$K color-scale images. This dataset is advocated as more challenging than MNIST. Images were interpolated as $32\times 32$ for MNIST, and $64\times 64$ for CelebA.
 
-In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
+In experiments reported in \supp, we found out that directly applying SWF to such high-dimensional data yielded noisy results, possibly due to the insufficient sampling of $\Sp^{d-1}$. To reduce the dimensionality, we trained a standard convolutional autoencoder (AE) on the training set of both datasets (see Figure~\ref{fig:using_ae} and \supp), and the target distribution $\nu$ considered becomes the distribution of the resulting bottleneck features,
 with dimension $d$. Particles can be visualized with the pre-trained decoder.
 Our goal is to show that SWF permits to directly sample from the distribution of bottleneck features, as an alternative to enforcing this distribution to match some prior, as in VAE. In the following, we set $\lambda=0$, $N_\theta=40000$, $d=32$ for MNIST and $d=64$ for CelebA.
 

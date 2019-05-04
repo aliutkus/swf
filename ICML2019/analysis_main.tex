@@ -10,9 +10,9 @@ In this section we will analyze the behavior of the proposed algorithm in the as
 where $\mub_{kh}$ denotes the law of $\bar{X}_k$ with step size $h$ and $\{Z_k\}_{k}$ denotes a collection of standard Gaussian random variables. Apart from its theoretical significance, this scheme is also practically relevant, since one would expect that it captures the behavior of the particle method \eqref{eqn:euler_particle} with large number of particles. 
 
 In practice, we would like to approximate the measure sequence $(\mu_t)_t$ as accurate as possible, where $\mu_t$ denotes the law of $X_t$. Therefore, we are interested in analyzing the distance $\| \mub_{Kh} - \mu_{T} \|_{\TV}$, where $K$ denotes the total number of iterations, $T=Kh$ is called the horizon, and $\|\mu-\nu\|_{\TV}$ denotes the total variation distance between two probability measures $\mu$ and $\nu$: 
-\begin{align*}
-\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |.
-\end{align*}
+% \begin{align*}
+$\|\mu-\nu\|_{\TV}\triangleq \sup_{A \in {\cal B}(\Omega)} |\mu(A) -\nu(A) |$.
+% \end{align*}
  
 %
 
@@ -46,7 +46,7 @@ h = (3/C_1)\wedge\left(\frac{2 \varepsilon^2 \lambda}{\delta_\lambda L^2 T}(1+3\
   \end{align}
   for $T=Kh$.
 \end{cor}
-This corollary shows that for a large horizon $T$, the approximate drift $\hat{v}$ should have a small variance in order to obtain accurate estimations. This result is similar to Theorem 2.1 of \cite{raginsky17a}: for small $\varepsilon$ the variance of the approximate drift should be small as well. On the other hand, we observe that the error decreases as $\lambda$ increases. This behavior is expected since for large $\lambda$, the Brownian term in \eqref{eqn:sde} dominates the drift, which makes the simulation easier.
+This corollary shows that for a large horizon $T$, the approximate drift $\hat{v}$ should have a small variance in order to obtain accurate estimations. This result is similar to \cite{raginsky17a} and \cite{nguyen2019non}: for small $\varepsilon$ the variance of the approximate drift should be small as well. On the other hand, we observe that the error decreases as $\lambda$ increases. This behavior is expected since for large $\lambda$, the Brownian term in \eqref{eqn:sde} dominates the drift, which makes the simulation easier.
 
 We note that these results establish the explicit dependency of the error with respect to the algorithm parameters (e.g. step-size, gradient noise) for a fixed number of iterations, rather than explaining the asymptotic behavior of the algorithm when $K$ goes to infinity.
 
