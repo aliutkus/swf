@@ -16,9 +16,51 @@ import os
 import matplotlib as mpl
 import pandas as pd
 
-
 mpl.rcParams['savefig.pad_inches'] = 0
-#sb.set_style('whitegrid',{'grid.linestyle': '--'})
+
+
+def add_plotting_arguments(parser):
+
+    parser.add_argument("--plot_every",
+                        help="Number of iterations between each plot."
+                             " Negative value means no plot",
+                        type=int,
+                        default=100)
+    parser.add_argument("--match_every",
+                        help="number of iteration between match with the "
+                             "items in the database. Negative means this "
+                             "is never checked.",
+                        type=int,
+                        default=-1)
+    parser.add_argument("--plot_dir",
+                        help="Output directory for the plots",
+                        default="samples")
+    parser.add_argument("--plot_nb_train",
+                        help="Number of training samples to plot",
+                        type=int,
+                        default=104)
+    parser.add_argument("--plot_nb_test",
+                        help="Number of test samples to plot",
+                        type=int,
+                        default=104)
+    parser.add_argument("--plot_nb_features",
+                        help="Number of features to consider for density plots",
+                        type=int,
+                        default=2)
+    parser.add_argument("--no_density_plot",
+                        help="If active, will not do the density plots",
+                        action="store_true")
+    parser.add_argument("--no_particles_plot",
+                        help="If active, will not display the particles",
+                        action="store_true")
+    parser.add_argument("--no_closest_plot",
+                        help="If active, will not display the closest particles",
+                        action="store_true")
+    parser.add_argument("--no_swcost_plot",
+                        help="If active, will not display the SW cost over iters",
+                        action="store_true")
+    return parser
+
 
 def find_closest(items, dataset):
     """ find the indices of the entries of the dataset that are closest
@@ -89,14 +131,18 @@ def plot_function(data, axes, markers='r.'):
 class SWFPlot:
     """ some big dirty class with just plotting stuff"""
     def __init__(self, features, dataset, plot_dir,
-                 plot_every, match_every,
-                 decode_fn, nb_plot, nb_plot_test=None, make_titles=True,
+                 no_density_plot=False, no_particles_plot=False,
+                 no_closest_plot=False, no_swcost_plot=False,
+                 plot_every=1, match_every=1000,
+                 plot_nb_train=104, plot_nb_test=None,
+                 decode_fn=None, make_titles=True,
                  dpi=200, extension='png'):
         """
         Initialize the plotting class
 
-        ndim: int,
-            number of dimensions to consider for the density plots
+        features: int or list of int,
+            number of dimensions to consider, or actual features to consider,
+            for the density plots
         dataset: dataset
             dataset to use for finding the closest entries, and also for the
             density plots
@@ -107,13 +153,13 @@ class SWFPlot:
         match_every: int_train
             will look for the closest entries each time the epoch is a
             multiple of this
+        plot_nb_train: int
+            number of train samples to plot (use -1 for all)
+        plot_nb_test: int or None
+            number of test samples to plot (use -1 for all). If None, will
+            do the same as plot_nb_train
         decode_fn: function or None
             if not None, the features are sent there for plotting
-        nb_plot: int
-            number of samples to plot (use -1 for all)
-        nb_plot_test: int or None
-            number of test samples to plot (use -1 for all). If None, will
-            do the same as nb_plot
         make_titles: boolean
             whether or not to write titles on the figures
         dpi: int
@@ -123,11 +169,10 @@ class SWFPlot:
 
             """
 
-        # hard coded switches
-        self.density_plot = True
-        self.particles_plot = True
-        self.closest_plot = True
-        self.swcost_plot = True
+        self.density_plot = not no_density_plot
+        self.particles_plot = not no_particles_plot
+        self.closest_plot = not no_closest_plot
+        self.swcost_plot = not no_swcost_plot
 
         self.plot_every = plot_every
         self.match_every = match_every
@@ -136,9 +181,9 @@ class SWFPlot:
         self.dataset = dataset
         self.plot_dir = plot_dir
         self.decode_fn = decode_fn
-        self.nb_plot = nb_plot
-        self.nb_plot_test = (nb_plot_test if nb_plot_test is not None
-                             else nb_plot)
+        self.plot_nb_train = plot_nb_train
+        self.plot_nb_test = (plot_nb_test if plot_nb_test is not None
+                             else plot_nb_train)
         self.make_titles = make_titles
         self.extension = extension
         self.plots_to_purge = []
@@ -157,7 +202,8 @@ class SWFPlot:
             fig.clf()
 
             # prepare the heat map of the distribution of the data
-            train_loader = DataLoader(dataset, batch_size=min(5000, len(dataset)))
+            train_loader = DataLoader(dataset,
+                                      batch_size=min(5000, len(dataset)))
             data = next(iter(train_loader))[0].squeeze().numpy()
             data = data.reshape((data.shape[0], -1))
 
@@ -309,6 +355,7 @@ class SWFPlot:
             self.figs[name].savefig(
                 os.path.join(self.plot_dir, name+filename+'.'+self.extension),
                 bbox_inches='tight', pad_inches=0)
+
         self.updated = []
 
     def clear_plots(self):
@@ -372,9 +419,9 @@ class SWFPlot:
                 self.figs['density'].suptitle(
                     'Density plot of particles, iteration %04d' % epoch)
             self.updated += ['density']
-        train = train[:self.nb_plot]
+        train = train[:self.plot_nb_train]
         if test is not None:
-            test = test[:self.nb_plot_test]
+            test = test[:self.plot_nb_test]
         if self.decode_fn is not None:
             train = self.decode_fn(train)
             if test is not None:
@@ -412,8 +459,9 @@ class SWFPlot:
                 self.updated += ['particles_test']
 
         if 'closest' in self.figs and match:
-            closest = find_closest(vars['particles']['train'][:self.nb_plot],
-                                   self.dataset)
+            closest = find_closest(
+                        vars['particles']['train'][:self.plot_nb_train],
+                        self.dataset)
             if self.decode_fn is not None:
                 closest = self.decode_fn(closest)
             new_plots_tmp = plot_function(

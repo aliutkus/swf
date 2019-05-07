@@ -82,6 +82,10 @@ Other options worth mentioning are the following:
 * Plot parameters
   * `PLOT_EVERY`: int
     Will make the different plots every PLOT_EVERY epochs. -1 for no plots
+  * `PLOT_NB_TRAIN`: int
+    the number of train particles to plot
+  * `PLOT_NB_TEST`: int
+    the number of test particles to plot
   * `MATCH_EVERY`: int
     _warning_ matching is quite slow ! Will find the closest samples from the training data every MATCH_EVERY epochs.
 

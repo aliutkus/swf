@@ -5,7 +5,7 @@ import matplotlib.pyplot as pl
 import seaborn as sns
 
 
-def draw_GMM_parameters(d, K, seed = None):
+def draw_GMM_parameters(d, K, seed=None):
     ''' randomly draws the parameters of the GMM'''
     if seed is not None:
         np.random.seed(seed)
@@ -42,7 +42,6 @@ def rand_GMM(params, T):
         # for each component, first pick the number of samples according to
         # the component weight
         Tc = min(T-pos, int(T*params['w'][k]))
-        print(Tc)
 
         # draw the samples from this component
         xc = randn(d, Tc)

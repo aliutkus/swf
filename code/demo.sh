@@ -1,23 +1,22 @@
 # parameters for sketching
-NUM_SKETCHES=10
-NUM_THETAS=4000
+NUM_SKETCHES=1 # 10 for MNIST
+NUM_THETAS=30 # 4000 for MNIST
 NUM_QUANTILES=500
 NUM_EXAMPLES=5000
 
 
 # images dimensions
-IMG_SIZE=64
+IMG_SIZE=32
 
 # parameters for auto encoder
-AE_STRING="--ae"
-CONV_AE_STRING="--conv_ae"
-BOTTLENECK_SIZE=64
+AE_STRING="" # put "--ae" for using an autoencoder
+CONV_AE_STRING="--conv_ae" # put "--conv_ae" for a conv AE
+BOTTLENECK_SIZE=32
 
 # parameters for SWF
-# pick something like num_thetas/4
-STEPSIZE=5
-REG=0
-NUM_EPOCHS=5000
+STEPSIZE=1 # pick 0.5 for toy, 5 for MNIST/image stuff
+REG=0.0001
+NUM_EPOCHS=500
 
 # whether to change the sketches at each epoch or not.
 # to change the sketch, set this to "--no_fixed_sketch"
@@ -30,11 +29,14 @@ NUM_SAMPLES=5000
 INPUT_DIM=10
 
 # number of test
-NUM_TEST=0
+NUM_TEST=5000
 TEST_TYPE='RANDOM'
 
 # plot options
 PLOT_EVERY=10
+PLOT_NB_TRAIN=104
+PLOT_NB_TEST=96
+PLOT_NB_FEATURES=2
 MATCH_EVERY=500
 
 if [ $1 = "toy" ]; then
@@ -50,4 +52,4 @@ if [ $1 = "toy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python -W ignore swf.py $1 $NO_FIXED_SKETCH_STRING --num_workers 15 --root_data_dir ~/data --img_size $IMG_SIZE --num_sketches $NUM_SKETCHES --num_examples $NUM_EXAMPLES --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --regularization $REG --num_thetas $NUM_THETAS --plot_dir ~/swf_samples_$1 --plot_every $PLOT_EVERY --num_epochs $NUM_EPOCHS --match_every $MATCH_EVERY $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE
+python swf.py $1 $NO_FIXED_SKETCH_STRING  --root_data_dir ~/data --img_size $IMG_SIZE --num_sketches $NUM_SKETCHES --num_examples $NUM_EXAMPLES --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --regularization $REG --num_thetas $NUM_THETAS --num_epochs $NUM_EPOCHS $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE --plot_dir ~/swf_samples_$1 --plot_every $PLOT_EVERY --match_every $MATCH_EVERY --plot_nb_train $PLOT_NB_TRAIN --plot_nb_test $PLOT_NB_TEST

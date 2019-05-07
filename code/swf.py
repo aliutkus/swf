@@ -143,6 +143,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sliced Wasserstein Flow.')
     parser = qsketch.add_sketch_arguments(parser)
     parser = data.add_data_arguments(parser)
+    parser = plotting.add_plotting_arguments(parser)
 
     parser.add_argument("--input_dim",
                         help="Dimension of the random input to the "
@@ -179,20 +180,6 @@ if __name__ == "__main__":
                         help="If active, will generate new sketch at "
                              "each epoch",
                         action="store_true")
-    parser.add_argument("--plot_every",
-                        help="Number of iterations between each plot."
-                             " Negative value means no plot",
-                        type=int,
-                        default=100)
-    parser.add_argument("--match_every",
-                        help="number of iteration between match with the "
-                             "items in the database. Negative means this "
-                             "is never checked.",
-                        type=int,
-                        default=-1)
-    parser.add_argument("--plot_dir",
-                        help="Output directory for the plots",
-                        default="samples")
     parser.add_argument("--ae",
                         help="Activate reduction dimension through auto-"
                              "encoding.",
@@ -346,16 +333,21 @@ if __name__ == "__main__":
     if test_particles is not None:
         test_particles = test_particles.view(-1, *data_shape)
 
-    plotter = plotting.SWFPlot(features=min(train_particles.shape[-1], 3),
+    plotter = plotting.SWFPlot(features=min(train_particles.shape[-1],
+                                            args.plot_nb_features),
                                dataset=train_data,
                                plot_dir=args.plot_dir,
+                               no_density_plot=args.no_density_plot,
+                               no_particles_plot=args.no_particles_plot,
+                               no_closest_plot=args.no_closest_plot,
+                               no_swcost_plot=args.no_swcost_plot,
                                plot_every=args.plot_every,
                                match_every=args.match_every,
+                               plot_nb_train=args.plot_nb_train,
+                               plot_nb_test=args.plot_nb_test,
                                decode_fn=(
                                 autoencoder.model.decode_nograd if args.ae
                                 else None),
-                               nb_plot=104,
-                               nb_plot_test=104,
                                make_titles=False,
                                dpi=300,
                                extension='pdf')
