@@ -2,7 +2,7 @@
 
 Authors pytorch implementation of [Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions](https://arxiv.org/abs/1806.08141), presented at ICML 2019.
 
-![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+![I need to change this but it's too hard](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 
 If you find this code useful, thank you to cite the following work:
 > @inproceedings{Liutkus2019SWF,  
