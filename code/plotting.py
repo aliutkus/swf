@@ -17,15 +17,24 @@ import matplotlib as mpl
 import pandas as pd
 
 mpl.rcParams['savefig.pad_inches'] = 0
+mpl.rcParams['pdf.fonttype'] = 42
+mpl.rcParams['ps.fonttype'] = 42
 
 
 def add_plotting_arguments(parser):
-
+    parser.add_argument("--basefilename",
+                        help="radical of the filename for exports.",
+                        default='')
     parser.add_argument("--plot_every",
                         help="Number of iterations between each plot."
                              " Negative value means no plot",
                         type=int,
                         default=100)
+    parser.add_argument("--plot_epochs",
+                        help="if provided, will plot only at the specified "
+                             "epochs",
+                        nargs='+',
+                        type=int)
     parser.add_argument("--match_every",
                         help="number of iteration between match with the "
                              "items in the database. Negative means this "
@@ -44,7 +53,8 @@ def add_plotting_arguments(parser):
                         type=int,
                         default=104)
     parser.add_argument("--plot_nb_features",
-                        help="Number of features to consider for density plots",
+                        help="Number of features to consider for density "
+                             "plots",
                         type=int,
                         default=2)
     parser.add_argument("--no_density_plot",
@@ -54,10 +64,12 @@ def add_plotting_arguments(parser):
                         help="If active, will not display the particles",
                         action="store_true")
     parser.add_argument("--no_closest_plot",
-                        help="If active, will not display the closest particles",
+                        help="If active, will not display the closest "
+                             "particles",
                         action="store_true")
     parser.add_argument("--no_swcost_plot",
-                        help="If active, will not display the SW cost over iters",
+                        help="If active, will not display the SW cost over "
+                             "iterations",
                         action="store_true")
     return parser
 
@@ -133,10 +145,10 @@ class SWFPlot:
     def __init__(self, features, dataset, plot_dir,
                  no_density_plot=False, no_particles_plot=False,
                  no_closest_plot=False, no_swcost_plot=False,
-                 plot_every=1, match_every=1000,
+                 plot_every=1, plot_epochs=None, match_every=1000,
                  plot_nb_train=104, plot_nb_test=None,
                  decode_fn=None, make_titles=True,
-                 dpi=200, extension='png'):
+                 dpi=200, basefilename='', extension='png'):
         """
         Initialize the plotting class
 
@@ -164,6 +176,8 @@ class SWFPlot:
             whether or not to write titles on the figures
         dpi: int
             dpi for the figures
+        basefilename: string
+            base file name for the exports
         extension: string
             the three letters of the file type for exports
 
@@ -175,6 +189,7 @@ class SWFPlot:
         self.swcost_plot = not no_swcost_plot
 
         self.plot_every = plot_every
+        self.plot_epochs = plot_epochs
         self.match_every = match_every
         self.ndim = features if isinstance(features, int) else len(features)
         self.features = features
@@ -186,6 +201,7 @@ class SWFPlot:
                              else plot_nb_train)
         self.make_titles = make_titles
         self.extension = extension
+        self.basefilename = basefilename
         self.plots_to_purge = []
 
         self.axes = {}
@@ -229,10 +245,6 @@ class SWFPlot:
                 row_xlim = []
                 row_ylim = []
                 for col in range(row+1):
-                    #xlims = np.percentile(data[:, self.features[col]],
-                    #                      [0, 100])
-                    #ylims = np.percentile(data[:, self.features[row+1]],
-                    #                      [0, 100])
                     ax = plt.subplot(self.ndim-1, self.ndim-1,
                                      row*(self.ndim-1)+col+1)
                     with sb.axes_style("whitegrid"):
@@ -240,7 +252,6 @@ class SWFPlot:
                             data=data[:, self.features[col]],
                             data2=data[:, self.features[row+1]],
                             gridsize=100, n_levels=self.density_nlevels,
-                            #cut=0.5,
                             shade=True,
                             shade_lowest=False,
                             cmap=self.density_data_palette,
@@ -254,19 +265,17 @@ class SWFPlot:
                             top=True,
                             labelbottom=False,
                             labelleft=False)
-                    ax.xaxis.set_major_locator(ticker.LinearLocator(numticks=5))
-                    ax.yaxis.set_major_locator(ticker.LinearLocator(numticks=5))
-                    ax.tick_params(axis=u'both', which=u'both',length=0)
+                    ax.xaxis.set_major_locator(
+                        ticker.LinearLocator(numticks=5))
+                    ax.yaxis.set_major_locator(
+                        ticker.LinearLocator(numticks=5))
+                    ax.tick_params(axis=u'both', which=u'both', length=0)
                     ax.set_axisbelow(True)
                     ax.grid(True, zorder=0)
-                    #ax.xaxis.set_major_formatter(plt.NullFormatter())
-                    #ax.yaxis.set_major_formatter(plt.NullFormatter())
-                    #ax.set_xlim(xlims)
-                    #ax.set_ylim(ylims)
+                    ax.relim()
 
                     row_xlim += [ax.get_xlim()]
                     row_ylim += [ax.get_ylim()]
-
                     row_axes += [ax]
                     if self.ndim > 2 and row == self.ndim - 2:
                         plt.text(0.5, -(self.ndim-1)/25.,
@@ -295,15 +304,13 @@ class SWFPlot:
                               frameon=True, fancybox=True, ncol=2,
                               bbox_to_anchor=(0.4, 0.88))
             plt.subplots_adjust(wspace=0.05, hspace=0.05)
-            #plt.tight_layout()
             self.figs['density'] = fig
             self.updated += ['density']
 
-        def new_fig(num, figsize=(10,8), display_axes=False, title=False):
+        def new_fig(num, figsize=(10, 8), display_axes=False, title=False):
             fig = plt.figure(num, figsize=figsize, dpi=dpi)
             fig.clf()
             axes = plt.gca()
-            #axes.autoscale(True, tight=True)
             if not display_axes:
                 axes.xaxis.set_major_formatter(plt.NullFormatter())
                 axes.yaxis.set_major_formatter(plt.NullFormatter())
@@ -321,20 +328,22 @@ class SWFPlot:
             return (fig, axes)
         if self.particles_plot:
             (self.figs['particles_train'],
-                self.axes['particles_train']) = new_fig(2, figsize=(10,4),
+                self.axes['particles_train']) = new_fig(2, figsize=(10, 4),
                                                         title=self.make_titles)
             self.axes['particles_train'].set_anchor('N')
             (self.figs['particles_test'],
-                self.axes['particles_test']) = new_fig(3, figsize=(10,4),
+                self.axes['particles_test']) = new_fig(3, figsize=(10, 4),
                                                        title=self.make_titles)
             self.axes['particles_test'].set_anchor('N')
         if self.closest_plot:
-            (self.figs['closest'], self.axes['closest']) = new_fig(4,figsize=(10,4))
+            (self.figs['closest'], self.axes['closest']) = new_fig(
+                4, figsize=(10, 4))
         if self.swcost_plot:
-            self.nswcost_plotted =  0
+            self.nswcost_plotted = 0
             (self.figs['swcost'], self.axes['swcost']) = new_fig(
-                                                            5, figsize=(11,4),
-                                                            display_axes=True, title=False)
+                                                            5, figsize=(11, 4),
+                                                            display_axes=True,
+                                                            title=False)
             self.swcost = pd.DataFrame({'iteration': [],
                                         'task': [],
                                         'SW loss (dB)': []})
@@ -348,14 +357,15 @@ class SWFPlot:
     def save_figs(self, filename):
         # create the folder if it doesn't exist
         if not os.path.exists(self.plot_dir):
-            os.mkdir(self.plot_dir)
+            os.makedirs(self.plot_dir)
         # now loop over the available figures and plot them all
         for name in self.updated:
             self.figs[name].canvas.draw()
             self.figs[name].savefig(
-                os.path.join(self.plot_dir, name+filename+'.'+self.extension),
-                bbox_inches='tight', pad_inches=0)
+                os.path.join(self.plot_dir, name+self.basefilename + filename
 
+                             + '.' + self.extension),
+                bbox_inches='tight', pad_inches=0)
         self.updated = []
 
     def clear_plots(self):
@@ -367,9 +377,10 @@ class SWFPlot:
         # checking whether we need to match and/or plot
         match = (self.match_every > 0
                  and epoch > 0 and not epoch % self.match_every)
-        plot = (epoch == 0
-                or (self.plot_every > 0 and not epoch % self.plot_every)
-                )#or epoch < 11)# in [2, 3,5, 10, 20, 50])
+        plot = ((self.plot_epochs is None
+                 and (self.plot_every > 0 and not epoch % self.plot_every))
+                or (self.plot_epochs is not None and epoch in self.plot_epochs)
+                )
         if not plot and not match:
             # nothing to do
             return
@@ -401,18 +412,12 @@ class SWFPlot:
                             shade=False,
                             cmap=self.density_train_palette,
                             ax=ax)
-                        ax.xaxis.set_major_locator(ticker.LinearLocator(numticks=5))
-                        ax.yaxis.set_major_locator(ticker.LinearLocator(numticks=5))
-                        ax.tick_params(axis=u'both', which=u'both',length=0)
+                        ax.xaxis.set_major_locator(
+                            ticker.LinearLocator(numticks=5))
+                        ax.yaxis.set_major_locator(
+                            ticker.LinearLocator(numticks=5))
+                        ax.tick_params(axis=u'both', which=u'both', length=0)
                         ax.grid(True, zorder=0)
-                    #xlims = np.percentile(train_plot[self.features[col]].numpy(),
-                    #                      [0, 100])
-                    #ylims = np.percentile(train_plot[self.features[row+1]].numpy(),
-                    #        [0, 100])
-
-                    #ax.autoscale(enable=True, tight=True)
-                    #ax.set_xlim(*xlimits)
-                    #ax.set_ylim(*ylimits)
                     new_plots += [p for p in ax.get_children()
                                   if p not in children]
             if self.make_titles:
@@ -487,12 +492,7 @@ class SWFPlot:
             # project
             swmodule = copy.deepcopy(
                             vars['projector_modules'][
-                            np.random.randint(100000)])
-
-            # modules = {'train': copy.deepcopy(vars['projector']),
-            #            'test': copy.deepcopy(
-            #                 vars['projector_modules'][
-            #                     np.random.randint(100000)])}
+                                np.random.randint(100000)])
             for task in vars['particles']:
                 particles = vars['particles'][task].clone().detach()
                 with torch.no_grad():
@@ -503,39 +503,30 @@ class SWFPlot:
                 errors = errors.mean(dim=1).detach().numpy()
                 errors = 20*np.log10(errors)
                 new_errors = pd.DataFrame(
-                        {'iteration': (np.ones(errors.shape) * epoch).astype(int),
+                        {'iteration': (np.ones(errors.shape)
+                                       * epoch).astype(int),
                          'task': [task, ]*len(errors),
                          'SW loss (dB)': errors})
                 self.swcost = self.swcost.append(new_errors)
             fig = self.figs['swcost']
             fig.clf()
             ax = fig.gca()
-            #ax = self.axes['swcost']
-            #ax.clear()
-
-            # children = ax.get_children()
 
             sb.boxplot(
                 x='iteration',
                 y='SW loss (dB)',
                 hue='task',
                 data=self.swcost,
-                #split=True,
                 ax=ax,
                 fliersize=1,
-                #scale='width',
-                #cut=0,
                 linewidth=0.01,
                 palette='Set2',
-                )#bw=.2)
+                )
             ax.autoscale(enable=True, tight=True)
             plt.grid(True)
             ax.tick_params(labelsize=6)
             if self.nswcost_plotted > 50:
                 ax.get_xaxis().set_ticks([])
-            #
-            # new_plots += [p for p in ax.get_children()
-            #               if p not in children]
             self.updated += ['swcost']
 
         self.save_figs(filename='%04d' % epoch)

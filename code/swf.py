@@ -267,7 +267,7 @@ if __name__ == "__main__":
     # prepare the projectors
     projectors = qsketch.ModulesDataset(
                         networks.projectors.LinearProjector,
-                        device='cuda',
+                        device=device_str,
                         shape_in=data_shape,
                         num_out=args.num_thetas)
 
@@ -342,6 +342,7 @@ if __name__ == "__main__":
                                no_closest_plot=args.no_closest_plot,
                                no_swcost_plot=args.no_swcost_plot,
                                plot_every=args.plot_every,
+                               plot_epochs=args.plot_epochs,
                                match_every=args.match_every,
                                plot_nb_train=args.plot_nb_train,
                                plot_nb_test=args.plot_nb_test,
@@ -350,6 +351,7 @@ if __name__ == "__main__":
                                 else None),
                                make_titles=False,
                                dpi=300,
+                               basefilename=args.basefilename,
                                extension='pdf')
     # launch the sliced wasserstein flow
     particles = swf(train_particles=train_particles,
@@ -362,3 +364,6 @@ if __name__ == "__main__":
                     device_str=device_str,
                     plot_function=plotter.log
                     )
+    print('''it's time to quit now !!!''')
+    import sys
+    sys.exit(0)

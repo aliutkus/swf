@@ -29,12 +29,12 @@ This code depends on several packages. To use it, we suggest you use the conda p
   * [qsketch](https://github.com/aliutkus/qsketch) as a toolbox for low-level routines related to Sliced Wasserstein training.
 
 When this is done, you should be able to try out the code. For instance, run the demo by going in the `code` folder and type:
-> ./demo.sh toy
+> ./demotoy.sh
 
 This will start SWF with the toy example found in the paper and write out results in your `~/swf_samples_toy` folder.
 
 # Options in `demo.sh`
-To play around with SWF, we have prepared a demo script called `demo.sh`. You may want to play with its options. With the `SWF` environment active, the way to use it is to run:
+To play around with SWF, we have prepared a more sophisticated demo script called `demo.sh`. You may want to play with its options. With the `SWF` environment active, the way to use it is to run:
 > ./demo.sh DATASET
 
 where supported values for `DATASET` are:

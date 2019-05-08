@@ -1,6 +1,6 @@
 # parameters for sketching
-NUM_SKETCHES=1 # 10 for MNIST
-NUM_THETAS=30 # 4000 for MNIST
+NUM_SKETCHES=10 # 10 for MNIST
+NUM_THETAS=4000 # 4000 for MNIST
 NUM_QUANTILES=500
 NUM_EXAMPLES=5000
 
@@ -9,7 +9,7 @@ NUM_EXAMPLES=5000
 IMG_SIZE=32
 
 # parameters for auto encoder
-AE_STRING="" # put "--ae" for using an autoencoder
+AE_STRING="--ae" # put "--ae" for using an autoencoder
 CONV_AE_STRING="--conv_ae" # put "--conv_ae" for a conv AE
 BOTTLENECK_SIZE=32
 
