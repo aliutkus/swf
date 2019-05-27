@@ -9,35 +9,6 @@ import random
 from PIL import Image
 
 
-class TransformedDataset:
-    """ Create a dataset whose items are obtained by applying a specified
-    transform (function) to the items and the targets of some other dataset."""
-
-    def __init__(self, dataset, transform=None, target_transform=None):
-        self.dataset = dataset
-        self.transform = transform
-        self.target_transform = target_transform
-
-    def __getitem__(self, indices):
-        try:
-            _ = iter(indices)
-            iterable = True
-        except TypeError as te:
-            indices = [indices]
-            iterable = False
-        result = []
-        for id in indices:
-            (X, y) = self.dataset[id]
-            result += [
-             (X if self.transform is None else self.transform(X),
-              y if self.target_transform is None else self.target_transform(y))
-            ]
-        return result[0] if not iterable else result
-
-    def __len__(self):
-        return len(self.dataset)
-
-
 class CelebA(data.Dataset):
     """Dataset class for the CelebA dataset."""
 
@@ -108,7 +79,6 @@ def load_image_dataset(dataset, data_dir="data", img_size=None, mode='train'):
         ydata = torch.zeros(len(xdata))
         res_data = data.TensorDataset(xdata[:, None, ...], ydata)
     else:
-        data_dir = os.path.join(data_dir, os.path.basename(dataset))
         # Just assume it's a torchvision dataset
         DATASET = getattr(datasets, dataset)
         res_data = DATASET(data_dir, train=(mode == 'train'),

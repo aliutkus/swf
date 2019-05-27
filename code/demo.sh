@@ -1,21 +1,27 @@
 # parameters for sketching
-NUM_SKETCHES=10 # 10 for MNIST
-NUM_THETAS=4000 # 4000 for MNIST
+NUM_SKETCHES=10 # 10 for MNIST/celeba
+NUM_THETAS=4000 # 4000 for MNIST/celeba
 NUM_QUANTILES=500
 NUM_EXAMPLES=5000
 
 
 # images dimensions
-IMG_SIZE=32
+IMG_SIZE=64
+
+# number of workers, increase or decrease depending on your equipment
+# note that if you are CUDA-equipped, AND using autoencoder, then the number
+# of dataworkers specified here will be ignored: only one will be used
+NUM_DATAWORKERS=13
+NUM_SKETCHERS=13
 
 # parameters for auto encoder
 AE_STRING="--ae" # put "--ae" for using an autoencoder
 CONV_AE_STRING="--conv_ae" # put "--conv_ae" for a conv AE
-BOTTLENECK_SIZE=32
+BOTTLENECK_SIZE=64
 
 # parameters for SWF
-STEPSIZE=1 # pick 0.5 for toy, 5 for MNIST/image stuff
-REG=0.0001
+STEPSIZE=5 # pick 0.5 for toy, 5 for MNIST/image stuff
+REG=0 # 0 works just fine: discretization of quantile is just like additive noise
 NUM_EPOCHS=500
 
 # whether to change the sketches at each epoch or not.
@@ -52,4 +58,4 @@ if [ $1 = "toy" ]; then
 fi
 
 # now launch the sliced Wasserstein flow
-python swf.py $1 $NO_FIXED_SKETCH_STRING  --root_data_dir ~/data --img_size $IMG_SIZE --num_sketches $NUM_SKETCHES --num_examples $NUM_EXAMPLES --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --regularization $REG --num_thetas $NUM_THETAS --num_epochs $NUM_EPOCHS $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE --plot_dir ~/swf_samples_$1 --plot_every $PLOT_EVERY --match_every $MATCH_EVERY --plot_nb_train $PLOT_NB_TRAIN --plot_nb_test $PLOT_NB_TEST
+python swf.py $1 $NO_FIXED_SKETCH_STRING  --root_data_dir ~/data --img_size $IMG_SIZE --num_sketches $NUM_SKETCHES --num_sketchers $NUM_SKETCHERS --num_dataworkers $NUM_DATAWORKERS --num_examples $NUM_EXAMPLES --num_quantiles $NUM_QUANTILES --input_dim $INPUT_DIM  --num_samples $NUM_SAMPLES --stepsize $STEPSIZE --regularization $REG --num_thetas $NUM_THETAS --num_epochs $NUM_EPOCHS $AE_STRING $CONV_AE_STRING --bottleneck_size $BOTTLENECK_SIZE --ae_model ae --num_test $NUM_TEST --test_type $TEST_TYPE --plot_dir ~/swf_samples_$1 --plot_every $PLOT_EVERY --match_every $MATCH_EVERY --plot_nb_train $PLOT_NB_TRAIN --plot_nb_test $PLOT_NB_TEST
