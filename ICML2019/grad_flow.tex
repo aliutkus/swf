@@ -1,4 +1,3 @@
-%!TEX root = ./icml_2019_sketchmcmc_supp.tex
 
 \section{Proof of Theorem~\ref{thm:continuity}}
 
@@ -23,8 +22,6 @@ The above means that $\SW(\cdot, \nu)$ is continuous with respect to topology gi
 
 If $\rho_0$ is smooth and positive on $\cB(0,r)$, the inequality \ref{ineq:inf_norm_bound} is true by \cite{bonnotte2013unidimensional}[Lemma 5.4.3.] When $\rho_0$ is just in $\mrl^{\infty}(\cB(0,r))$, we proceed by smoothing. 
 For $t \in (0,1]$, let $\rho_t$ be a function obtained by convolution of $\rho_0$ with a Gaussian kernel $(t,x,y) \mapsto (2\pi)^{d/2} \exp(\norm[2]{x-y}/2)$, restricting the result to $\cB(0,r)$ and normalizing to obtain a probability density. Then $(\rho_t)_{t}$ are smooth positive densities, and it is easy to see that $\lim_{t \rightarrow 0} ||\rho_t||_{\mrl^{\infty}} \leq ||\rho_0||_{\mrl^{\infty}}$. Furthermore, if we denote by $\mu_t$ the measure on $\cB(0,r)$ with density $\rho_t$, then $\mu_t$ converge weakly to $\mu_0$.
-%Let $\mu_t$ be the heat flow on $\cB(0,r)$ starting from $\mu_0$ ([[some ref on existance?]]). 
-%Then for any $t > 0$, $\mu_t$ has a smooth density $\rho_t$ such that  
 For $t \in (0, 1]$ let $\hat{\mu}_t$ be the minimum of $ \mcf^{\nu}_{\lambda}(\cdot) + \frac{1}{2h} \W^2(\cdot, \mu_t)$, and let $\hat{\rho}_t$ be the density of $\hat{\mu}_t$. Using \cite{bonnotte2013unidimensional}[Lemma 5.4.3.] we get 
 \[
 ||\hat{\rho}_t ||_{\mrl^{\infty}} \leq (1 + h\sqrt{d})^d ||\rho_t||_{\mrl^{\infty}}.
@@ -78,11 +75,6 @@ We start by noting, that by \ref{thm:implicit_step} for any $h > 0$ there exists
 ||\rho_t^h||_{\mrl^{\infty}} \leq e^{d \sqrt{d} (t+ h)} ||\rho_0||_{\mrl^{\infty}}.
 \end{equation}
 Let us choose $T > 0$. We denote $\rho^h(t,x) = \rho_t^h(x)$. 
-%Also, for $h > 0$ we define a measure $\rho^h$ on $[0, T] \times \cB(0,r)$ by:
-%\[
-%\int \xi(t,x) d\rho^h(t,x) dx dt = \frac{1}{T} \int_0^T \int \xi(t,x) d\rho_t^h(x dx) dt 
-%\]
-%for all continuous and bounded functions $\xi$. 
 For $ h \leq 1$, the functions $\rho^h$ lie in a ball in $\mrl^{\infty}([0,T] \times \cB(0,r))$, so from Banach-Alaoglu theorem there is a sequence $h_n$ converging to $0$, such that $\rho^{h_n}$ converges in weak-star topology in $\mrl^{\infty}([0,T] \times \cB(0,r))$ to a certain limit $\rho$. Since $\rho$ has to be nonnegative except for a set of measure zero, we assume $\rho$ is nonnegative. We denote $\rho_t(x) = \rho(t,x)$. We will prove that for almost all $t$, $\rho_t$ is a probability density and $\mu_{t}^{h_n}$ converges in $\W$ to a measure $\mu_t$ with density $\rho_t$.
 
 First of all, for almost all $t \in [0,T]$, $\rho_t$ is a probability density, since for any Borel set $A \subseteq [0,T]$ the indicator of set $A \times \cB(0,r)$ is integrable, and hence by definition of the weak-star topology:
@@ -224,10 +216,5 @@ From \eqref{thm:cont_proof_eq4}, \eqref{thm:cont_proof_eq5} and \eqref{thm:cont_
 where both limits exist, since the difference of left hand side and right hand side of the equation goes to zero, while the left hand side converges to a finite value by \eqref{thm:cont_proof_part1}.
 \item  Combining \eqref{thm:cont_proof_part1}, \eqref{thm:cont_proof_part2}, \eqref{thm:cont_proof_part3} and \eqref{thm:cont_proof_part4} we get the result.   
 \end{enumerate}
-%
 \end{proof}
 
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "nips_2018_sketchmcmc_supp"
-%%% End:

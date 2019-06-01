@@ -1,13 +1,10 @@
 \usepackage{xargs}
 
-% \newcommand{\supp}{Appendix}
 \newcommand{\supp}{the supplementary document}
 
 \newcommand{\x}{\mathbf{x}}
 \newcommand{\thb}{\mathbf{x}} 
 \newcommand{\Ths}{{\cal X}} 
-% \newcommand{\thb}{\boldsymbol{\theta}} 
-% \newcommand{\Ths}{{\cal M}} 
 \newcommand{\xe}{\tilde{\mathbf{x}}} 
 
 \newcommand{\B}{\mathcal{B}}
@@ -71,14 +68,10 @@
 \DeclareMathOperator{\sign}{sign}
 \newcommand{\sas}{{\cal S} \alpha {\cal S} }
 
-% \newcommand{\pb}{\bar{{\cal P}}}
-% \newcommand{\pt}{\tilde{{\cal P}}}
 
 \newcommand{\pb}{{\cal P}^\x}
 \newcommand{\pt}{{\cal P}^\y}
 
-% \newcommand{\ab}{\bar{{\cal A}}}
-% \newcommand{\at}{\tilde{{\cal A}}}
 
 \newcommand{\ab}{{\cal A}^\x}
 \newcommand{\at}{{\cal A}^\y}
@@ -86,21 +79,11 @@
 
 
 
-% \newtheoremstyle{exampstyle}
-%   {\topsep} % Space above
-%   {0} % Space below
-%   {} % Body font
-%   {} % Indent amount
-%   {\bfseries} % Theorem head font
-%   {.} % Punctuation after theorem head
-%   {0pt} % Space after theorem head
-%   {} % Theorem head spec (can be left empty, meaning `normal')
-
-% \theoremstyle{exampstyle} 
 
 
 
-\newcommand{\insertimage}[4]{ % scale, filename, caption, label
+
+\newcommand{\insertimage}[4]{ %
 \begin{figure}[t]
 \centering
 \includegraphics[scale=#1, clip=true]{figures/#2}
@@ -109,27 +92,21 @@
 \end{figure}
 }
 
-\newcommand{\insertimageC}[5]{ % scale, filename, caption, label, location
+\newcommand{\insertimageC}[5]{ %
 \begin{figure}[#5]
 \centering
 \includegraphics[width=#1\linewidth, clip=true]{figures/#2}
-%\vspace{-1.5em}
 \caption{#3}
-%\vspace{-0.5em}
 \label{#4}
 \end{figure}
 }
 
-%\setlength{\belowcaptionskip}{-10pt}
-%\captionsetup[figure]{calcwidth = 0.95\linewidth,skip=10pt}
-% \setlength{\abovecaptionskip}{-10pt}
 
-\newcommand{\insertimageStar}[5]{ % scale, filename, caption, label, location
+\newcommand{\insertimageStar}[5]{ %
 \begin{figure*}[#5]
 \centering
 \includegraphics[width=#1\linewidth, clip=true]{figures/#2}
 \caption{#3}
-%\vspace{-0.5em}
 \label{#4}
 \end{figure*}
 }
@@ -139,7 +116,7 @@
 \crefname{assumption}{\textbf{H}}{\textbf{H}}
 
 
-\newcommand{\insertimageAsSubfig}[5]{ % scale, filename, caption, label,
+\newcommand{\insertimageAsSubfig}[5]{ %
 \begin{figure}[#5]
 \begin{center}
 \subfigbottomskip =-4in
@@ -165,7 +142,6 @@
 \newcommand{\ccint}[1]{\left[#1\right]}
 \def\eg{e.g.}
 
-%%% mathsf
 \def\msi{\mathsf{I}}
 \def\msa{\mathsf{A}}
 \def\msd{\mathsf{D}}
@@ -192,11 +168,10 @@
 
 
 
-%% mathcal
 \def\mca{\mathcal{A}}
 \def\mcat{\tilde{\mathcal{A}}}
 \def\mcab{\bar{\mathcal{A}}}
-\def\mcbb{\mathcal{B}}  %%% \mcb est déjà pris
+\def\mcbb{\mathcal{B}}  %
 \newcommand{\mcb}[1]{\mathcal{B}(#1)}
 \def\mcc{\mathcal{C}}
 \def\mcy{\mathcal{Y}}
@@ -217,7 +192,6 @@
 \def\mcp{\mathcal{P}}
 \def\mcq{\mathcal{Q}}
 
-%% mathbb
 
 \def\rset{\mathbb{R}}
 \def\rsets{\mathbb{R}^*}
@@ -233,7 +207,6 @@
 \def\Tset{\mathbb{T}}
 
 
-%%%% mathrm 
 
 \def\rmd{\mathrm{d}}
 \def\mrd{\mathrm{d}}
