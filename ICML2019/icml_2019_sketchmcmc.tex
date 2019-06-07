@@ -1,27 +1,14 @@
-%%%%%%%% ICML 2019 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
 
 \documentclass{article}
 
-% Recommended, but optional, packages for figures and better typesetting:
 \usepackage{microtype}
 \usepackage{graphicx}
 \graphicspath{{./},{./figures/}}
 
 \usepackage{subfigure}
-\usepackage{booktabs} % for professional tables
+\usepackage{booktabs} %
 
-% hyperref makes hyperlinks in the resulting PDF.
-% If your build breaks (sometimes temporarily if a hyperlink spans a page)
-% please comment out the following usepackage line and replace
-% \usepackage{icml2019} with \usepackage[nohyperref]{icml2019} above.
 \usepackage{hyperref}
-
-% Attempt to make hyperref and algorithmic work together better:
-% \newcommand{\theHalgorithm}{\arabic{algorithm}}
-
-% Use the following line for the initial blind version submitted for review:
-\usepackage[accepted]{icml2019}
-
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -29,51 +16,44 @@
 
 \usepackage{cancel}
 \usepackage{amsthm}
-% \usepackage{natbib}
-% \usepackage{dsfont}
 
 \usepackage{tikz}
 \usetikzlibrary{positioning,fit, calc}
 \usepackage{pgfplots}
 
 
-% \usepackage{ stmaryrd }
 \usepackage{wrapfig}
 \usepackage{enumitem}
 
-% \usepackage{silence}
-% \WarningFilter[xcolor_w]{xcolor}{Incompatible color definition}
-% \ActivateWarningFilters[xcolor_w]
 
 \usepackage{xcolor}
+\usepackage{dsfont}
 
+\usepackage[export]{adjustbox}
 
-%%%%
-
-\usepackage{url}            % simple URL typesetting
-%\usepackage{booktabs}       % professional-quality tables
-\usepackage{amsfonts}       % blackboard math symbols
-%\usepackage{nicefrac}       % compact symbols for 1/2, etc.
-%\usepackage{microtype}      % microtypography
+\usepackage{url}            %
+\usepackage{amsfonts}       %
 
 \usepackage{cleveref}
 \usepackage[active]{srcltx}
 
-\usepackage[algo2e,inoutnumbered,algoruled,vlined]{algorithm2e} %linesnumbered
+\usepackage[algo2e,inoutnumbered,algoruled,vlined]{algorithm2e} %
 \usepackage{wrapfig}
 \usepackage{mathtools}
 
-%\usepackage{float}
 \usepackage{subfigure}
 
 \input{defs}
 
 
-% If accepted, instead use the following line for the camera-ready submission:
-%\usepackage[accepted]{icml2019}
+\usepackage[accepted]{icml2019}
 
-% The \icmltitle you define below is probably too long as a header.
-% Therefore, a short form for the running title is supplied here:
+\usepackage{xr}
+\newcommand{\fint}{\int_{\Sp^{d-1}}}
+
+% \usepackage{multibib}
+% \newcites{New}{References}
+
 \icmltitlerunning{Sliced-Wasserstein Flows}
 
 \begin{document}
@@ -81,20 +61,8 @@
 \twocolumn[
 \icmltitle{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions}
 
-% It is OKAY to include author information, even for blind
-% submissions: the style file will automatically remove it for you
-% unless you've provided the [accepted] option to the icml2019
-% package.
 
-% List of affiliations: The first argument should be a (short)
-% identifier you will use later to specify author affiliations
-% Academic affiliations should list Department, University, City, Region, Country
-% Industry affiliations should list Company, City, Region, Country
 
-% You can specify symbols, otherwise they are numbered in order.
-% Ideally, you should not use this facility. Affiliations will be numbered
-% in order of appearance and this is the preferred way.
-% \icmlsetsymbol{equal}{*}
 
 \begin{icmlauthorlist}
 \icmlauthor{Antoine Liutkus}{inria}
@@ -112,42 +80,24 @@
 \icmlcorrespondingauthor{Antoine Liutkus}{antoine.liutkus@inria.fr}
 \icmlcorrespondingauthor{Umut \c{S}im\c{s}ekli}{umut.simsekli@telecom-paristech.fr}
 
-% You may provide any keywords that you
-% find helpful for describing your paper; these are used to populate
-% the "keywords" metadata in the PDF but will not be shown in the document
 \icmlkeywords{Machine Learning, ICML, sliced wasserstein}
 
 \vskip 0.3in
 ]
 
-% this must go after the closing bracket ] following \twocolumn[ ...
 
-% This command actually creates the footnote in the first column
-% listing the affiliations and the copyright notice.
-% The command takes one argument, which is text to display at the start of the footnote.
-% The \icmlEqualContribution command is standard text for equal contribution.
-% Remove it (just {}) if you do not need this facility.
 
-\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
-%\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+\printAffiliationsAndNotice{}  %
 
 
 
 \input{abstract}
-
 \input{intro}
-
 \input{tech_bg}
-
 \input{method}
 \input{analysis_main}
-
-
 \input{experiments}
-
 \input{conclusion}
-
-
 
 \section*{Acknowledgments}
 This work is partly supported by the French National Research Agency (ANR) as a part of the FBIMATRIX
@@ -156,5 +106,53 @@ This work is partly supported by the French National Research Agency (ANR) as a 
 \bibliography{references}
 \bibliographystyle{icml2019}
 
+\vfill
+\pagebreak
+
+\newpage
+
+\onecolumn
+
+\icmltitle{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions \\ {\large SUPPLEMENTARY DOCUMENT}}
+
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+\icmlauthor{Antoine Liutkus}{inria}
+\icmlauthor{Umut \c{S}im\c{s}ekli}{telecool}
+\icmlauthor{Szymon Majewski}{impan}
+\icmlauthor{Alain Durmus}{ens}
+\icmlauthor{Fabian-Robert St\"oter}{inria}
+\end{icmlauthorlist}
+
+\icmlaffiliation{inria}{Inria and LIRMM, Univ. of Montpellier, France}
+\icmlaffiliation{telecool}{LTCI, T\'{e}l\'{e}com Paristech, Universit\'{e} Paris-Saclay, Paris, France }
+\icmlaffiliation{impan}{Institute of Mathematics, Polish Academy of Sciences, Warsaw, Poland}
+\icmlaffiliation{ens}{CNRS, ENS Paris-Saclay,Université Paris-Saclay, Cachan, France}
+
+\icmlcorrespondingauthor{Antoine Liutkus}{antoine.liutkus@inria.fr}
+\icmlcorrespondingauthor{Umut Simsekli}{umut.simsekli@telecom-paristech.fr}
+
+\icmlkeywords{Machine Learning, ICML}
+
+\setcounter{section}{0}
+\setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{page}{1}
+% %\makeatletter
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thelemma}{S\arabic{lemma}}
+\renewcommand{\theassumption}{S\arabic{assumption}}
+\renewcommand{\thethm}{S\arabic{thm}}
+\renewcommand{\theprop}{S\arabic{prop}}
+
+\input{grad_flow}
+\input{euler}
+\input{comp_details}
+
+% \bibliographystyleNew{icml2019}
+% \bibliographyNew{references}
 
 \end{document}
