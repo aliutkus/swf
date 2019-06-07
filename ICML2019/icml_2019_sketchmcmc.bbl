@@ -1,4 +1,4 @@
-\begin{thebibliography}{47}
+\begin{thebibliography}{50}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -78,6 +78,13 @@ Cuturi, M.
 \newblock Sinkhorn distances: Lightspeed computation of optimal transport.
 \newblock In \emph{Advances in neural information processing systems}, pp.\
   2292--2300, 2013.
+
+\bibitem[Dalalyan(2017)]{dalalyan2017theoretical}
+Dalalyan, A.~S.
+\newblock Theoretical guarantees for approximate sampling from smooth and
+  log-concave densities.
+\newblock \emph{Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 79\penalty0 (3):\penalty0 651--676, 2017.
 
 \bibitem[Deshpande et~al.(2018)Deshpande, Zhang, and
   Schwing]{deshpande2018generative}
@@ -163,6 +170,11 @@ Jordan, R., Kinderlehrer, D., and Otto, F.
 \newblock \emph{SIAM journal on mathematical analysis}, 29\penalty0
   (1):\penalty0 1--17, 1998.
 
+\bibitem[Kingma \& Ba(2014)Kingma and Ba]{kingma2014adam}
+Kingma, D. and Ba, J.
+\newblock Adam: A method for stochastic optimization.
+\newblock \emph{arXiv preprint arXiv:1412.6980}, 2014.
+
 \bibitem[Kingma \& Welling(2013)Kingma and Welling]{kingma2013VAE}
 Kingma, D.~P. and Welling, M.
 \newblock Auto-encoding variational bayes.
@@ -246,6 +258,13 @@ Raginsky, M., Rakhlin, A., and Telgarsky, M.
   nonasymptotic analysis.
 \newblock In \emph{Proceedings of the 2017 Conference on Learning Theory},
   volume~65, pp.\  1674--1703, 2017.
+
+\bibitem[Samangouei et~al.(2018)Samangouei, Kabkab, and
+  Chellappa]{samangouei2018defensegan}
+Samangouei, P., Kabkab, M., and Chellappa, R.
+\newblock Defense-{GAN}: Protecting classifiers against adversarial attacks
+  using generative models.
+\newblock In \emph{International Conference on Learning Representations}, 2018.
 
 \bibitem[Santambrogio(2014)]{santambrogio2010introduction}
 Santambrogio, F.

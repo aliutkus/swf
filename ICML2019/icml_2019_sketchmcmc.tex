@@ -10,10 +10,6 @@
 
 \usepackage{hyperref}
 
-
-\usepackage[accepted]{icml2019}
-
-
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{comment}
@@ -31,8 +27,9 @@
 
 
 \usepackage{xcolor}
+\usepackage{dsfont}
 
-
+\usepackage[export]{adjustbox}
 
 \usepackage{url}            %
 \usepackage{amsfonts}       %
@@ -49,6 +46,13 @@
 \input{defs}
 
 
+\usepackage[accepted]{icml2019}
+
+\usepackage{xr}
+\newcommand{\fint}{\int_{\Sp^{d-1}}}
+
+% \usepackage{multibib}
+% \newcites{New}{References}
 
 \icmltitlerunning{Sliced-Wasserstein Flows}
 
@@ -88,20 +92,12 @@
 
 
 \input{abstract}
-
 \input{intro}
-
 \input{tech_bg}
-
 \input{method}
 \input{analysis_main}
-
-
 \input{experiments}
-
 \input{conclusion}
-
-
 
 \section*{Acknowledgments}
 This work is partly supported by the French National Research Agency (ANR) as a part of the FBIMATRIX
@@ -110,5 +106,53 @@ This work is partly supported by the French National Research Agency (ANR) as a 
 \bibliography{references}
 \bibliographystyle{icml2019}
 
+\vfill
+\pagebreak
+
+\newpage
+
+\onecolumn
+
+\icmltitle{Sliced-Wasserstein Flows: Nonparametric Generative Modeling via Optimal Transport and Diffusions \\ {\large SUPPLEMENTARY DOCUMENT}}
+
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+\icmlauthor{Antoine Liutkus}{inria}
+\icmlauthor{Umut \c{S}im\c{s}ekli}{telecool}
+\icmlauthor{Szymon Majewski}{impan}
+\icmlauthor{Alain Durmus}{ens}
+\icmlauthor{Fabian-Robert St\"oter}{inria}
+\end{icmlauthorlist}
+
+\icmlaffiliation{inria}{Inria and LIRMM, Univ. of Montpellier, France}
+\icmlaffiliation{telecool}{LTCI, T\'{e}l\'{e}com Paristech, Universit\'{e} Paris-Saclay, Paris, France }
+\icmlaffiliation{impan}{Institute of Mathematics, Polish Academy of Sciences, Warsaw, Poland}
+\icmlaffiliation{ens}{CNRS, ENS Paris-Saclay,Université Paris-Saclay, Cachan, France}
+
+\icmlcorrespondingauthor{Antoine Liutkus}{antoine.liutkus@inria.fr}
+\icmlcorrespondingauthor{Umut Simsekli}{umut.simsekli@telecom-paristech.fr}
+
+\icmlkeywords{Machine Learning, ICML}
+
+\setcounter{section}{0}
+\setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{page}{1}
+% %\makeatletter
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thelemma}{S\arabic{lemma}}
+\renewcommand{\theassumption}{S\arabic{assumption}}
+\renewcommand{\thethm}{S\arabic{thm}}
+\renewcommand{\theprop}{S\arabic{prop}}
+
+\input{grad_flow}
+\input{euler}
+\input{comp_details}
+
+% \bibliographystyleNew{icml2019}
+% \bibliographyNew{references}
 
 \end{document}
