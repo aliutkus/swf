@@ -44,15 +44,15 @@ def add_plotting_arguments(parser):
     parser.add_argument("--plot_dir",
                         help="Output directory for the plots",
                         default="samples")
-    parser.add_argument("--plot_nb_train",
+    parser.add_argument("--plot_num_train",
                         help="Number of training samples to plot",
                         type=int,
                         default=104)
-    parser.add_argument("--plot_nb_test",
+    parser.add_argument("--plot_num_test",
                         help="Number of test samples to plot",
                         type=int,
                         default=104)
-    parser.add_argument("--plot_nb_features",
+    parser.add_argument("--plot_num_features",
                         help="Number of features to consider for density "
                              "plots",
                         type=int,
@@ -146,7 +146,7 @@ class SWFPlot:
                  no_density_plot=False, no_particles_plot=False,
                  no_closest_plot=False, no_swcost_plot=False,
                  plot_every=1, plot_epochs=None, match_every=1000,
-                 plot_nb_train=104, plot_nb_test=None,
+                 plot_num_train=104, plot_num_test=None,
                  decode_fn=None, make_titles=True,
                  dpi=200, basefilename='', extension='png'):
         """
@@ -165,11 +165,11 @@ class SWFPlot:
         match_every: int_train
             will look for the closest entries each time the epoch is a
             multiple of this
-        plot_nb_train: int
+        plot_num_train: int
             number of train samples to plot (use -1 for all)
-        plot_nb_test: int or None
+        plot_num_test: int or None
             number of test samples to plot (use -1 for all). If None, will
-            do the same as plot_nb_train
+            do the same as plot_num_train
         decode_fn: function or None
             if not None, the features are sent there for plotting
         make_titles: boolean
@@ -196,9 +196,9 @@ class SWFPlot:
         self.dataset = dataset
         self.plot_dir = plot_dir
         self.decode_fn = decode_fn
-        self.plot_nb_train = plot_nb_train
-        self.plot_nb_test = (plot_nb_test if plot_nb_test is not None
-                             else plot_nb_train)
+        self.plot_num_train = plot_num_train
+        self.plot_num_test = (plot_num_test if plot_num_test is not None
+                             else plot_num_train)
         self.make_titles = make_titles
         self.extension = extension
         self.basefilename = basefilename
@@ -424,9 +424,9 @@ class SWFPlot:
                 self.figs['density'].suptitle(
                     'Density plot of particles, iteration %04d' % epoch)
             self.updated += ['density']
-        train = train[:self.plot_nb_train]
+        train = train[:self.plot_num_train]
         if test is not None:
-            test = test[:self.plot_nb_test]
+            test = test[:self.plot_num_test]
         if self.decode_fn is not None:
             train = self.decode_fn(train)
             if test is not None:
@@ -465,7 +465,7 @@ class SWFPlot:
 
         if 'closest' in self.figs and match:
             closest = find_closest(
-                        vars['particles']['train'][:self.plot_nb_train],
+                        vars['particles']['train'][:self.plot_num_train],
                         self.dataset)
             if self.decode_fn is not None:
                 closest = self.decode_fn(closest)

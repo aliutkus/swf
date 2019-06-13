@@ -130,8 +130,8 @@ class AE(object):
         ).to(device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
 
-    def train(self, data_loader, nb_epochs=10):
-        for epoch in range(1, nb_epochs + 1):
+    def train(self, data_loader, num_epochs=10):
+        for epoch in range(1, num_epochs + 1):
             self.model.train()
             train_loss = 0
             for batch_idx, (X, _) in enumerate(data_loader):
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     if args.train_ae:
         if not os.path.exists(args.ae_model):
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=30)
+            autoencoder.train(train_loader, num_epochs=30)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), args.ae_model)

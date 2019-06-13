@@ -239,7 +239,7 @@ if __name__ == "__main__":
                 shuffle=True
             )
             print('training AE on', device)
-            autoencoder.train(train_loader, nb_epochs=30)
+            autoencoder.train(train_loader, num_epochs=30)
             autoencoder.model = autoencoder.model.to('cpu')
             if args.ae_model is not None:
                 torch.save(autoencoder.model.state_dict(), ae_filename)
@@ -266,17 +266,17 @@ if __name__ == "__main__":
 
     # prepare the projectors
     projectors = qsketch.ModulesDataset(
-                        networks.projectors.LinearProjector,
+                        qsketch.LinearProjector,
                         device=device_str,
-                        shape_in=data_shape,
-                        num_out=args.num_thetas)
+                        input_shape=data_shape,
+                        num_projections=args.num_thetas)
 
     sketcher.stream(modules=projectors,
                     num_sketches=args.num_sketches,
                     num_epochs=(
                             args.num_epochs if args.no_fixed_sketch
                             else 1),
-                    num_workers=args.num_workers)
+                    num_workers=args.num_sketchers)
 
     # generates the train particles
     print('using ', device)
@@ -297,14 +297,14 @@ if __name__ == "__main__":
         test_particles = None
     elif args.test_type.upper() == "INTERPOLATE":
         # Create an interpolation between training particles
-        nb_interp_test = 16
-        nb_test_pic = 100
-        interpolation = torch.linspace(0, 1, nb_interp_test).to('cpu').numpy()
-        test_particles = torch.zeros(nb_interp_test * nb_test_pic,
+        num_interp_test = 16
+        num_test_pic = 100
+        interpolation = torch.linspace(0, 1, num_interp_test).to('cpu').numpy()
+        test_particles = torch.zeros(num_interp_test * num_test_pic,
                                      *train_particles_shape).to(device)
-        for id in range(nb_test_pic):
+        for id in range(num_test_pic):
             for id_in_q, q in enumerate(interpolation):
-                test_particles[id*nb_interp_test+id_in_q, :] = (
+                test_particles[id*num_interp_test+id_in_q, :] = (
                  q * train_particles[2*id+1]
                  + (1. - q)*train_particles[2*id])
     elif args.test_type.upper() == "RANDOM":
@@ -334,7 +334,7 @@ if __name__ == "__main__":
         test_particles = test_particles.view(-1, *data_shape)
 
     plotter = plotting.SWFPlot(features=min(train_particles.shape[-1],
-                                            args.plot_nb_features),
+                                            args.plot_num_features),
                                dataset=train_data,
                                plot_dir=args.plot_dir,
                                no_density_plot=args.no_density_plot,
@@ -344,8 +344,8 @@ if __name__ == "__main__":
                                plot_every=args.plot_every,
                                plot_epochs=args.plot_epochs,
                                match_every=args.match_every,
-                               plot_nb_train=args.plot_nb_train,
-                               plot_nb_test=args.plot_nb_test,
+                               plot_num_train=args.plot_num_train,
+                               plot_num_test=args.plot_num_test,
                                decode_fn=(
                                 autoencoder.model.decode_nograd if args.ae
                                 else None),
