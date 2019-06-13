@@ -1,0 +1,527 @@
+
+\def\xstar{x^\star}
+\def\Tr{\operatorname{T}}
+\def\trace{\operatorname{Tr}}
+\newcommandx{\functionspace}[2][1=+]{\mathbb{F}_{#1}(#2)}
+%% argmin, argmax
+\newcommand{\Var}[1]{\operatorname{Var}\left\{#1 \right\}}
+\newcommand{\estimateur}[1]{\hat{\pi}_n^N(#1)}
+\def\RichR{\operatorname{R}}
+\def\piR{\hat{\pi}^{\RichR}}
+\def\estimatorRR{\piR}
+\newcommandx{\VarDeux}[3][3=]{\operatorname{Var}^{#3}_{#1}\left\{#2 \right\}}
+\newcommand{\VarDeuxLigne}[2]{\operatorname{Var}_{#1}\{#2 \}}
+\newcommand{\gramm}{\operatorname{Gramm}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\1}{\mathbbm{1}}
+\newcommand{\2}[1]{\mathbbm{1}_{\{#1\}}}
+\newcommand{\B}{\mathcal{B}}
+
+
+\newcommand{\LeftEqNo}{\let\veqno\@@leqno}
+
+\newcommand{\lambdast}{\lambda^{s \rightarrow t}}
+\newcommand{\etast}{\eta^{s \rightarrow t}}
+\newcommand{\mst}{m^{s \rightarrow t}}
+\newcommand{\mun}{m^{1 \rightarrow 2}}
+\newcommand{\mdeux}{m^{2 \rightarrow 1}}
+\newcommand{\lambdaun}{\lambda^{2 \rightarrow 1}}
+\newcommand{\etaun}{\eta^{2 \rightarrow 1}}
+\newcommand{\lambdadeux}{\lambda^{1 \rightarrow 2}}
+\newcommand{\etadeux}{\eta^{1 \rightarrow 2}}
+\newcommand{\mnun}{m^{n+1 \rightarrow \pi(n+1)}}
+\newcommand{\etanun}{\eta^{n+1 \rightarrow \pi(n+1)}}
+\newcommand{\lambdanun}{\lambda^{n+1 \rightarrow \pi(n+1)}}
+\newcommand{\xpinun}{x_{\pi(n+1)}}
+\newcommand{\xnun}{x_{n+1}}
+\newcommand{\mpinun}{m^{\pi(n+1) \rightarrow n+1}}
+\newcommand{\etapinun}{\eta^{\pi(n+1) \rightarrow n+1}}
+\newcommand{\lambdapinun}{\lambda^{\pi(n+1) \rightarrow n+1}}
+\newcommand{\pinun}{\pi(n+1)}
+\newcommand{\vois}{\mathcal{N}}
+\newcommand{\mpii}{m^{i \rightarrow \pi(n+1)}}
+\newcommand{\etapii}{\eta^{i \rightarrow \pi(n+1)}}
+\newcommand{\lambdapii}{\lambda^{i \rightarrow \pi(n+1)}}
+\newcommand{\alphahat}{\widehat{\alpha}}
+\newcommand{\betahat}{\widehat{\beta}}
+\DeclareMathOperator*{\pCN}{pCN}
+\newcommand{\tildegamma}{\widetilde{\gamma}}
+\newcommand{\tildeP}{\widetilde{P}}
+
+\newcommand{\myeqref}[1]{Eq.~\eqref{#1}}
+
+
+
+%%%% Floating Points Notation
+
+\newcommand{\fpround}[1]{\lfloor #1 \rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\inv}[1]{\frac{1}{#1}}
+
+
+%voc
+\newcommand{\pth}{\ensuremath{p^{\text{th}}}}
+\newcommand{\qth}{\ensuremath{q^{\text{th}}}}
+\newcommand{\nth}{\ensuremath{n^{\text{th}}}}
+
+%order
+\newcommand{\ord}{\ensuremath{\operatorname{ord}}}
+\newcommand{\rad}{\ensuremath{\operatorname{rad}}}
+
+
+
+% Sets
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\primes}{\ensuremath{\mathcal P}}
+
+\newcommand{\sfi}{\ensuremath{\mathcal{S}\!\mathcal{F}}}
+\newcommand{\sfibt}{\ensuremath{\mathcal{S}\!\mathcal{F}'}}
+
+\newcommand{\reghat}{\widehat{R}}
+
+\newcommand{\reghatn}{\widehat{R}_n}
+
+\newcommand{\arm}{\mathcal{A}}
+
+\newcommand{\mX}{\widehat{X}}
+\newcommand{\PE}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\Ft}{\mathcal{F}}
+
+\newcommand{\Sy}{\mathbf{S}}
+
+\newcommand{\Kfrac}{\mathscr{K}}
+
+% Operands
+\newcommand{\absolute}[1]{\left\vert #1 \right\vert}
+\newcommand{\abs}[1]{\left\vert #1 \right\vert}
+\newcommand{\absLigne}[1]{\vert #1 \vert}
+\newcommand{\tvnorm}[1]{\| #1 \|_{\mathrm{TV}}}
+\newcommand{\tvnormEq}[1]{\left \| #1 \right \|_{\mathrm{TV}}}
+\newcommandx{\Vnorm}[2][1=V]{\| #2 \|_{#1}}
+\newcommandx{\VnormEq}[2][1=V]{\left\| #2 \right\|_{#1}}
+\newcommandx{\norm}[2][1=]{\ifthenelse{\equal{#1}{}}{\left\Vert #2 \right\Vert}{\left\Vert #2 \right\Vert^{#1}}}
+\newcommandx{\normLigne}[2][1=]{\ifthenelse{\equal{#1}{}}{\Vert #2 \Vert}{\Vert #2\Vert^{#1}}}
+\newcommand{\crochet}[1]{\left\langle#1 \right\rangle}
+\newcommand{\parenthese}[1]{\left(#1 \right)}
+\newcommand{\parentheseLigne}[1]{(#1 )}
+\newcommand{\parentheseDeux}[1]{\left[ #1 \right]}
+\newcommand{\defEns}[1]{\left\lbrace #1 \right\rbrace }
+\newcommand{\defEnsLigne}[1]{\lbrace #1 \rbrace }
+\newcommand{\defEnsPoint}[1]{\left\lbrace #1 \right. }
+\newcommand{\defEnsPointDeux}[1]{\left. #1 \right  \rbrace }
+\newcommand{\defEnsL}[1]{\left\lbrace #1 \right. }
+\newcommand{\defEnsR}[1]{\left. #1 \right  \rbrace }
+
+%\newcommand{\defSystem}[1]{\left\lbrace #1 \right. }
+
+\newcommand{\ps}[2]{\left\langle#1,#2 \right\rangle}
+\newcommand{\eqdef}{\overset{\text{\tiny def}} =}
+\newcommand{\defeq}{\overset{\text{\tiny def}} =}
+% Relations
+\newcommand{\divid}{\mid}
+\newcommand{\ndivide}{\nmid}
+
+% Proba
+\newcommand{\proba}[1]{\mathbb{P}\left( #1 \right)}
+\newcommand{\probaLigne}[1]{\mathbb{P}( #1 )}
+\newcommandx\probaMarkovTilde[2][2=]
+{\ifthenelse{\equal{#2}{}}{{\widetilde{\mathbb{P}}_{#1}}}{\widetilde{\mathbb{P}}_{#1}\left[ #2\right]}}
+\newcommand{\probaMarkov}[2]{\mathbb{P}_{#1}\left[ #2\right]}
+\newcommand{\expe}[1]{\PE \left[ #1 \right]}
+\newcommand{\expeLigne}[1]{\PE [ #1 ]}
+\newcommand{\expeMarkov}[2]{\PE_{#1} \left[ #2 \right]}
+\newcommand{\probaMarkovTildeDeux}[2]{\widetilde{\mathbb{P}}_{#1} \left[ #2 \right]}
+\newcommand{\expeMarkovTilde}[2]{\widetilde{\PE}_{#1} \left[ #2 \right]}
+
+% Landau notation (big O)
+\newcommand{\bigO}{\ensuremath{\mathcal O}}
+\newcommand{\softO}{\Tilde{\ensuremath{\mathcal O}}}
+
+% Environments
+
+%\renewenvironment{proof}[1][{\textit{Proof:}}]{\begin{trivlist} \item[\em{\hskip \labelsep #1}]}{\ensuremath{\qed} \end{trivlist}}
+
+%\renewenvironment{proof}[1][{\textit{Proof:}}]{\begin{trivlist} \item[\em{\hskip \labelsep #1}]}{\ensuremath{\qed} \end{trivlist}}
+
+\newcommand{\exper}{\expe{R_n}}
+
+
+\newcommand{\Mun}{\mathcal{M}^1}
+\newcommand{\couplage}[2]{\Pi(#1,#2)}
+\newcommand{\Pens}{\mathcal{P}}
+\newcommand{\PensPhiV}{\Pens_{\phi \circ V} (E)}
+\newcommand{\phiV}{\phi \circ V}
+\newcommand{\EnsYoung}{\mathcal{I}}
+
+\newcommand{\smallSet}{\mathcal{C}}
+\newcommand{\smallSetD}{\mathcal{D}}
+\newcommand{\filtration}{\mathcal{F}}
+\newcommand{\filtrationTilde}{\widetilde{\mathcal{F}}}
+
+\newcommand{\dint}{\mathrm{d}}
+
+\newcommand{\Vl}{\mathcal{V}}
+
+
+%fleche limite
+\newcommand{\flecheLimite}{\underset{n\to+\infty}{\longrightarrow}}
+\newcommand{\flecheLimiteOption}[2]{\underset{#1\to#2}{\longrightarrow}}
+\newcommand{\flecheLimiteHaut}{\overset{n\to+\infty}{\longrightarrow}}
+
+%constante
+\newcommand{\cbas}{\underline{c}}
+\newcommand{\chaut}{\overline{c}}
+
+%notation infini
+\newcommand{\plusinfty}{+\infty}
+
+%notation egale
+\newcommand{\egale}[1]{\ensuremath{\underset{#1}{=}}}
+
+%plusieurs ligne indice
+%\sum\limits_{\substack{i=0 \\ i \neq i_0}}^{n}{A_
+
+
+
+\newcounter{hypoconbis}
+\newcounter{saveconbis}
+\newcommand\debutH{\begin{list}
+{\textbf{H\arabic{hypoconbis}}}{\usecounter{hypoconbis}}\setcounter{hypoconbis}{\value{saveconbis}}}
+\newcommand\finH{\end{list}\setcounter{saveconbis}{\value{hypoconbis}}}
+
+
+
+
+\newcommand{\tilded}{d}
+\newcommand{\dtilde}{\tilde d}
+
+\newcommand{\hilbert}{\mathcal{H}}
+
+\newcommand{\covariance}{\mathsf{C}}
+\newcommand{\setAbruit}{\mathscr{I}}
+\newcommand{\distinctalpha}{\mathscr{D}}
+\newcommand{\distinctalphadeux}{\widetilde{\mathscr{D}}}
+\newcommand{\setaccept}{\mathscr{A}}
+\newcommand{\setacceptdeux}{\widetilde{\mathscr{A}}}
+\newcommand{\setreject}{\mathscr{R}}
+\newcommand{\rayontilde}{\widetilde{R}}
+
+\def\ie{\textit{i.e.}}
+\def\eqsp{\;}
+\newcommand{\coint}[1]{\left[#1\right)}
+\newcommand{\ocint}[1]{\left(#1\right]}
+\newcommand{\ooint}[1]{\left(#1\right)}
+\newcommand{\ccint}[1]{\left[#1\right]}
+\def\primr{f_r}
+\def\primrO{f_{r_0}}
+
+
+
+
+\newcommand{\indi}[1]{\1_{#1}}
+\newcommandx{\weight}[2][2=n]{\omega_{#1,#2}^N}
+\newcommand{\loi}{\mathcal{L}}
+\newcommand{\boule}[2]{\operatorname{B}(#1,#2)}
+\newcommand{\boulefermee}[2]{\overline{B}(#1,#2)}
+\newcommand{\diameter}{\operatorname{diam}}
+\newcommand{\deta}{d_{\eta}}
+
+\def\TV{\mathrm{TV}}
+
+\newcommand{\gers}[1]{\todo[color=magenta!15]{{\bf GF:} #1}}
+\newcommand{\eric}[1]{\todo[color=red!20]{{\bf EM:} #1}}
+\newcommand{\alain}[1]{\todo[color=blue!20]{{\bf AL:} #1}}
+\newcommand{\umut}[1]{\todo[color=blue!20]{{\bf UM:} #1}}
+% \newcommand{\tcr}[1]{\textcolor{red}{#1}}
+% \newcommand{\tcb}[1]{\textcolor{blue}{#1}}
+
+\def\as{\ensuremath{\text{a.s}}}
+\def\dist{d_*}
+\def\rmd{\mathrm{d}}
+\newcommandx\sequence[3][2=,3=]
+{\ifthenelse{\equal{#3}{}}{\ensuremath{\{ #1_{#2}\}}}{\ensuremath{\{ #1_{#2}, \eqsp #2 \in #3 \}}}}
+\newcommandx{\sequencen}[2][2=n\in\N]{\ensuremath{\{ #1, \eqsp #2 \}}}
+\newcommandx\sequenceDouble[4][3=,4=]
+{\ifthenelse{\equal{#3}{}}{\ensuremath{\{ (#1_{#3},#2_{#3}) \}}}{\ensuremath{\{  (#1_{#3},#2_{#3}), \eqsp #3 \in #4 \}}}}
+\newcommandx{\sequencenDouble}[3][3=n\in\N]{\ensuremath{\{ (#1_{n},#2_{n}), \eqsp #3 \}}}
+\newcommand{\wrt}{w.r.t.}
+\newcommand{\Withoutlog}{w.l.o.g.}
+
+\def\iid{i.i.d.}
+\def\rme{\mathrm{e}}
+\def\ifof{if and only if}
+\def\eg{e.g.}
+
+\def\bias{\mathrm{bias}}
+\def\rset{\mathbb{R}}
+\def\setProba{\mathcal{P}}
+\def\probaSet{\mathcal{P}}
+\def\nset{\mathbb{N}}
+\def\tildem{\varpi}
+\def\tildeL{\beta}
+\def\tildedelta{\delta}
+\def\FiltrationDeux{\mathcal{G}}
+\def\MSE{\operatorname{MSE}}
+\def\Lip{\operatorname{Lip}}
+
+\newcommandx{\CPE}[3][1=]{{\mathbb E}_{#1}\left[\left. #2 \, \right| #3 \right]} %%%% esperance conditionnelle
+\newcommandx{\CPELigne}[3][1=]{{\mathbb E}_{#1} [ #2 \, | #3 ]} %%%% esperance conditionnelle
+%\newcommandx{\CPE}[3][1=]{{\mathbb E}^{#3}_{#1}\left[#2 \right]} %%%% esperance conditionnelle
+\newcommandx{\CPVar}[3][1=]{\mathrm{Var}^{#3}_{#1}\left\{ #2 \right\}}
+\newcommand{\CPP}[3][]
+{\ifthenelse{\equal{#1}{}}{{\mathbb P}\left(\left. #2 \, \right| #3 \right)}{{\mathbb P}_{#1}\left(\left. #2 \, \right | #3 \right)}}
+
+\def\generator{\mathcal{A}}
+\def\dirichlet{\mathscr{E}}
+\def\carrechamp{\mathscr{G}}
+
+\def\Poincarecvx{C_{\mathrm{cvx}}}
+\def\Poincarelyap{C_{\mathrm{lyap}}}
+\newcommandx{\osc}[2][1=]{\mathrm{osc}_{#1}(#2)}
+
+\def\mcf{\mathcal{F}}
+\def\mcfU{\mathcal{F}^{(\step)}}
+\def\mcfD{\mathcal{F}^{(\step/2)}}
+\def\Fcal{\mcf}
+\def\calF{\mcf}
+\def\mcg{\mathcal{G}}
+
+\def\overlineY{\overline{Y}}
+
+\newcommand{\chunk}[4][]%
+{\ifthenelse{\equal{#1}{}}{\ensuremath{{#2}_{#3:#4}}}{\ensuremath{#2^#1}_{#3:#4}}
+}
+
+\def\Escr{\mathscr{E}}
+\def\vphi{\varphi}
+
+
+\def\restriction#1#2{\mathchoice
+              {\setbox1\hbox{${\displaystyle #1}_{\scriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\textstyle #1}_{\scriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\scriptstyle #1}_{\scriptscriptstyle #2}$}
+              \restrictionaux{#1}{#2}}
+              {\setbox1\hbox{${\scriptscriptstyle #1}_{\scriptscriptstyle #2}$}
+              \restrictionaux{#1}{#2}}}
+\def\restrictionaux#1#2{{#1\,\smash{\vrule height .8\ht1 depth .85\dp1}}_{\,#2}}
+
+
+\def\KL{\operatorname{KL}}
+\def\Ybar{\bar{Y}}
+\def\Id{\operatorname{Id}}
+\newcommand\EntDeux[2]{\Ent_{#1}\left[#2 \right]}
+\def\Ltwo{\mathrm{L}^2}
+\def\Lone{\mathrm{L}^1}
+\newcommand\densityPi[1]{\frac{\rmd #1}{\rmd \pi}}
+\newcommand\densityPiLigne[1]{\rmd #1 /\rmd \pi}
+\newcommand\density[2]{\frac{\rmd #2}{\rmd #1}}
+\newcommand\densityLigne[2]{\rmd #2/\rmd #1}
+\def\rmR{\mathrm{R}}
+\def\Csetfunction{\mathrm{C}}
+\def\rmb{\mathrm{b}}
+\def\Gammabf{\mathbf{\Gamma}}
+\def\rma{\mathrm{a}}
+\def\rmF{\mathrm{F}}
+
+\def\bfx{\mathbf{x}}
+\def\bfy{\mathbf{y}}
+\def\bfY{\mathbf{Y}}
+\def\bfX{\mathbf{X}}
+\def\bfbeta{\pmb{\beta}}
+\def\bfpsi{\pmb{\psi}}
+\def\bfz{\mathbf{z}}
+\def\vrho{\varrho}
+\def\rmk{\mathrm{k}}
+
+\def\CPoincare{C_{\mathrm{P}}}
+\def\ClogSob{C_{\mathrm{LS}}}
+\def\domain{\mathrm{D}}
+\newcommand\Ent[2]{\mathrm{Ent}_{#1}\left(#2\right)}
+\def\phiExtractor{\varphi}
+\def\bargamma{\bar{\gamma}}
+
+
+\def\VOne{W}
+\def\thetaOne{\theta_1}
+\def\KOne{K_{\rho,1}}
+\def\bOne{b_{\rho,1}}
+
+\def\VSAlpha{V_s}
+\def\thetaSAlpha{\theta_{\alpha,s}}
+\def\KSAlpha{K_{\rho,\alpha,s}}
+\def\bSAlpha{b_{\rho,\alpha,s}}
+
+\def\ConstVnorm{C_\alpha}
+\def\rateExpVnorm{\upsilon_\alpha}
+
+\def\VStar{V}
+\def\VUndemi{V_{1/2}}
+\def\bDriftRgamma{c_{\bargamma,\rho,\alpha}}
+\def\bDriftQgamma{c_{\gamma,\rho,\alpha}}
+\def\bDriftQgammaUn{c_{\gamma_1,\rho,\alpha}}
+
+\def\KDriftRgamma{K_{\bargamma,\rho,\alpha}}
+\def\KDriftQgamma{K_{\gamma,\rho,\alpha}}
+\def\sDriftRgamma{s_{\bargamma}}
+\def\sDriftQgamma{s_{\gamma}}
+\def\sDriftQgammaUn{s_{\gamma_1}}
+
+\def\VUnquart{V_{1/4}}
+\def\Xset{\mathsf{X}}
+\def\Xtribu{\mathcal{X}}
+
+\def\bUndemi{b_{\rho,\alpha,1/2}}
+\def\KUndemi{K_{\rho,\alpha,1/2}}
+\def\thetaUndemi{\theta_{\alpha,1/2}}
+
+\def\taulemme{\tau}
+\def\suiteAnnexeUn{\tilde{u}^{(1)}}
+\def\suiteAnnexeDeux{\tilde{u}^{(2)}}
+\def\suiteAnnexeQuatre{\tilde{u}^{(4)}}
+\def\suiteAnnexeCinq{\tilde{u}^{(5)} }
+
+\def\ConstTheoAnnexeUn{C_1}
+\def\ConstTheoAnnexeDeux{C_2}
+\def\ConstTheoAnnexeTrois{C_3}
+\def\deltag{\rho}
+\def\borneKindDriftAnnexe{E}
+\def\ConstB{\mathsf{b}}
+\def\ConstA{\mathsf{C}}
+
+\def\ConstBB{\mathsf{A}_1}
+\def\ConstAA{\mathsf{A}_0}
+\def\ConstCC{\mathsf{B}_0}
+\def\ConstDD{\mathsf{B}_1}
+\def\ConstAABase{\mathsf{A}}
+\def\ConstCCBase{\mathsf{B}}
+
+
+\def\kgamma{\mathrm{k}_\gamma}
+\def\qgamma{\mathrm{q}_\gamma}
+\def\rgamma{\mathrm{r}_\gamma}
+
+\def\pinumber{\uppi}
+\def\boreleanA{\mathrm{A}}
+
+\def\boundUnTV{B_{n,p}(x;\gamma)}
+\newcommand\boundUnTVArg[1]{B_{#1,p}(x;\gamma)}
+\def\boundDeuxTV{A_{n,p}(x;\gamma)}
+\def\boundDeuxTVlogSob{C_{n,p}(x,\gamma)}
+\def\boundUnTVlogSob{D_{n,p}(x,\gamma)}
+
+\def\rankP{\mathsf{P}}
+\def\nFunp{n(p)}
+\def\martInc{\Phi}
+\def\martIncF{\Psi}
+
+\def\AtermProofBloc{A}
+\def\BtermProofBloc{B}
+\def\fLemme{\mathsf{f}}
+\def\phiLemme{\phi}
+\def\ConstCgene{C}
+\def\rmy{\mathrm{y}}
+
+\def\resteR{H}
+
+\def\tildea{\tilde{a}}
+\def\tildeV{\tilde{V}}
+\def\tildev{\tilde{v}}
+\def\data{\mathbf{x}}
+\def\dataa{\mathbf{a}}
+\def\pot{U}
+\def\XES{\theta}
+\def\nablaUe{\nabla\tilde{U}}
+%\def\nablaUeD{\nabla\bar{U}}
+\def\multino{\mathrm{n}}
+\def\XL{\vartheta}
+\def\XLU{X}
+\def\XLD{Y}
+\def\BM{B}
+\def\BMU{B^{(1)}}
+\def\BMD{B^{(2)}}
+\def\BMtilde{\tilde{B}}
+\def\ZE{Z}
+\def\ZEDD{W}
+\def\step{\gamma}
+\def\stepD{\eta}
+\def\Step{\Gamma}
+\def\thetabf{\pmb{\theta}}
+\def\bftheta{\thetabf}
+\def\XE{\theta}
+\def\matOrth{O}
+\def\matcorr{\Sigma}
+\def\RR{RR}
+\def\lyap{V}
+\def\varx{\theta}
+\def\varr{r}
+\def\varxtilde{\tilde{\theta}}
+\def\xvar{\varx}
+\def\randomPart{\mathbf{R}}
+\def\randomPartMod{\mathbf{S}}
+\def\varTCL{\sigma_{\RichR}}
+\def\meanTCLU{\kappa}
+\def\meanTCLD{\mu_{\RichR}}
+\def\muTCL{\meanTCLD}
+
+
+\def\gf{g}
+\def\opDecomp{\mathcal{D}}
+\def\opDecompE{\mathcal{E}}
+\def\opDecompH{\mathcal{H}}
+\def\opDecompN{\mathcal{N}}
+\def\opDecompB{\mathcal{B}}
+\def\opDecompR{\mathcal{R}}
+\def\opDecompG{\mathcal{G}}
+\def\gG{\phi^{(2)}}
+\def\opDecompK{\mathcal{K}}
+\def\opDecompM{\mathcal{M}}
+\def\lawNablaEst{\mathcal{L}}
+\def\SetrandomU{\mathbf{A}}
+\def\SetrandomD{\randomPart}
+\def\bone{\mathsf{e}}
+\def\XESDDKMU{\XES_{2k-1}^{(\step/2)}}
+\def\XESDDK{\XES_{2k}^{(\step/2)}}
+\def\XESUK{\XES_{k}^{(\step)}}
+
+\def\ZEDDK{\ZE_{2k}^{(\step/2)}}
+\def\ZEDDKPU{\ZE_{2k+1}^{(\step/2)}}
+\def\ZEUKPU{\ZE_{k+1}^{(\step)}}
+\def\nablaUeDDK{\nablaUe_{2k}^{(\step/2)}}
+\def\nablaUeD{\nablaUe^{(\step/2)}}
+\def\nablaUeU{\nablaUe^{(\step)}}
+\def\nablaUeDDKPU{\nablaUe_{2k}^{(\step/2)}}
+\def\nablaUeUKPU{\nablaUe_{k+1}^{(\step)}}
+\def\Stept{\Gamma}
+\def\tStep{\Stept}
+\def\ZED{\ZE^{(\step/2)}}
+\def\ZEU{\ZE^{(\step)}}
+\def\XESD{\XES^{(\step/2)}}
+\def\XESU{\XES^{(\step)}}
+\def\varnablaUe{\Upsilon^{(2)}}
+\newcommand\monablaUe[1]{\Upsilon^{(#1)}}
+\def\sfp{\mathsf{p}}
+\def\sfh{\mathsf{h}}
+\def\sff{\mathsf{f}}
+\def\bias{\operatorname{b}}
+\def\MSE{\operatorname{M}}
+\def\adrift{a}
+\def\bdrift{b}
+\def\testfunh{h}
+\def\tmp{f}
+\def\gfD{G}
+\def\nbrandomSet{B}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

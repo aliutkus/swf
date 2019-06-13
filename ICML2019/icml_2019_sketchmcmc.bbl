@@ -1,0 +1,328 @@
+\begin{thebibliography}{50}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ambrosio et~al.(2008)Ambrosio, Gigli, and
+  Savar{\'e}]{ambrosio2008gradient}
+Ambrosio, L., Gigli, N., and Savar{\'e}, G.
+\newblock \emph{Gradient flows: in metric spaces and in the space of
+  probability measures}.
+\newblock Springer Science \& Business Media, 2008.
+
+\bibitem[Arjovsky et~al.(2017)Arjovsky, Chintala, and
+  Bottou]{arjovsky2017wasserstein}
+Arjovsky, M., Chintala, S., and Bottou, L.
+\newblock Wasserstein generative adversarial networks.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  214--223, 2017.
+
+\bibitem[Benamou \& Brenier(2000)Benamou and Brenier]{benamou2000computational}
+Benamou, J.-D. and Brenier, Y.
+\newblock A computational fluid mechanics solution to the {M}onge-{K}antorovich
+  mass transfer problem.
+\newblock \emph{Numerische Mathematik}, 84\penalty0 (3):\penalty0 375--393,
+  2000.
+
+\bibitem[Bogachev et~al.(2015)Bogachev, Krylov, R{\"o}ckner, and
+  Shaposhnikov]{bogachev2015fokker}
+Bogachev, V.~I., Krylov, N.~V., R{\"o}ckner, M., and Shaposhnikov, S.~V.
+\newblock \emph{{F}okker-{P}lanck-{K}olmogorov Equations}, volume 207.
+\newblock American Mathematical Soc., 2015.
+
+\bibitem[Bonneel et~al.(2015)Bonneel, Rabin, Peyr{\'e}, and
+  Pfister]{bonneel2015sliced}
+Bonneel, N., Rabin, J., Peyr{\'e}, G., and Pfister, H.
+\newblock Sliced and {R}adon {W}asserstein barycenters of measures.
+\newblock \emph{Journal of Mathematical Imaging and Vision}, 51\penalty0
+  (1):\penalty0 22--45, 2015.
+
+\bibitem[Bonnotte(2013)]{bonnotte2013unidimensional}
+Bonnotte, N.
+\newblock \emph{Unidimensional and evolution methods for optimal
+  transportation}.
+\newblock PhD thesis, Paris 11, 2013.
+
+\bibitem[Bossy \& Talay(1997)Bossy and Talay]{bossy1997stochastic}
+Bossy, M. and Talay, D.
+\newblock A stochastic particle method for the {M}c{K}ean-{V}lasov and the
+  {B}urgers equation.
+\newblock \emph{Mathematics of Computation of the American Mathematical
+  Society}, 66\penalty0 (217):\penalty0 157--192, 1997.
+
+\bibitem[Bousquet et~al.(2017)Bousquet, Gelly, Tolstikhin, Simon-Gabriel, and
+  Schoelkopf]{bousquet2017optimal}
+Bousquet, O., Gelly, S., Tolstikhin, I., Simon-Gabriel, C.-J., and Schoelkopf,
+  B.
+\newblock From optimal transport to generative modeling: the vegan cookbook.
+\newblock \emph{arXiv preprint arXiv:1705.07642}, 2017.
+
+\bibitem[Cattiaux et~al.(2008)Cattiaux, Guillin, and Malrieu]{cgm-08}
+Cattiaux, P., Guillin, A., and Malrieu, F.
+\newblock Probabilistic approach for granular media equations in the non
+  uniformly convex case.
+\newblock \emph{Prob. Theor. Rel. Fields}, 140\penalty0 (1-2):\penalty0 19--40,
+  2008.
+
+\bibitem[\c{S}im\c{s}ekli et~al.(2018)\c{S}im\c{s}ekli, Yildiz, Nguyen, Cemgil,
+  and Richard]{pmlr-v80-simsekli18a}
+\c{S}im\c{s}ekli, U., Yildiz, C., Nguyen, T.~H., Cemgil, A.~T., and Richard, G.
+\newblock Asynchronous stochastic quasi-{N}ewton {MCMC} for non-convex
+  optimization.
+\newblock In \emph{ICML}, pp.\  4674--4683, 2018.
+
+\bibitem[Cuturi(2013)]{cuturi2013sinkhorn}
+Cuturi, M.
+\newblock Sinkhorn distances: Lightspeed computation of optimal transport.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2292--2300, 2013.
+
+\bibitem[Dalalyan(2017)]{dalalyan2017theoretical}
+Dalalyan, A.~S.
+\newblock Theoretical guarantees for approximate sampling from smooth and
+  log-concave densities.
+\newblock \emph{Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 79\penalty0 (3):\penalty0 651--676, 2017.
+
+\bibitem[Deshpande et~al.(2018)Deshpande, Zhang, and
+  Schwing]{deshpande2018generative}
+Deshpande, I., Zhang, Z., and Schwing, A.
+\newblock Generative modeling using the sliced wasserstein distance.
+\newblock \emph{arXiv preprint arXiv:1803.11188}, 2018.
+
+\bibitem[Diggle \& Gratton(1984)Diggle and Gratton]{diggle1984monte}
+Diggle, P.~J. and Gratton, R.~J.
+\newblock Monte carlo methods of inference for implicit statistical models.
+\newblock \emph{Journal of the Royal Statistical Society. Series B
+  (Methodological)}, pp.\  193--227, 1984.
+
+\bibitem[Donoho \& Tanner(2009)Donoho and Tanner]{donoho2009observed}
+Donoho, D. and Tanner, J.
+\newblock Observed universality of phase transitions in high-dimensional
+  geometry, with implications for modern data analysis and signal processing.
+\newblock \emph{Philosophical Transactions of the Royal Society of London A:
+  Mathematical, Physical and Engineering Sciences}, 367\penalty0
+  (1906):\penalty0 4273--4293, 2009.
+
+\bibitem[Durmus et~al.(2016)Durmus, \c{S}im\c{s}ekli, Moulines, Badeau, and
+  Richard]{durmus2016stochastic}
+Durmus, A., \c{S}im\c{s}ekli, U., Moulines, E., Badeau, R., and Richard, G.
+\newblock Stochastic gradient {Richardson-Romberg Markov Chain Monte Carlo}.
+\newblock In \emph{NIPS}, 2016.
+
+\bibitem[Dwork \& Roth(2014)Dwork and Roth]{dwork2014algorithmic}
+Dwork, C. and Roth, A.
+\newblock The algorithmic foundations of differential privacy.
+\newblock \emph{Foundations and Trends{\textregistered} in Theoretical Computer
+  Science}, 9\penalty0 (3--4):\penalty0 211--407, 2014.
+
+\bibitem[Genevay et~al.(2016)Genevay, Cuturi, Peyr{\'e}, and
+  Bach]{genevay2016stochastic}
+Genevay, A., Cuturi, M., Peyr{\'e}, G., and Bach, F.
+\newblock Stochastic optimization for large-scale optimal transport.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  3440--3448, 2016.
+
+\bibitem[Genevay et~al.(2017)Genevay, Peyr{\'e}, and Cuturi]{genevay2017gan}
+Genevay, A., Peyr{\'e}, G., and Cuturi, M.
+\newblock Gan and vae from an optimal transport point of view.
+\newblock \emph{arXiv preprint arXiv:1706.01807}, 2017.
+
+\bibitem[Genevay et~al.(2018)Genevay, Peyr{\'e}, and
+  Cuturi]{genevay2018learning}
+Genevay, A., Peyr{\'e}, G., and Cuturi, M.
+\newblock Learning generative models with {S}inkhorn divergences.
+\newblock In \emph{International Conference on Artificial Intelligence and
+  Statistics}, pp.\  1608--1617, 2018.
+
+\bibitem[Goodfellow et~al.(2014)Goodfellow, Pouget-Abadie, Mirza, Xu,
+  Warde-Farley, Ozair, Courville, and Bengio]{goodfellow2014generative}
+Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair,
+  S., Courville, A., and Bengio, Y.
+\newblock Generative adversarial nets.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2672--2680, 2014.
+
+\bibitem[Gribonval et~al.(2017)Gribonval, Blanchard, Keriven, and
+  Traonmilin]{gribonval2017compressive}
+Gribonval, R., Blanchard, G., Keriven, N., and Traonmilin, Y.
+\newblock Compressive statistical learning with random feature moments.
+\newblock \emph{arXiv preprint arXiv:1706.07180}, 2017.
+
+\bibitem[Gulrajani et~al.(2017)Gulrajani, Ahmed, Arjovsky, Dumoulin, and
+  Courville]{gulrajani2017improved}
+Gulrajani, I., Ahmed, F., Arjovsky, M., Dumoulin, V., and Courville, A.~C.
+\newblock Improved training of {W}asserstein {GAN}s.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  5769--5779, 2017.
+
+\bibitem[Guo et~al.(2017)Guo, Hong, Lin, and Yang]{guo2017relaxed}
+Guo, X., Hong, J., Lin, T., and Yang, N.
+\newblock Relaxed {W}asserstein with applications to {GAN}s.
+\newblock \emph{arXiv preprint arXiv:1705.07164}, 2017.
+
+\bibitem[Jordan et~al.(1998)Jordan, Kinderlehrer, and
+  Otto]{jordan1998variational}
+Jordan, R., Kinderlehrer, D., and Otto, F.
+\newblock The variational formulation of the {F}okker--{P}lanck equation.
+\newblock \emph{SIAM journal on mathematical analysis}, 29\penalty0
+  (1):\penalty0 1--17, 1998.
+
+\bibitem[Kingma \& Ba(2014)Kingma and Ba]{kingma2014adam}
+Kingma, D. and Ba, J.
+\newblock Adam: A method for stochastic optimization.
+\newblock \emph{arXiv preprint arXiv:1412.6980}, 2014.
+
+\bibitem[Kingma \& Welling(2013)Kingma and Welling]{kingma2013VAE}
+Kingma, D.~P. and Welling, M.
+\newblock Auto-encoding variational bayes.
+\newblock \emph{arXiv preprint arXiv:1312.6114}, 2013.
+
+\bibitem[Kolouri et~al.(2018)Kolouri, Martin, and Rohde]{kolouri2018sliced}
+Kolouri, S., Martin, C.~E., and Rohde, G.~K.
+\newblock Sliced-wasserstein autoencoder: An embarrassingly simple generative
+  model.
+\newblock \emph{arXiv preprint arXiv:1804.01947}, 2018.
+
+\bibitem[Lavenant et~al.(2018)Lavenant, Claici, Chien, and
+  Solomon]{lavenant2018dynamical}
+Lavenant, H., Claici, S., Chien, E., and Solomon, J.
+\newblock Dynamical optimal transport on discrete surfaces.
+\newblock In \emph{SIGGRAPH Asia 2018 Technical Papers}, pp.\  250. ACM, 2018.
+
+\bibitem[Lei et~al.(2017)Lei, Su, Cui, Yau, and Gu]{lei2017geometric}
+Lei, N., Su, K., Cui, L., Yau, S.-T., and Gu, D.~X.
+\newblock A geometric view of optimal transportation and generative model.
+\newblock \emph{arXiv preprint arXiv:1710.05488}, 2017.
+
+\bibitem[Liu et~al.(2017)Liu, Bousquet, and Chaudhuri]{liu2017approximation}
+Liu, S., Bousquet, O., and Chaudhuri, K.
+\newblock Approximation and convergence properties of generative adversarial
+  learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  5551--5559, 2017.
+
+\bibitem[Liu et~al.(2015)Liu, Luo, Wang, and Tang]{liu2015faceattributes}
+Liu, Z., Luo, P., Wang, X., and Tang, X.
+\newblock Deep learning face attributes in the wild.
+\newblock In \emph{Proceedings of International Conference on Computer Vision
+  (ICCV)}, 2015.
+
+\bibitem[Ma et~al.(2015)Ma, Chen, and Fox]{ma2015complete}
+Ma, Y.~A., Chen, T., and Fox, E.
+\newblock A complete recipe for stochastic gradient {MCMC}.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  2899--2907, 2015.
+
+\bibitem[Malrieu(2003)]{malrieu03}
+Malrieu, F.
+\newblock Convergence to equilibrium for granular media equations and their
+  {E}uler schemes.
+\newblock \emph{Ann. Appl. Probab.}, 13\penalty0 (2):\penalty0 540--560, 2003.
+
+\bibitem[Mishura \& Veretennikov(2016)Mishura and
+  Veretennikov]{mishura2016existence}
+Mishura, Y.~S. and Veretennikov, A.~Y.
+\newblock Existence and uniqueness theorems for solutions of
+  {M}c{K}ean--{V}lasov stochastic equations.
+\newblock \emph{arXiv preprint arXiv:1603.02212}, 2016.
+
+\bibitem[Mohamed \& Lakshminarayanan(2016)Mohamed and
+  Lakshminarayanan]{mohamed2016learning}
+Mohamed, S. and Lakshminarayanan, B.
+\newblock Learning in implicit generative models.
+\newblock \emph{arXiv preprint arXiv:1610.03483}, 2016.
+
+\bibitem[Nguyen et~al.(2019)Nguyen, \c{S}im\c{s}ekli, , and
+  Richard]{nguyen2019non}
+Nguyen, T.~H., \c{S}im\c{s}ekli, U., , and Richard, G.
+\newblock Non-asymptotic analysis of fractional {L}angevin {M}onte {C}arlo for
+  non-convex optimization.
+\newblock In \emph{ICML}, 2019.
+
+\bibitem[Rabin et~al.(2012)Rabin, Peyr{\'e}, Delon, and
+  Bernot]{rabin:et:al:2011}
+Rabin, J., Peyr{\'e}, G., Delon, J., and Bernot, M.
+\newblock Wasserstein barycenter and its application to texture mixing.
+\newblock In Bruckstein, A.~M., ter Haar~Romeny, B.~M., Bronstein, A.~M., and
+  Bronstein, M.~M. (eds.), \emph{Scale Space and Variational Methods in
+  Computer Vision}, pp.\  435--446, Berlin, Heidelberg, 2012. Springer Berlin
+  Heidelberg.
+\newblock ISBN 978-3-642-24785-9.
+
+\bibitem[Raginsky et~al.(2017)Raginsky, Rakhlin, and Telgarsky]{raginsky17a}
+Raginsky, M., Rakhlin, A., and Telgarsky, M.
+\newblock Non-convex learning via stochastic gradient {L}angevin dynamics: a
+  nonasymptotic analysis.
+\newblock In \emph{Proceedings of the 2017 Conference on Learning Theory},
+  volume~65, pp.\  1674--1703, 2017.
+
+\bibitem[Samangouei et~al.(2018)Samangouei, Kabkab, and
+  Chellappa]{samangouei2018defensegan}
+Samangouei, P., Kabkab, M., and Chellappa, R.
+\newblock Defense-{GAN}: Protecting classifiers against adversarial attacks
+  using generative models.
+\newblock In \emph{International Conference on Learning Representations}, 2018.
+
+\bibitem[Santambrogio(2014)]{santambrogio2010introduction}
+Santambrogio, F.
+\newblock Introduction to optimal transport theory.
+\newblock In Pajot, H., Ollivier, Y., and Villani, C. (eds.), \emph{Optimal
+  Transportation: Theory and Applications}, chapter~1. Cambridge University
+  Press, 2014.
+
+\bibitem[Santambrogio(2017)]{santambrogio2017euclidean}
+Santambrogio, F.
+\newblock $\{$Euclidean, metric, and Wasserstein$\}$ gradient flows: an
+  overview.
+\newblock \emph{Bulletin of Mathematical Sciences}, 7\penalty0 (1):\penalty0
+  87--154, 2017.
+
+\bibitem[{\c{S}}im{\c{s}}ekli(2017)]{csimcsekli2017fractional}
+{\c{S}}im{\c{s}}ekli, U.
+\newblock Fractional {Langevin Monte Carlo: Exploring L\'{e}vy Driven
+  Stochastic Differential Equations for Markov Chain Monte Carlo}.
+\newblock In \emph{International Conference on Machine Learning}, 2017.
+
+\bibitem[Tolstikhin et~al.(2017)Tolstikhin, Bousquet, Gelly, and
+  Schoelkopf]{tolstikhin2017wasserstein}
+Tolstikhin, I., Bousquet, O., Gelly, S., and Schoelkopf, B.
+\newblock Wasserstein auto-encoders.
+\newblock \emph{arXiv preprint arXiv:1711.01558}, 2017.
+
+\bibitem[Van~der Vaart(1998)]{van1998asymptotic}
+Van~der Vaart, A.~W.
+\newblock \emph{Asymptotic statistics}, volume~3.
+\newblock Cambridge university press, 1998.
+
+\bibitem[Veretennikov(2006)]{veretennikov2006ergodic}
+Veretennikov, A.~Y.
+\newblock On ergodic measures for {M}c{K}ean-{V}lasov stochastic equations.
+\newblock In \emph{Monte Carlo and Quasi-Monte Carlo Methods 2004}, pp.\
+  471--486. Springer, 2006.
+
+\bibitem[Villani(2008)]{villani2008optimal}
+Villani, C.
+\newblock \emph{Optimal transport: old and new}, volume 338.
+\newblock Springer Science \& Business Media, 2008.
+
+\bibitem[Welling \& Teh(2011)Welling and Teh]{WelTeh2011a}
+Welling, M. and Teh, Y.~W.
+\newblock Bayesian learning via stochastic gradient {L}angevin dynamics.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  681--688, 2011.
+
+\bibitem[Wu et~al.(2018)Wu, Huang, Li, and Gool]{autotranspoter}
+Wu, J., Huang, Z., Li, W., and Gool, L.~V.
+\newblock Sliced wasserstein generative models.
+\newblock \emph{arXiv preprint arXiv:1706.02631}, abs/1706.02631, 2018.
+
+\bibitem[Zhang et~al.(2018)Zhang, Zhang, and Chen]{zhang2018stochastic}
+Zhang, J., Zhang, R., and Chen, C.
+\newblock Stochastic particle-optimization sampling and the non-asymptotic
+  convergence theory.
+\newblock \emph{arXiv preprint arXiv:1809.01293}, 2018.
+
+\end{thebibliography}

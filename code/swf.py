@@ -199,6 +199,11 @@ if __name__ == "__main__":
     parser.add_argument("--test_type",
                         help="different kinds of test options. should be "
                              "either RANDOM or INTERPOLATE.")
+    parser.add_argument("--num_dataworkers",
+                        help="number of workers for the datastream",
+                        type=int,
+                        default=2)
+
     args = parser.parse_args()
 
     # prepare the torch device (cuda or cpu ?)
@@ -249,13 +254,17 @@ if __name__ == "__main__":
             print("Model loaded")
 
         # augmenting the dataset with calling the encoder, to get an item
-        train_data = data.TransformedDataset(
+        train_data = qsketch.TransformedDataset(
             train_data,
-            transform=autoencoder.model.encode_nograd)
-    data_shape = train_data[0][0].shape
+            transform=autoencoder.model.encode,
+            device=device_str)
+
     # Launch the data stream
-    data_stream = qsketch.DataStream(train_data)
+    data_stream = qsketch.DataStream(train_data,
+                                     num_workers=args.num_dataworkers)
     data_stream.stream()
+
+    data_shape = train_data[0][0].shape
 
     # prepare the sketcher
     sketcher = qsketch.Sketcher(data_source=data_stream,
@@ -288,7 +297,6 @@ if __name__ == "__main__":
     train_particles = torch.randn(
         args.num_samples,
         *input_shape).to(device)
-
     # get the initial dimension for the train particles
     train_particles_shape = train_particles.shape[1:]
 

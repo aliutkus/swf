@@ -116,7 +116,7 @@ def plot_function(data, axes, markers='r.'):
             nrow=nrow,
             padding=2, normalize=True, scale_each=True
             )
-        pic_npy = pic.numpy()
+        pic_npy = pic.cpu().numpy()
         newplots = [axes.imshow(
             np.transpose(pic_npy, (1, 2, 0)),
             interpolation='nearest')]
@@ -131,8 +131,8 @@ def plot_function(data, axes, markers='r.'):
         plt.axis('off')
     elif len(data.squeeze().shape) == 2 and data.squeeze().shape[1] == 2:
         # it's 2D data
-        newplots = axes.plot(data.squeeze().numpy()[:, 0],
-                             data.squeeze().numpy()[:, 1],
+        newplots = axes.plot(data.squeeze().cpu().numpy()[:, 0],
+                             data.squeeze().cpu().numpy()[:, 1],
                              markers, markersize=1)
     else:
         newplots = []
@@ -220,7 +220,7 @@ class SWFPlot:
             # prepare the heat map of the distribution of the data
             train_loader = DataLoader(dataset,
                                       batch_size=min(5000, len(dataset)))
-            data = next(iter(train_loader))[0].squeeze().numpy()
+            data = next(iter(train_loader))[0].squeeze().cpu().numpy()
             data = data.reshape((data.shape[0], -1))
 
             std_data = np.std(data, axis=0)
@@ -406,8 +406,10 @@ class SWFPlot:
                         ax.set_xlim(*self.density_xlim[row][col])
                         ax.set_ylim(*self.density_ylim[row][col])
                         sb.kdeplot(
-                            data=train_plot[:, self.features[col]].numpy(),
-                            data2=train_plot[:, self.features[row+1]].numpy(),
+                            data=(train_plot[:, self.features[col]]
+                                  .cpu().numpy()),
+                            data2=(train_plot[:, self.features[row+1]]
+                                   .cpu().numpy()),
                             gridsize=100, n_levels=self.density_nlevels,
                             shade=False,
                             cmap=self.density_train_palette,
