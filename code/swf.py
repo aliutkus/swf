@@ -12,6 +12,7 @@ from torchinterp1d import Interp1d
 from torchpercentile import Percentile
 from math import sqrt
 from tqdm import tqdm, trange
+import copy
 
 
 def swf(train_particles, test_particles, sketcher, projector_modules,
@@ -257,11 +258,11 @@ if __name__ == "__main__":
         # make sure that the encoder doesn't require grad
         for p in autoencoder.model.parameters():
             p.requires_grad = False
-        autoencoder.model = autoencoder.model.to('cpu')
+        autoencoder.model = autoencoder.model.to(device)
         train_data = qsketch.TransformedDataset(
             train_data,
             transform=autoencoder.model.encode,
-            device='cpu')
+            device=device)
 
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data,
@@ -359,7 +360,7 @@ if __name__ == "__main__":
                                plot_num_train=args.plot_num_train,
                                plot_num_test=args.plot_num_test,
                                decode_fn=(
-                                autoencoder.model.decode_nograd if args.ae
+                                copy.deepcopy(autoencoder.model).to('cpu').decode_nograd if args.ae
                                 else None),
                                make_titles=False,
                                dpi=300,
