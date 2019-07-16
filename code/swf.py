@@ -257,10 +257,11 @@ if __name__ == "__main__":
         # make sure that the encoder doesn't require grad
         for p in autoencoder.model.parameters():
             p.requires_grad = False
-
+        autoencoder.model.to(device)
         train_data = qsketch.TransformedDataset(
             train_data,
-            transform=autoencoder.model.encode)
+            transform=autoencoder.model.encode,
+            device=device)
 
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data,
