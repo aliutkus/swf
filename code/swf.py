@@ -254,10 +254,13 @@ if __name__ == "__main__":
             print("Model loaded")
 
         # augmenting the dataset with calling the encoder, to get an item
+        # make sure that the encoder doesn't require grad
+        for p in autoencoder.model.parameters():
+            p.requires_grad = False
+
         train_data = qsketch.TransformedDataset(
             train_data,
-            transform=autoencoder.model.encode,
-            device=device_str)
+            transform=autoencoder.model.encode)
 
     # Launch the data stream
     data_stream = qsketch.DataStream(train_data,
