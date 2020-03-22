@@ -101,7 +101,7 @@ dependencies:
     - torch==1.0.1.post2
     - git+https://github.com/aliutkus/torchinterp1d.git
     - git+https://github.com/aliutkus/torchpercentile.git
-    - git+https://github.com/aliutkus/torchsearchsorted.git
+    - git+https://github.com/aliutkus/torchsearchsorted.git@1.0
     - traitlets==4.3.2
     - wcwidth==0.1.7
 prefix: SWF
