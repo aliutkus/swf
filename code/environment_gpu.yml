@@ -97,11 +97,11 @@ dependencies:
     - prompt-toolkit==2.0.9
     - ptyprocess==0.6.0
     - pygments==2.3.1
-    - qsketch==0.1
+    - git+https://github.com/aliutkus/qsketch.git
     - torch==1.0.1.post2
-    - torchinterp1d==1.0
-    - torchpercentile==0.1
-    - torchsearchsorted==1.0
+    - git+https://github.com/aliutkus/torchinterp1d.git
+    - git+https://github.com/aliutkus/torchpercentile.git
+    - git+https://github.com/aliutkus/torchsearchsorted.git
     - traitlets==4.3.2
     - wcwidth==0.1.7
 prefix: SWF
